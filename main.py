@@ -1,5 +1,7 @@
 import sys
 import pygame
+import menu
+
 from pygame.locals import *
 
 pygame.init()
@@ -10,10 +12,4 @@ DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 FPS = pygame.time.Clock()
 FPS.tick(60)
 
-while True:
-  for event in pygame.event.get():
-    if event.type == QUIT:
-      pygame.quit()
-      sys.exit()
-  
-  pygame.display.update()
+menu()
