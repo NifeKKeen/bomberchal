@@ -1,8 +1,5 @@
-import sys
 import pygame
-import menu
-
-from pygame.locals import *
+from pages import menu
 
 pygame.init()
 SCREEN_WIDTH = 500
