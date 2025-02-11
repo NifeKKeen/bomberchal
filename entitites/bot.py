@@ -1,12 +1,14 @@
 from entity import Entity
 
 class Bot(Entity):
-    timer = 0
-    speed = 1
-    lives = 1
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    def __init__(self, x, y):
-        super().__init__(x, y)
+        self.bomb_allowed = kwargs.get("bomb_allowed", 1)
+        self.bomb_power = kwargs.get("bomb_power", 1)
+        self.speed = kwargs.get("bomb_speed", 1)
+        self.lives = kwargs.get("bomb_lives", 1)
+        self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
 
     def is_alive(self):
         return bool(self.lives)
