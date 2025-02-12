@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import globals
-from entitites.bomb import Bomb
 from entitites.player import Player
 from utils import paint_api
 from pygame.locals import *

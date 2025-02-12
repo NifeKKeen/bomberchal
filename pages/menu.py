@@ -1,10 +1,5 @@
-import pygame.sprite
-
-import globals
 from utils import paint_api
-from pygame.locals import *
 
-from utils.event_api import is_fired
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
