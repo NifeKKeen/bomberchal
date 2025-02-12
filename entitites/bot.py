@@ -1,4 +1,4 @@
-from entity import Entity
+from entitites.entity import Entity
 
 class Bot(Entity):
     def __init__(self, **kwargs):
@@ -6,7 +6,7 @@ class Bot(Entity):
 
         self.bomb_allowed = kwargs.get("bomb_allowed", 1)
         self.bomb_power = kwargs.get("bomb_power", 1)
-        self.speed = kwargs.get("bomb_speed", 1)
+        self.speed = kwargs.get("speed", 1)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
 

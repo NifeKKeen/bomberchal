@@ -1,6 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 
+from pages.game import reset_game
 from utils import paint_api
 from pages import menu, game
 import globals
@@ -19,13 +20,16 @@ if __name__ == "__main__":
         if globals.switched_page:
             paint_api.reset()
             globals.switched_page = False
-
         for event in pygame.event.get():
-            globals.frame_events.add(event.type)
-
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
+                globals.frame_events.add((event.type, event.button))
+
+            globals.frame_keys = pygame.key.get_pressed()
+
 
         # Page navigation
 
@@ -38,9 +42,17 @@ if __name__ == "__main__":
         # elif globals.current_page == "menu/scoreboard":
         #     menu_scoreboard()
         elif globals.current_page == "game":
-            game.game()
+            game.game(is_setup=globals.switched_page_this_frame)
+
+        if not globals.current_page.startswith("game"):
+            reset_game()
 
         draw_sprites()
 
         globals.Frame.tick(globals.FPS)
         globals.frame_events.clear()
+
+        # Check if the page was NOT switched during this frame
+        if not globals.switched_page:
+            # Since no switch occurred, reset the flag for next frame
+            globals.switched_page_this_frame = False

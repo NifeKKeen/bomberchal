@@ -1,6 +1,8 @@
 import pygame
 
 import globals
+from globals import map_key_sprite
+
 
 def format_surface_id_to_key(surface_id):
     return "-sid_" + str(surface_id)
@@ -12,8 +14,6 @@ class SurfaceSprite(pygame.sprite.Sprite):
     def __init__(self, **kwargs):
         super().__init__()
 
-        self.x = kwargs.get("x", 0)  # position x in board (from left) [целые коорды]
-        self.y = kwargs.get("y", 0)  # position x in board (from top) [целые коорды]
         self.px_x = kwargs.get("px_x", 0)  # position x in pixels (from left) [пиксельные коорды]
         self.px_y = kwargs.get("px_y", 0)  # position y in pixels (from top) [пиксельные коорды]
         self.px_w = kwargs.get("px_w", 1)  # width in pixels
@@ -36,6 +36,18 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.y = self.px_y
 
 
+    def move_px(self, x=0, y=0):
+        self.px_x += x
+        self.px_y += y
+        self.rect.x += x
+        self.rect.y += y
+
+    def set_px(self, x=0, y=0):
+        self.px_x = x
+        self.px_y = y
+        self.rect.x = x
+        self.rect.y = y
+
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
     # otherwise, try to get surface from globals.map_key_sprite with this surface_id
@@ -52,15 +64,6 @@ def _get_surface(**kwargs):
         surface_sprite = globals.map_key_sprite[surface_key]
 
     return surface_sprite
-
-
-def set_sprite(sprite):
-    if sprite.surface_id in globals.to_render_keys:
-        return
-
-    key = sprite.key
-    globals.map_key_sprite[key] = sprite
-    globals.to_render_keys.add(key)
 
 
 def mount_rect(**kwargs):
@@ -105,6 +108,17 @@ def mount_sprite(sprite):
     return sprite
 
 
+def unmount_sprite(sprite):
+    globals.all_sprites.remove(sprite)
+    globals.to_render_keys.discard(sprite.key)
+
+    return sprite
+
+
+def is_mounted(sprite):
+    return sprite.key in globals.to_render_keys
+
+
 def refill_screen():
     globals.DISPLAYSURF.fill((0, 0, 20))
 
@@ -118,19 +132,10 @@ def reset():
 def draw_sprites():
     refill_screen()
 
-    will_be_rendered_keys = set()
-
-    for (surface_id, sprite) in globals.map_key_sprite.items():
-        if surface_id not in globals.to_render_keys:
-            globals.all_sprites.remove(sprite)
-            globals.map_key_sprite.pop(sprite.key)
-
     for sprite in globals.all_sprites.sprites():
-        if sprite.key in globals.to_render_keys:
-            will_be_rendered_keys.add(sprite.key)
+        if sprite.key not in globals.to_render_keys:
+            globals.all_sprites.remove(sprite.key)
 
-    globals.to_render_keys.clear()
-    globals.to_render_keys.update(will_be_rendered_keys)
     # all_sprites.update()
 
     globals.all_sprites.draw(globals.DISPLAYSURF)
