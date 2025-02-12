@@ -1,6 +1,4 @@
-import pygame
-
-from paint_api import SurfaceSprite
+from utils.paint_api import SurfaceSprite
 
 
 class Entity(SurfaceSprite):

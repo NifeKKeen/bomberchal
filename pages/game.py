@@ -1,24 +1,30 @@
 import pygame.sprite
 
 import globals
-import paint_api
+from entitites.player import Player
+from utils import paint_api
 from pygame.locals import *
 
+from utils.event_api import is_fired
 from pages.navigation import navigate
+from utils.interaction_api import is_clicked, is_pressed
 
 
-def game():
-    paint_api.draw_rect(px_x=600, px_y=30, px_w=200, px_h=80, key="test")
-    paint_api.draw_rect(px_x=600, px_y=120, px_w=200, px_h=80, key="cell1")
+def game(**kwargs):
+    cols = kwargs.get("cols", 1)
+    rows = kwargs.get("cols", 1)
 
-    click_pos = None
+    go_menu_button_sprite = paint_api.mount_rect(px_x=0, px_y=0, px_w=40, px_h=40, key="go_menu")
+    player_sprite = paint_api.mount_sprite(Player(px_x=0, px_y=0, px_w=30, px_h=30, key="player1"))
 
-    for event in globals.frame_events:
-        if event.type == MOUSEBUTTONDOWN:
-            click_pos = pygame.mouse.get_pos()
-
-    if click_pos:
-        for sprite in reversed(globals.all_sprites.sprites()):
-            if sprite.rect.collidepoint(click_pos):
-                navigate("menu")
-                break
+    # TODO
+    if is_clicked(go_menu_button_sprite):
+        navigate("menu")
+    elif is_pressed(K_w):
+        player_sprite.rect.y -= 1
+    elif is_pressed(K_s):
+        player_sprite.rect.y += 1
+    elif is_pressed(K_a):
+        player_sprite.rect.x -= 1
+    elif is_pressed(K_d):
+        player_sprite.rect.x += 1

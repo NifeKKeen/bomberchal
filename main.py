@@ -1,11 +1,10 @@
 import pygame, sys
 from pygame.locals import *
 
-import paint_api
-from globals import frame_events, all_sprites, to_render_keys
+from utils import paint_api
 from pages import menu, game
 import globals
-from paint_api import draw_sprites
+from utils.paint_api import draw_sprites
 
 if __name__ == "__main__":
     pygame.init()
@@ -22,7 +21,7 @@ if __name__ == "__main__":
             globals.switched_page = False
 
         for event in pygame.event.get():
-            globals.frame_events.append(event)
+            globals.frame_events.add(event.type)
 
             if event.type == QUIT:
                 pygame.quit()

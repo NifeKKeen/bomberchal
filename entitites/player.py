@@ -1,4 +1,4 @@
-from entity import Entity
+from entitites.entity import Entity
 
 class Player(Entity):
     def __init__(self, **kwargs):

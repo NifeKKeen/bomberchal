@@ -63,7 +63,10 @@ def set_sprite(sprite):
     globals.to_render_keys.add(key)
 
 
-def draw_rect(**kwargs):
+def mount_rect(**kwargs):
+    # key should be specified in order to decrease the number of renders
+    # otherwise a new surface will be created and rendered each frame
+
     px_x = kwargs.get("px_x", 0)
     px_y = kwargs.get("px_y", 0)
     px_w = kwargs.get("px_w", 1)
@@ -72,7 +75,7 @@ def draw_rect(**kwargs):
 
     if key in globals.to_render_keys:
         # This sprite already exists in render queue
-        return
+        return globals.map_key_sprite[key]
 
     sprite = _get_surface(px_x=px_x, px_y=px_y, px_w=px_w, px_h=px_h)
 
@@ -86,6 +89,20 @@ def draw_rect(**kwargs):
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[key] = sprite
     globals.to_render_keys.add(key)
+
+    return sprite
+
+
+def mount_sprite(sprite):
+    if sprite.key in globals.to_render_keys:
+        # already in to render queue
+        return sprite
+
+    globals.all_sprites.add(sprite)
+    globals.map_key_sprite[sprite.key] = sprite
+    globals.to_render_keys.add(sprite.key)
+
+    return sprite
 
 
 def refill_screen():
