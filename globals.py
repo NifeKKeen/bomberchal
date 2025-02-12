@@ -35,7 +35,7 @@ game_mode = None
 scores = dict()
 tick = 0
 events_stack = deque()  # TODO
-entities = []
+entities = set()
 
 # GAME CONSTRAINTS
 VOID_CELL = 0

@@ -12,6 +12,10 @@ class Entity(SurfaceSprite):
         self.x = kwargs.get("x", 0)  # position x in board (from left) [целые коорды]
         self.y = kwargs.get("y", 0)  # position x in board (from top) [целые коорды]
 
+        self.entity_group = kwargs.get("entity_group", None)  # entity group which this entity belongs to
+        if self.entity_group is not None:
+            self.entity_group.add(self)
+
         self.image.fill(self.color)
 
         self.entity_id = Entity.EntityId
@@ -19,14 +23,18 @@ class Entity(SurfaceSprite):
 
         self.tick = 0  # lifespan
 
-        self.displayed = True  # is interactable and visible in screen
+        self.mounted = False  # is visible in screen
 
 
-    def disable(self):
-        self.displayed = False
+    def unmount(self):
+        self.mounted = False
         paint_api.unmount_sprite(self)
 
 
-    def enable(self):
-        self.displayed = True
+    def mount(self):
+        self.mounted = True
         paint_api.mount_sprite(self)
+
+
+    def add_tick(self):
+        self.tick += 1

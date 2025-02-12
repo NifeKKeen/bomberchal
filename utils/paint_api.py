@@ -28,14 +28,13 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
         self.image.set_colorkey((0, 0, 0))  # color to make transparent
-        self.image.fill(self.color) # Color of surface
+        self.image.fill(self.color)  # Color of surface
 
         pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
 
         self.rect = self.image.get_rect()
         self.rect.x = self.px_x
         self.rect.y = self.px_y
-
 
     def move_px(self, x=0, y=0):
         self.px_x += x
@@ -48,6 +47,10 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.px_y = y
         self.rect.x = x
         self.rect.y = y
+
+    def collides_with(self, sprite2):
+        return pygame.sprite.collide_rect(self, sprite2)
+
 
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
@@ -80,6 +83,8 @@ def mount_sprite(sprite):
     if sprite.key in globals.to_render_keys:
         # already in to render queue
         return sprite
+
+    print("Rendered", sprite.key)
 
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite

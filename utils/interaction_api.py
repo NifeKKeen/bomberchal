@@ -19,3 +19,6 @@ def is_clicked(sprite):
 
 def is_pressed(event_key):
     return globals.frame_keys[event_key]
+
+def is_pressed_once(event_key):
+    return is_fired(KEYDOWN, event_key)

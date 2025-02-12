@@ -27,6 +27,8 @@ if __name__ == "__main__":
 
             if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
                 globals.frame_events.add((event.type, event.button))
+            if event.type in (KEYDOWN, KEYUP):
+                globals.frame_events.add((event.type, event.key))
 
             globals.frame_keys = pygame.key.get_pressed()
 
@@ -50,6 +52,8 @@ if __name__ == "__main__":
         draw_sprites()
 
         globals.Frame.tick(globals.FPS)
+
+        # Clean up
         globals.frame_events.clear()
 
         # Check if the page was NOT switched during this frame
