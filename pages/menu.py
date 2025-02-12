@@ -12,6 +12,7 @@ from utils.interaction_api import is_clicked
 def menu():
     play_button_sprite = paint_api.mount_rect(px_x=300, px_y=30, px_w=200, px_h=80, key="play")
     settings_button_sprite = paint_api.mount_rect(px_x=300, px_y=120, px_w=200, px_h=80, key="settings")
+    test_button_sprite = paint_api.mount_rect(px_x=300, px_y=210, px_w=200, px_h=80)  # if key is not specified, it will render over and over
 
     if is_clicked(play_button_sprite):
         navigate("game")

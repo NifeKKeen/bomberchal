@@ -1,7 +1,7 @@
 import pygame
 
 import globals
-from globals import map_key_sprite
+from utils.helpers import rand
 
 
 def format_surface_id_to_key(surface_id):
@@ -19,6 +19,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.px_w = kwargs.get("px_w", 1)  # width in pixels
         self.px_h = kwargs.get("px_h", 1)  # height in pixels
 
+        self.color = kwargs.get("color", (rand(128, 256), 0, rand(128, 256)))
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
 
         self.surface_id = SurfaceSprite.SurfaceId
@@ -27,9 +28,9 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
         self.image.set_colorkey((0, 0, 0))  # color to make transparent
+        self.image.fill(self.color) # Color of surface
 
-        self.image.fill((255, 0, 255))  # if there are no image
-        pygame.draw.rect(self.image, (255, 255, 255), pygame.Rect((0, 0, self.px_w, self.px_h)))
+        pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
 
         self.rect = self.image.get_rect()
         self.rect.x = self.px_x
@@ -51,15 +52,11 @@ class SurfaceSprite(pygame.sprite.Sprite):
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
     # otherwise, try to get surface from globals.map_key_sprite with this surface_id
-
-    px_x = kwargs.get("px_x", 0)
-    px_y = kwargs.get("px_y", 0)
-    px_w = kwargs.get("px_w", 1)
-    px_h = kwargs.get("px_h", 1)
     surface_key = kwargs.get("key", None)
 
-    if surface_key is None:
-        surface_sprite = SurfaceSprite(px_x=px_x, px_y=px_y, px_w=px_w, px_h=px_h)
+    if surface_key not in globals.to_render_keys:
+        surface_sprite = SurfaceSprite(**kwargs)
+        print("Rendered", surface_sprite.key)
     else:
         surface_sprite = globals.map_key_sprite[surface_key]
 
@@ -70,28 +67,11 @@ def mount_rect(**kwargs):
     # key should be specified in order to decrease the number of renders
     # otherwise a new surface will be created and rendered each frame
 
-    px_x = kwargs.get("px_x", 0)
-    px_y = kwargs.get("px_y", 0)
-    px_w = kwargs.get("px_w", 1)
-    px_h = kwargs.get("px_h", 1)
-    key = kwargs.get("key", None)
-
-    if key in globals.to_render_keys:
-        # This sprite already exists in render queue
-        return globals.map_key_sprite[key]
-
-    sprite = _get_surface(px_x=px_x, px_y=px_y, px_w=px_w, px_h=px_h)
-
-    if key:
-        sprite.key = key
-
-    print("Rendered", sprite.key)
-    # rect = sprite.image.get_rect()
-    pygame.draw.rect(sprite.image, (255, 255, 255), pygame.Rect((0, 0, sprite.px_w, sprite.px_h)))
+    sprite = _get_surface(**kwargs)
 
     globals.all_sprites.add(sprite)
-    globals.map_key_sprite[key] = sprite
-    globals.to_render_keys.add(key)
+    globals.map_key_sprite[sprite.key] = sprite
+    globals.to_render_keys.add(sprite.key)
 
     return sprite
 

@@ -20,7 +20,13 @@ def setup_game(**kwargs):
     globals.rows = kwargs.get("rows", 20)
     globals.field = kwargs.get("field", deepcopy(DEFAULT_FIELD))
     for i in range(2):
-        player = Player(px_x=0, px_y=0, px_w=50, px_h=50, speed=20, key=f"player-{i}")
+        player = Player(
+            px_x=0, px_y=0,
+            px_w=50, px_h=50,
+            speed=rand(1, 10),
+            color=(0, rand(128, 256), rand(126, 256)),
+            key=f"player-{i}"
+        )
         player.enable()
         globals.entities.append(player)
 
@@ -39,9 +45,6 @@ def game(**kwargs):
 
     player1_sprite = get_players(globals.entities)[0]
     player2_sprite = get_players(globals.entities)[1]
-
-    player1_sprite.speed = rand(1, 20)
-    player2_sprite.speed = rand(1, 10)
 
     if is_clicked(go_menu_button_sprite):
         navigate("menu")

@@ -11,9 +11,8 @@ class Entity(SurfaceSprite):
 
         self.x = kwargs.get("x", 0)  # position x in board (from left) [целые коорды]
         self.y = kwargs.get("y", 0)  # position x in board (from top) [целые коорды]
-        self.color = kwargs.get("color", (rand(0, 256), rand(0, 256), rand(0, 256)))
 
-        self.image.set_colorkey(self.color)
+        self.image.fill(self.color)
 
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
@@ -26,7 +25,6 @@ class Entity(SurfaceSprite):
     def disable(self):
         self.displayed = False
         paint_api.unmount_sprite(self)
-        print(self, self.key)
 
 
     def enable(self):
