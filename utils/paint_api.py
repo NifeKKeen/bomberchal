@@ -5,7 +5,7 @@ from utils.helpers import rand
 
 
 def format_surface_id_to_key(surface_id):
-    return "-sid_" + str(surface_id)
+    return "sid_" + str(surface_id)
 
 
 class SurfaceSprite(pygame.sprite.Sprite):
@@ -36,6 +36,18 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.x = self.px_x
         self.rect.y = self.px_y
 
+        self.mounted = False  # is visible in screen
+
+
+    def unmount(self):
+        self.mounted = False
+        unmount_sprite(self)
+
+
+    def mount(self):
+        self.mounted = True
+        mount_sprite(self)
+
     def move_px(self, x=0, y=0):
         self.px_x += x
         self.px_y += y
@@ -49,7 +61,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.y = y
 
     def collides_with(self, sprite2):
-        return pygame.sprite.collide_rect(self, sprite2)
+        return self.mounted and sprite2.mounted and pygame.sprite.collide_rect(self, sprite2)
 
 
 def _get_surface(**kwargs):

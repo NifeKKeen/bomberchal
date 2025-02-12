@@ -1,4 +1,3 @@
-from pygame.locals import *
 import globals
 
 def is_fired(event_type, event_code):

@@ -20,6 +20,7 @@ class Player(Entity):
     def spawn_bomb(self):
         if self.bomb_allowed <= 0:
             return
+
         self.bomb_allowed -= 1
 
         bomb = Bomb(
@@ -34,6 +35,13 @@ class Player(Entity):
             entity_group=globals.entities,
         )
         bomb.mount()
+
+    def add_tick(self):
+        self.tick += 1
+
+        # TEST
+        if self.tick % 120 == 0:
+            self.mount()
 
 
 def get_players(entities):

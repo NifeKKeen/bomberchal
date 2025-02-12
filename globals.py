@@ -1,7 +1,5 @@
 from collections import deque
 
-import pygame
-
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

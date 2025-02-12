@@ -1,5 +1,4 @@
 from entitites.entity import Entity
-import globals
 from utils.helpers import get_ms_from_tick
 
 

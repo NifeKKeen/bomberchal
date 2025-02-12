@@ -1,5 +1,3 @@
-from utils import paint_api
-from utils.helpers import rand
 from utils.paint_api import SurfaceSprite
 
 
@@ -16,24 +14,10 @@ class Entity(SurfaceSprite):
         if self.entity_group is not None:
             self.entity_group.add(self)
 
-        self.image.fill(self.color)
-
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
 
         self.tick = 0  # lifespan
-
-        self.mounted = False  # is visible in screen
-
-
-    def unmount(self):
-        self.mounted = False
-        paint_api.unmount_sprite(self)
-
-
-    def mount(self):
-        self.mounted = True
-        paint_api.mount_sprite(self)
 
 
     def add_tick(self):
