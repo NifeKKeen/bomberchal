@@ -1,9 +1,10 @@
 import pygame, sys
 from pygame.locals import *
 
+from bomberchal.menu import menu
 from pages.game import reset_game
 from utils import paint_api
-from pages import menu, game
+from pages import game
 import globals
 from utils.paint_api import draw_sprites
 
