@@ -18,9 +18,21 @@ def generate(rows, cols):
         for y in range(1, cols - 1):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 continue
-            field[x][y] = (globals.D_OBSTACLE_CELL if random.randint(1, 100) <= 10 else globals.VOID_CELL)
-
+            rnd = random.randint(1, 100)
+            if rnd <= 10:
+                field[x][y] = globals.D_OBSTACLE_CELL
+            elif rnd <= 35:
+                field[x][y] = globals.BOT_CELL
+            else:
+                field[x][y] = globals.VOID_CELL
+    field[1][1] = globals.VOID_CELL
+    field[1][2] = globals.VOID_CELL
+    field[2][1] = globals.VOID_CELL
+    field[rows - 2][cols - 3] = globals.VOID_CELL
+    field[rows - 3][cols - 2] = globals.VOID_CELL
+    field[rows - 2][cols - 2] = globals.VOID_CELL
     return field
+
 
 # Maze generator, probably will be used for smth
 def generate_maze(rows, cols):

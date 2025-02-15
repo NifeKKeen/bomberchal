@@ -8,7 +8,7 @@ class Entity(SurfaceSprite):
         super().__init__(**kwargs)
 
         self.x = kwargs.get("x", 0)  # position x in board (from left) [целые коорды]
-        self.y = kwargs.get("y", 0)  # position x in board (from top) [целые коорды]
+        self.y = kwargs.get("y", 0)  # position y in board (from top) [целые коорды]
 
         self.entity_group = kwargs.get("entity_group", None)  # entity group which this entity belongs to
         if self.entity_group is not None:
