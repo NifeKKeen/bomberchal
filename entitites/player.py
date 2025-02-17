@@ -17,6 +17,7 @@ class Player(Entity):
     def is_alive(self):
         return bool(self.lives)
 
+
     def spawn_bomb(self):
         if self.bomb_allowed <= 0:
             return
@@ -25,10 +26,10 @@ class Player(Entity):
 
         bomb = Bomb(
             spawner=self,
-            px_w=40,
-            px_h=40,
-            px_x=self.px_x,
-            px_y=self.px_y,
+            px_w=globals.cell_size,
+            px_h=globals.cell_size,
+            px_x=int(self.px_x / globals.cell_size) * globals.cell_size,
+            px_y=int(self.px_y / globals.cell_size) * globals.cell_size,
             layer=255,
             timer=3000,
             color=(rand(128, 256), 0, 0),
@@ -43,10 +44,16 @@ class Player(Entity):
         if self.tick % 120 == 0:
             self.mount()
 
-
 def get_players(entities):
     res = set()
     for entity in entities:
         if isinstance(entity, Player):
+            res.add(entity)
+    return res
+
+def get_bombs(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Bomb):
             res.add(entity)
     return res

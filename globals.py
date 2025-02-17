@@ -2,7 +2,7 @@ from collections import deque
 
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None #  pygame.time.Clock()
 FPS = 60
@@ -38,3 +38,7 @@ entities = set()
 # GAME CONSTRAINTS
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # TODO
+D_OBSTACLE_CELL = 2  # destroyable obstacle
+BOT_CELL = 3  # starting cell for bot
+
+directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]

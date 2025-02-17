@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 
-from pages.game import reset_game
+from pages.game.game import reset_game
 from utils import paint_api
 from pages import menu, game
 import globals
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         # elif globals.current_page == "menu/scoreboard":
         #     menu_scoreboard()
         elif globals.current_page == "game":
-            game.game(is_setup=globals.switched_page_this_frame)
+            game.game.game(is_setup=globals.switched_page_this_frame)
 
         if not globals.current_page.startswith("game"):
             reset_game()
