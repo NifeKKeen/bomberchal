@@ -3,11 +3,10 @@ from pygame.locals import *
 
 import globals
 from utils.event_api import is_fired
-from utils.paint_api import is_mounted
 
 
 def is_clicked(sprite):
-    if not is_mounted(sprite):
+    if not sprite.mounted:
         return False
     if is_fired(MOUSEBUTTONDOWN, 1):
         click_pos = pygame.mouse.get_pos()

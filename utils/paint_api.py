@@ -26,6 +26,12 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.key = kwargs.get("key", format_surface_id_to_key(self.surface_id))
         SurfaceSprite.SurfaceId += 1
 
+        self.mounted = False  # is visible in screen
+
+        if kwargs.get("should_init_surface", True):
+            self.__init_surface__()
+
+    def __init_surface__(self):
         self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
         self.image.set_colorkey((0, 0, 0))  # color to make transparent
         self.image.fill(self.color)  # Color of surface
@@ -35,9 +41,6 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.px_x
         self.rect.y = self.px_y
-
-        self.mounted = False  # is visible in screen
-
 
     def unmount(self):
         self.mounted = False
@@ -63,6 +66,28 @@ class SurfaceSprite(pygame.sprite.Sprite):
     def collides_with(self, sprite2):
         return self.mounted and sprite2.mounted and pygame.sprite.collide_rect(self, sprite2)
 
+class TextSprite(SurfaceSprite):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, should_init_surface=False)
+        self.font_size = kwargs.get("key", None)
+        self.color = kwargs.get("color", (0, 0, 0))
+        self.font_size = kwargs.get("font_size", 14)
+        self.font = kwargs.get("font_family", None)
+        self.text = kwargs.get("text", "-")
+        self.align = kwargs.get("align", "topleft")
+
+        self.font_obj = pygame.font.Font(self.font, self.font_size)
+
+        if kwargs.get("should_init_surface", True):
+            self.__init_surface__()
+
+    def __init_surface__(self):
+        self.image = self.font_obj.render(self.text, True, self.color)
+        self.rect = self.image.get_rect()
+
+        self.rect.__setattr__(self.align, (self.px_x, self.px_y))
+
+
 
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
@@ -78,11 +103,40 @@ def _get_surface(**kwargs):
     return surface_sprite
 
 
+def _get_text_surface(**kwargs):
+    # if surface_id is not specified, generate a new surface with its unique id
+    # otherwise, try to get surface from globals.map_key_sprite with this surface_id
+    surface_key = kwargs.get("key", None)
+
+    if surface_key not in globals.to_render_keys:
+        surface_sprite = TextSprite(**kwargs)
+        print("Rendered", surface_sprite.key)
+    else:
+        surface_sprite = globals.map_key_sprite[surface_key]
+
+    return surface_sprite
+
+
 def mount_rect(**kwargs):
     # key should be specified in order to decrease the number of renders
     # otherwise a new surface will be created and rendered each frame
 
     sprite = _get_surface(**kwargs)
+    sprite.mounted = True
+
+    globals.all_sprites.add(sprite)
+    globals.map_key_sprite[sprite.key] = sprite
+    globals.to_render_keys.add(sprite.key)
+
+    return sprite
+
+
+def mount_text(**kwargs):
+    # key should be specified in order to decrease the number of renders
+    # otherwise a new surface will be created and rendered each frame
+
+    sprite = _get_text_surface(**kwargs)
+    sprite.mounted = True
 
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite
@@ -110,10 +164,6 @@ def unmount_sprite(sprite):
     globals.to_render_keys.discard(sprite.key)
 
     return sprite
-
-
-def is_mounted(sprite):
-    return sprite.key in globals.to_render_keys
 
 
 def refill_screen():
