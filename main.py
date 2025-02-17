@@ -1,7 +1,8 @@
 import pygame, sys
 from pygame.locals import *
 
-from bomberchal.menu import menu
+from pages.menu.menu import menu as main_menu
+from pages.settings import settings as menu_settings
 from pages.game import reset_game
 from utils import paint_api
 from pages import game
@@ -37,9 +38,9 @@ if __name__ == "__main__":
         # Page navigation
 
         if globals.current_page == "menu":
-            menu.menu()
-        # elif globals.current_page == "menu/settings":
-        #     menu_settings()
+            main_menu()
+        elif globals.current_page == "menu/settings":
+            menu_settings()
         # elif globals.current_page == "menu/customization":
         #     menu_customization()
         # elif globals.current_page == "menu/scoreboard":

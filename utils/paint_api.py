@@ -117,8 +117,7 @@ def is_mounted(sprite):
 
 
 def refill_screen():
-    globals.DISPLAYSURF.fill((0, 0, 20))
-
+    globals.DISPLAYSURF.fill(globals.COLOR_BACKGROUND)
 
 def reset():
     globals.to_render_keys.clear()

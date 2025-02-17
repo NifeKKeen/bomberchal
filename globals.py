@@ -6,6 +6,7 @@ SCREEN_HEIGHT = 600
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None #  pygame.time.Clock()
 FPS = 60
+COLOR_BACKGROUND = (255, 255, 255)
 
 all_sprites = None #  pygame.sprite.LayeredUpdates()
 
@@ -13,6 +14,7 @@ all_sprites = None #  pygame.sprite.LayeredUpdates()
 current_page = "menu"
 switched_page = False  # can change in current frame
 switched_page_this_frame = False # will be updated when frame ends
+
 
 # EVENTS
 frame_events = set()  # {(event_type, event_code)}
