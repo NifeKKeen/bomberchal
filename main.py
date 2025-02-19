@@ -25,7 +25,7 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()
+                sys.exit()  # тут завершаем программу, чтобы рендеринг не продолжался
 
             if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
                 globals.frame_events.add((event.type, event.button))

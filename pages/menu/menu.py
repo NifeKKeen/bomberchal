@@ -1,3 +1,4 @@
+import sys
 import pygame
 from utils import paint_api
 from pages.navigation import navigate
@@ -30,4 +31,4 @@ def menu():
         navigate("menu/settings")
     elif is_clicked(quit_button_sprite):
         pygame.quit()
-        # exit()
+        sys.exit()
