@@ -1,4 +1,3 @@
-import pygame
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
