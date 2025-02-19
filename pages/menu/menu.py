@@ -16,7 +16,7 @@ def menu():
         title="Play",
     )
     settings_button_sprite = paint_api.mount_rect(
-        px_x=300, px_y=120, px_w=200, px_h=80, key="settings", title="Settings"
+        px_x=300, px_y=120, px_w=200, px_h=80, key="settings", image_path="pages/menu/img.png"
     )
     test_button_sprite = paint_api.mount_rect(
         px_x=300, px_y=210, px_w=200, px_h=80

@@ -28,15 +28,19 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.mounted = False  # is visible in screen
 
+        self.image_path = kwargs.get("image_path", None)
+
         if kwargs.get("should_init_surface", True):
             self.__init_surface__()
 
     def __init_surface__(self):
-        self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
-        self.image.set_colorkey((0, 0, 0))  # color to make transparent
-        self.image.fill(self.color)  # Color of surface
-
-        pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
+        if self.image_path is not None:
+            self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
+        else:
+            self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
+            self.image.set_colorkey((0, 0, 0))  # color to make transparent
+            self.image.fill(self.color)  # Color of surface
+            pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
 
         self.rect = self.image.get_rect()
         self.rect.x = self.px_x
