@@ -69,5 +69,3 @@ class Fire(Entity):
 
             fire.mount()
             fire.explosion(power - 1)
-
-    #TODO: directional explosion etc.
