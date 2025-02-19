@@ -2,7 +2,7 @@ import pygame, sys
 from pygame.locals import *
 
 from pages.menu.menu import menu
-from pages.settings.settings import settings as menu_settings
+from pages.menu.settings import settings as menu_settings
 from pages.game import reset_game
 from utils import paint_api
 from pages import game
