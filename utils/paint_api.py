@@ -53,12 +53,14 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.px_y += y
         self.rect.x += x
         self.rect.y += y
+        self.x, self.y = self.get_pos(self.px_x, self.px_y)
 
     def set_px(self, x=0, y=0):
         self.px_x = x
         self.px_y = y
         self.rect.x = x
         self.rect.y = y
+        self.x, self.y = self.get_pos(self.px_x, self.px_y)
 
     def collides_with(self, sprite2):
         return self.mounted and sprite2.mounted and pygame.sprite.collide_rect(self, sprite2)

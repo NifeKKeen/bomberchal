@@ -1,18 +1,18 @@
 from entitites.bot import Bot
 from entitites.entity import Entity
 import pages.game.game
-from entitites.fire import Fire
 from entitites.obstacle import Obstacle
 from utils.helpers import get_ms_from_tick
 import globals
 
-class Bomb(Entity):
+class Fire(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.timer = kwargs.get("timer", 0)  # in milliseconds
         self.power = kwargs.get("power", 1)
+        self.timer = kwargs.get("timer", 300)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
+        self.type = "bfs"# | "right"
 
 
     def add_tick(self):
@@ -20,7 +20,16 @@ class Bomb(Entity):
         if self.mounted and get_ms_from_tick(self.tick) > self.timer:
             self.self_destroy()
 
-    def explosion(self):
+    def self_destroy(self):
+        self.unmount()
+
+        if self.entity_group:
+            self.entity_group.discard(self)
+
+    def explosion(self, power):
+        if power < 1:
+            return
+        self.power = power
         for dx, dy in globals.directions:
             nx = self.x + dx
             ny = self.y + dy
@@ -50,7 +59,7 @@ class Bomb(Entity):
                 elif isinstance(entity, Obstacle):
                     if entity.type == globals.U_OBSTACLE_CELL:
                         collision = True
-                    else: #destroyable
+                    else:  # destroyable
                         entity.unmount()
                         globals.entities.remove(entity)
 
@@ -59,16 +68,6 @@ class Bomb(Entity):
                 continue
 
             fire.mount()
-            fire.explosion(self.power)
+            fire.explosion(power - 1)
 
-
-    def self_destroy(self):
-        self.unmount()
-
-        if self.entity_group:
-            self.entity_group.discard(self)
-
-        self.explosion()
-
-        if self.spawner:
-            self.spawner.bomb_allowed += 1
+    #TODO: directional explosion etc.
