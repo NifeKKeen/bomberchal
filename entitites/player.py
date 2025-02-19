@@ -32,7 +32,7 @@ class Player(Entity):
         print(self.x, self.y, bombpx_x, bombpx_y)
 
         self.bomb_allowed -= 1
-
+        print(self.entity_id, self.bomb_power)
         bomb = Bomb(
             spawner=self,
             px_w=globals.cell_size,
@@ -43,8 +43,9 @@ class Player(Entity):
             px_y=bombpx_y,
             layer=255,
             timer=300,
-            color=(rand(128, 256), 0, 0),
+            color=([rand(12, 64)] * 3),
             entity_group=globals.entities,
+            power=self.bomb_power
         )
         bomb.mount()
 

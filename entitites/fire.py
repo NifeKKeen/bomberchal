@@ -13,7 +13,7 @@ class Fire(Entity):
         self.timer = kwargs.get("timer", 300)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
         self.type = "bfs"# | "right"
-
+        self.exploded = False
 
     def add_tick(self):
         self.tick += 1
@@ -26,17 +26,28 @@ class Fire(Entity):
         if self.entity_group:
             self.entity_group.discard(self)
 
-    def explosion(self, power):
-        if power < 1:
+    def explode(self):
+        if self.power < 1 or self.exploded:
             return
-        self.power = power
+
         for dx, dy in globals.directions:
             nx = self.x + dx
             ny = self.y + dy
-            if nx < 0 or nx > globals.rows or ny < 0 or ny > globals.cols:
+            if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
                 continue
-            fire = Fire(
-                spawner=self,
+            # if abs(nx - self.spawner.x) + abs(ny - self.spawner.y) <= self.spawner.power - self.power:
+            #     continue
+            if dx == 1 and self.x < self.spawner.x:
+                continue
+            if dx == -1 and self.x > self.spawner.x:
+                continue
+            if dy == 1 and self.y < self.spawner.y:
+                continue
+            if dy == -1 and self.y > self.spawner.y:
+                continue
+
+            new_fire = Fire(
+                spawner=self.spawner,
                 px_w=self.px_w,
                 px_h=self.px_h,
                 px_x=self.px_x + dx * globals.cell_size,
@@ -45,8 +56,9 @@ class Fire(Entity):
                 y=ny,
                 layer=self.layer + 1,
                 color=self.color,
-                power=self.power + 1,
+                power=self.power - 1,
                 entity_group=globals.entities,
+                key=f"f-{nx};{ny}"
             )
             collision = False
             entity_lst = list(globals.entities)
@@ -64,8 +76,7 @@ class Fire(Entity):
                         globals.entities.remove(entity)
 
             if collision:
-                fire.unmount()
+                # self.self_destroy()
                 continue
 
-            fire.mount()
-            fire.explosion(power - 1)
+            new_fire.mount()

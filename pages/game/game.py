@@ -1,5 +1,6 @@
 from entitites.bomb import Bomb
 from entitites.bot import Bot
+from entitites.fire import Fire
 from entitites.obstacle import Obstacle
 from globals import directions
 from pages.game import field_generator
@@ -12,6 +13,7 @@ from entitites.player import get_players, Player, get_bombs
 from utils.helpers import rand
 from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
 import globals
+from utils.paint_api import SurfaceSprite
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
@@ -28,8 +30,9 @@ def setup_game(**kwargs):
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed=2,
             color=(0, rnd / 2, rnd),
-            layer=260,
+            bomb_power=4,
             bomb_allowed=5,
+            layer=260,
             entity_group=globals.entities,
             key=f"player-{i}"
         )
@@ -50,7 +53,7 @@ def render_field(**kwargs):
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
-                    key = str(x) + ";" + str(y),
+                    key = f"o-{x};{y}",
                     color=(64, 64, 64),
                     type=field[x][y],
                     entity_group=globals.entities)
@@ -62,7 +65,7 @@ def render_field(**kwargs):
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
-                    key = str(x) + ";" + str(y),
+                    key = f"o-{x};{y}",
                     color=(255, 255, 64),
                     type=field[x][y],
                     entity_group=globals.entities)
@@ -151,7 +154,7 @@ def movement(player_sprites):
                         break
 
 
-            if is_pressed(player[5]):
+            if is_pressed_once(player[5]):
                 player[0].spawn_bomb()
 
 def game(**kwargs):
@@ -176,7 +179,10 @@ def game(**kwargs):
 
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
-
+    print(SurfaceSprite.SurfaceId)
     globals.tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
+        if isinstance(entity, Fire):
+            entity.explode()
+            entity.exploded = True
