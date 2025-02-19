@@ -35,7 +35,7 @@ class Bomb(Entity):
             color=(rand(128,256), 0, 0),
             power=self.power,
             entity_group=globals.entities,
-            key=f"f-{self.x};{self.y}"
+            initial_fire_key=f"{self.entity_id}"
         )
         fire.mount()
         self.entity_group.add(fire)

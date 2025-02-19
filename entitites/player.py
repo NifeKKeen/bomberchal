@@ -1,6 +1,7 @@
 from entitites.bomb import Bomb
 from entitites.entity import Entity
-from utils.helpers import rand, get_ms_from_tick
+from utils.helpers import get_pos, get_field_pos
+from utils.helpers import rand
 import globals
 
 
@@ -18,17 +19,17 @@ class Player(Entity):
     def is_alive(self):
         return bool(self.lives)
 
-
     def spawn_bomb(self):
+        if self.bomb_allowed <= 0:
+            return
+
         # if get_ms_from_tick(self.tick) < self.cooldown:
         #     self.tick = 0
         #     return
         #print(self.x, self.y, self.px_x, self.px_y)
-        self.x, self.y = self.get_pos(self.px_x, self.px_y)
-        bombpx_x, bombpx_y = self.get_field_pos(self.x, self.y)
+        self.x, self.y = get_pos(self.px_x, self.px_y)
+        bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
         print(self.bomb_allowed)
-        if self.bomb_allowed <= 0:
-            return
         print(self.x, self.y, bombpx_x, bombpx_y)
 
         self.bomb_allowed -= 1
@@ -45,7 +46,8 @@ class Player(Entity):
             timer=300,
             color=([rand(12, 64)] * 3),
             entity_group=globals.entities,
-            power=self.bomb_power
+            power=self.bomb_power,
+            key=f"b-{self.x};{self.y}"
         )
         bomb.mount()
 

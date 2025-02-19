@@ -166,7 +166,7 @@ def game(**kwargs):
     go_menu_button_sprite = paint_api.mount_rect(px_x=0, px_y=0, px_w=40, px_h=40, layer=300, key="go_menu")
 
     player_sprites = []
-    player_entities = list(get_players(globals.entities))
+    player_entities = sorted(list(get_players(globals.entities)), key=lambda e: e.entity_id )
 
     for player in player_entities:
         player_sprites.append(player)
@@ -179,10 +179,10 @@ def game(**kwargs):
 
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
-    print(SurfaceSprite.SurfaceId)
+    # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
-        if isinstance(entity, Fire):
-            entity.explode()
-            entity.exploded = True
+        # if isinstance(entity, Fire):
+            # entity.explode()
+            # entity.exploded = True

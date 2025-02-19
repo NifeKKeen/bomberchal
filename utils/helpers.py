@@ -7,3 +7,16 @@ def get_ms_from_tick(tick):
 def rand(l, r):
     # random number between [l, r)
     return random.randint(l, r - 1)
+
+def get_field_pos(x, y):
+    px_x = x * globals.cell_size
+    px_y = y * globals.cell_size
+    #print(x, y, px_x, px_y, "GET FIELD POS")
+    return px_x, px_y
+
+
+def get_pos(px_x, px_y):
+    x = (px_x + globals.cell_size * 0.5) // globals.cell_size
+    y = (px_y + globals.cell_size * 0.5) // globals.cell_size
+    #print(px_x, px_y, x, y, "GET COORD POS")
+    return x, y
