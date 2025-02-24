@@ -15,7 +15,7 @@ def generate(rows, cols):
                                     for j in range(cols)] for i in range(rows)
     ]
     bot_count = 5
-    obstacle_count = 10
+    obstacle_count = 15
     objects = []
     current = 0
     for x in range(1, rows - 1):
