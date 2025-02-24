@@ -41,4 +41,4 @@ U_OBSTACLE_CELL = 1  # TODO
 D_OBSTACLE_CELL = 2  # destroyable obstacle
 BOT_CELL = 3  # starting cell for bot
 
-directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]

@@ -13,7 +13,7 @@ class Player(Entity):
         self.bomb_power = kwargs.get("bomb_power", 1)
         self.speed = kwargs.get("speed", 1)
         self.lives = kwargs.get("bomb_lives", 1)
-        self.cooldown = kwargs.get("cooldown", 2000)
+        self.bomb_timer = kwargs.get("bomb_timer", 2000)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
 
     def is_alive(self):
@@ -23,17 +23,11 @@ class Player(Entity):
         if self.bomb_allowed <= 0:
             return
 
-        # if get_ms_from_tick(self.tick) < self.cooldown:
-        #     self.tick = 0
-        #     return
         #print(self.x, self.y, self.px_x, self.px_y)
         self.x, self.y = get_pos(self.px_x, self.px_y)
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
-        print(self.bomb_allowed)
-        print(self.x, self.y, bombpx_x, bombpx_y)
 
         self.bomb_allowed -= 1
-        print(self.entity_id, self.bomb_power)
         bomb = Bomb(
             spawner=self,
             px_w=globals.cell_size,
@@ -43,8 +37,8 @@ class Player(Entity):
             px_x=bombpx_x,
             px_y=bombpx_y,
             layer=255,
-            timer=300,
-            color=([rand(12, 64)] * 3),
+            timer=self.bomb_timer,
+            color=([rand(64, 128)] * 3),
             entity_group=globals.entities,
             power=self.bomb_power,
             key=f"b-{self.x};{self.y}"
@@ -55,8 +49,8 @@ class Player(Entity):
         self.tick += 1
 
         # TEST
-        if self.tick % 120 == 0:
-            self.mount()
+        # if self.tick % 120 == 0:
+        #     self.mount()
 
 def get_players(entities):
     res = set()

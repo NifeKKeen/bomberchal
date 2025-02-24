@@ -9,6 +9,14 @@ class Bot(Entity):
         self.speed = kwargs.get("speed", 1)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
+        self.direction = kwargs.get("direction", (self.y % 2) * 2) # index in globals.directions
 
     def is_alive(self):
         return bool(self.lives)
+
+def get_bots(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Bot):
+            res.add(entity)
+    return res

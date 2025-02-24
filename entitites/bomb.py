@@ -21,8 +21,9 @@ class Bomb(Entity):
         self.tick += 1
         if self.mounted and get_ms_from_tick(self.tick) > self.timer:
             self.self_destroy()
+            self.spawner.bomb_allowed += 1
 
-    def explode(self):
+    def spread(self):
         fire = Fire(
             spawner=self,
             px_w=self.px_w,
@@ -38,6 +39,7 @@ class Bomb(Entity):
             initial_fire_key=f"{self.entity_id}"
         )
         fire.mount()
+        fire.spread()
         self.entity_group.add(fire)
 
     def self_destroy(self):
@@ -46,7 +48,7 @@ class Bomb(Entity):
         if self.entity_group:
             self.entity_group.discard(self)
 
-        self.explode()
+        self.spread()
 
         if self.spawner:
             self.spawner.bomb_allowed += 1

@@ -14,23 +14,37 @@ def generate(rows, cols):
                                     i == 0 or i == rows - 1 or j == 0 or j == cols - 1 else globals.VOID_CELL
                                     for j in range(cols)] for i in range(rows)
     ]
+    bot_count = 5
+    obstacle_count = 10
+    objects = []
+    current = 0
     for x in range(1, rows - 1):
         for y in range(1, cols - 1):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 continue
-            rnd = random.randint(1, 100)
-            if rnd <= 10:
+            objects.append(current)
+            current += 1
+
+    random.shuffle(objects)
+    current = 0
+    for x in range(1, rows - 1):
+        for y in range(1, cols - 1):
+            if field[x][y] == globals.U_OBSTACLE_CELL:
+                continue
+            if objects[current] < obstacle_count:
                 field[x][y] = globals.D_OBSTACLE_CELL
-            elif rnd <= 35:
+            elif objects[current] < obstacle_count + bot_count:
                 field[x][y] = globals.BOT_CELL
             else:
                 field[x][y] = globals.VOID_CELL
-    field[1][1] = globals.VOID_CELL
-    field[1][2] = globals.VOID_CELL
-    field[2][1] = globals.VOID_CELL
-    field[rows - 2][cols - 3] = globals.VOID_CELL
-    field[rows - 3][cols - 2] = globals.VOID_CELL
-    field[rows - 2][cols - 2] = globals.VOID_CELL
+            current += 1
+
+    # field[1][1] = globals.VOID_CELL
+    # field[1][2] = globals.VOID_CELL
+    # field[2][1] = globals.VOID_CELL
+    # field[rows - 2][cols - 3] = globals.VOID_CELL
+    # field[rows - 3][cols - 2] = globals.VOID_CELL
+    # field[rows - 2][cols - 2] = globals.VOID_CELL
     return field
 
 
