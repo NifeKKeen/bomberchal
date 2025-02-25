@@ -1,11 +1,5 @@
-import pygame
-from pygame.locals import *
-
 import globals
-from utils import helpers
 import random
-from utils.event_api import is_fired
-from utils.paint_api import is_mounted
 
 # Generator like in real game
 def generate(rows, cols):

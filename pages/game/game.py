@@ -1,11 +1,6 @@
-import random
-
-from entitites.bomb import Bomb
 from entitites.fire import Fire
 from entitites.obstacle import Obstacle
-from globals import directions
 from pages.game import field_generator
-from pages.game.game import *
 from utils import paint_api
 from pygame.locals import *
 
@@ -37,7 +32,7 @@ def setup_game(**kwargs):
             layer=260,
             bomb_timer=3000,
             entity_group=globals.entities,
-            key=f"player-{i}"
+            key=f"p-{i}"
         )
         player.mount()
 
@@ -81,10 +76,9 @@ def render_field(**kwargs):
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     x=x, y=y,
                     speed=2,
-                    color=(13*x, 13*y, 92 * ((x + y) % 2)),
+                    color=((13*x) % 256, (13*y) % 256 , 92 * ((x + y) % 2)),
                     layer=250,
                     entity_group=globals.entities,
-                    key=f"bot-{x};{y}",
                 )
                 bot.mount()
 
@@ -141,7 +135,6 @@ def bot_movement(bot_sprites):
                     break
                 elif isinstance(entity, Fire):
                     bot.kill()
-                    globals.entities.remove(bot)
                     break
                 elif isinstance(entity, Obstacle) or isinstance(entity, Bot):
                     bot.move_px(*tuple(x * -bot.speed for x in globals.directions[bot.direction]))
