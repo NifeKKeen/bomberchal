@@ -13,7 +13,7 @@ all_sprites = None #  pygame.sprite.LayeredUpdates()
 # NAVIGATION
 current_page = "menu"
 switched_page = False  # can change in current frame
-switched_page_this_frame = False # will be updated when frame ends
+switched_page_this_frame = True # will be updated when frame ends
 
 # EVENTS
 frame_events = set()  # {(event_type, event_code)}

@@ -21,6 +21,5 @@ class Bomb(Entity):
 
         if self.entity_group:
             self.entity_group.discard(self)
-        self.explosion()
         if self.spawner:
             self.spawner.bomb_allowed += 1

@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+import pygame
+
 import globals
 from entitites.player import Player
 from utils import paint_api
@@ -16,6 +18,9 @@ DEFAULT_FIELD = [
 
 
 def setup_game(**kwargs):
+    pygame.mixer.music.load("assets/sound/BG.mpeg")
+    pygame.mixer.music.play(-1)
+
     globals.cols = kwargs.get("cols", 20)
     globals.rows = kwargs.get("rows", 20)
     globals.field = kwargs.get("field", deepcopy(DEFAULT_FIELD))
@@ -35,6 +40,7 @@ def setup_game(**kwargs):
 
 def reset_game():
     globals.entities.clear()
+    pygame.mixer.music.stop()
 
 
 def game(**kwargs):
