@@ -1,5 +1,5 @@
 from entitites.entity import Entity
-from utils.helpers import get_ms_from_tick
+from utils.helpers import get_ms_from_tick, rand
 import globals
 
 class Fire(Entity):
@@ -31,6 +31,7 @@ class Fire(Entity):
         from entitites.bot import Bot
         from entitites.obstacle import Obstacle
         from entitites.player import Player
+        from entitites.bonus import Bonus
 
         directions = []
         if self.power < 1 or self.fired:
@@ -46,8 +47,7 @@ class Fire(Entity):
             raise Exception("Unknown type of spread!")
 
         for dx, dy in directions:
-            nx = self.x + dx
-            ny = self.y + dy
+            nx, ny = self.x + dx, self.y + dy
             if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
                 continue
             if dx == 1 and self.x < self.spawner.x:
@@ -68,7 +68,7 @@ class Fire(Entity):
                 x=nx,
                 y=ny,
                 layer=self.layer + 1,
-                color=self.color,
+                color=(rand(255 // self.power - 1, 255), 0, 0),
                 timer=self.timer,
                 spread_timer=self.spread_timer,
                 power=self.power - 1,
@@ -91,6 +91,8 @@ class Fire(Entity):
                     entity.explode()
                 elif isinstance(entity, Player) or isinstance(entity, Bot):
                     entity.kill()
+                elif isinstance(entity, Bonus):
+                    entity.collect(collector=new_fire)
 
             if collision:
                 # self.self_destroy()

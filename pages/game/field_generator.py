@@ -8,8 +8,8 @@ def generate(rows, cols):
                                     i == 0 or i == rows - 1 or j == 0 or j == cols - 1 else globals.VOID_CELL
                                     for j in range(cols)] for i in range(rows)
     ]
-    bot_count = 5
-    obstacle_count = 15
+    bot_count = 10
+    obstacle_count = 25
     objects = []
     current = 0
     for x in range(1, rows - 1):
@@ -36,13 +36,6 @@ def generate(rows, cols):
             else:
                 field[x][y] = globals.VOID_CELL
             current += 1
-
-    # field[1][1] = globals.VOID_CELL
-    # field[1][2] = globals.VOID_CELL
-    # field[2][1] = globals.VOID_CELL
-    # field[rows - 2][cols - 3] = globals.VOID_CELL
-    # field[rows - 3][cols - 2] = globals.VOID_CELL
-    # field[rows - 2][cols - 2] = globals.VOID_CELL
     return field
 
 

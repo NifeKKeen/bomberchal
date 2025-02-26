@@ -21,7 +21,7 @@ class Bomb(Entity):
     def spread_fire(self):
         fire = Fire(
             timer=600,
-            spread_timer=0,
+            spread_timer=50,
             spawner=self,
             px_w=self.px_w,
             px_h=self.px_h,
@@ -30,7 +30,7 @@ class Bomb(Entity):
             x=self.x,
             y=self.y,
             layer=self.layer + 1,
-            color=(rand(128,256), 0, 0),
+            color=(255 // self.power, 0, 0),
             power=self.power,
             entity_group=globals.entities,
         )
