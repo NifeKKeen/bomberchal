@@ -1,8 +1,9 @@
 from entitites.entity import Entity
-from utils.helpers import get_ms_from_tick, rand
+from entitites.interfaces.Collidable import Collidable
+from utils.helpers import get_ms_from_tick
 import globals
 
-class Fire(Entity):
+class Fire(Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -26,14 +27,6 @@ class Fire(Entity):
         self.kill()
 
     def spread(self):
-        # To avoid circular import issue
-        from entitites.bomb import Bomb
-        from entitites.bot import Bot
-        from entitites.obstacle import Obstacle
-        from entitites.player import Player
-        from entitites.bonus import Bonus
-
-        directions = []
         if self.power < 1 or self.fired:
             return
         self.fired = True
@@ -47,8 +40,11 @@ class Fire(Entity):
             raise Exception("Unknown type of spread!")
 
         for dx, dy in directions:
-            nx, ny = self.x + dx, self.y + dy
+            nx = int(self.x + dx)
+            ny = int(self.y + dy)
             if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
+                continue
+            if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
                 continue
             if dx == 1 and self.x < self.spawner.x:
                 continue
@@ -68,35 +64,13 @@ class Fire(Entity):
                 x=nx,
                 y=ny,
                 layer=self.layer + 1,
-                color=(rand(255 // self.power - 1, 255), 0, 0),
+                color=self.color,
                 timer=self.timer,
                 spread_timer=self.spread_timer,
                 power=self.power - 1,
                 type=self.type,
                 entity_group=globals.entities,
             )
-            collision = False
-            entity_lst = list(globals.entities)
-            for entity in entity_lst:
-                if entity.x != nx or entity.y != ny:
-                    continue
-                # They collide
-
-                if isinstance(entity, Obstacle):
-                    if entity.type == globals.U_OBSTACLE_CELL: # undestroyable
-                        collision = True
-                    else:  # destroyable
-                        entity.kill()
-                elif isinstance(entity, Bomb):
-                    entity.explode()
-                elif isinstance(entity, Player) or isinstance(entity, Bot):
-                    entity.kill()
-                elif isinstance(entity, Bonus):
-                    entity.collect(collector=new_fire)
-
-            if collision:
-                # self.self_destroy()
-                continue
 
             new_fire.mount()
             if self.spread_timer == 0:

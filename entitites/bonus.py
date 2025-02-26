@@ -10,8 +10,8 @@ class Bonus(Entity):
         self.type = kwargs.get("type", 0)
         self.collector = kwargs.get("collector", None)  # which entity collected bonus
 
-    def collect(self, **kwargs):
-        self.collector = kwargs.get("collector", None)
+    def collect(self, collector):
+        self.collector = collector
         print("Collected by ", self.collector)
         self.unmount()
         globals.entities.remove(self)
