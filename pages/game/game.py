@@ -41,7 +41,7 @@ def setup_game(**kwargs):
             attack_func=Player.spawn_bomb,
             speed=2,
             color=(0, rnd / 2, rnd),
-            bomb_power=3,
+            bomb_power=10,
             bomb_allowed=5,
             layer=260,
             bomb_timer=3000,

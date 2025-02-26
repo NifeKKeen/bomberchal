@@ -1,6 +1,7 @@
 import globals
 from entitites.bonus import Bonus
 from entitites.entity import Entity
+from utils.helpers import rand
 
 
 class Collidable(Entity):
@@ -36,8 +37,16 @@ class Collidable(Entity):
                         ent_c_x = entity.px_x + entity.px_w // 2
                         ent_c_y = entity.px_y + entity.px_h // 2
 
-                        # if self_c_x < ent_c_x and self_c_y < ent_c_y:  # top left
-                        if abs(self_c_x - ent_c_x) <= abs(self_c_y - ent_c_y):
+                        c_dx = self_c_x - ent_c_x
+                        c_dy = self_c_y - ent_c_y
+
+                        if abs(c_dx) == abs(c_dy):
+                            if rand(0, 2) == 0:
+                                self.adjust_from_x(entity)
+                            else:
+                                self.adjust_from_y(entity)
+
+                        elif abs(c_dx) < abs(c_dy):
                             self.adjust_from_y(entity)
                         else:
                             self.adjust_from_x(entity)
