@@ -1,13 +1,14 @@
 from entitites.bomb import Bomb
 from entitites.entity import Entity
+from entitites.interfaces.Movable import Movable
 from utils.helpers import get_pos, get_field_pos
 from utils.helpers import rand
 import globals
 
 
-class Player(Entity):
+class Player(Movable, Entity):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        Entity.__init__(self, **kwargs)
 
         self.bomb_allowed = kwargs.get("bomb_allowed", 1)
         self.bomb_power = kwargs.get("bomb_power", 1)
@@ -31,7 +32,6 @@ class Player(Entity):
             return
 
         #print(self.x, self.y, self.px_x, self.px_y)
-        self.x, self.y = get_pos(self.px_x, self.px_y)
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
 
         self.bomb_allowed -= 1

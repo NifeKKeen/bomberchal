@@ -1,8 +1,10 @@
 from entitites.entity import Entity
+from entitites.interfaces.Movable import Movable
 
-class Bot(Entity):
+
+class Bot(Movable, Entity):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        Entity.__init__(self, **kwargs)
 
         self.bomb_allowed = kwargs.get("bomb_allowed", 1)
         self.bomb_power = kwargs.get("bomb_power", 1)
