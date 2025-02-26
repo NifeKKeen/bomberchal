@@ -7,7 +7,7 @@ DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCR
 Frame = None #  pygame.time.Clock()
 FPS = 60
 FONT_PARAMETER = (None, 36)
-
+menu_background_img = None  
 all_sprites = None #  pygame.sprite.LayeredUpdates()
 
 # NAVIGATION

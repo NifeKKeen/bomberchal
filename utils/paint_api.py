@@ -137,8 +137,7 @@ def mount_rect(**kwargs):
 
 def mount_text(**kwargs):
     # key should be specified in order to decrease the number of renders
-    # otherwise a new surface will be created and rendered each frame
-
+    # otherwise a new surface will be created and rendered each frame   
     sprite = _get_text_surface(**kwargs)
     sprite.mounted = True
 
@@ -171,7 +170,10 @@ def unmount_sprite(sprite):
 
 
 def refill_screen():
-    globals.DISPLAYSURF.fill((0, 0, 20))
+    if globals.menu_background_img:
+        globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))
+    else:
+        globals.DISPLAYSURF.fill((0, 0, 20))
 
 def reset():
     globals.to_render_keys.clear()

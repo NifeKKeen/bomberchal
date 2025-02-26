@@ -6,7 +6,6 @@ from utils.interaction_api import is_clicked
 
 
 def menu():
-    paint_api.refill_screen()
     play_button_sprite = paint_api.mount_rect(
         px_x=300,
         px_y=30,
@@ -16,7 +15,7 @@ def menu():
         title="Play",
     )
     settings_button_sprite = paint_api.mount_rect(
-        px_x=300, px_y=120, px_w=200, px_h=80, key="settings", image_path="pages/menu/img.png"
+        px_x=300, px_y=120, px_w=200, px_h=80, key="settings"
     )
     test_button_sprite = paint_api.mount_rect(
         px_x=300, px_y=210, px_w=200, px_h=80
