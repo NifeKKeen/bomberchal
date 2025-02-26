@@ -41,7 +41,6 @@ class Player(Entity):
             color=([rand(64, 128)] * 3),
             entity_group=globals.entities,
             power=self.bomb_power,
-            key=f"b-{self.x};{self.y}"
         )
         bomb.mount()
 

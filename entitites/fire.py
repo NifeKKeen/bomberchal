@@ -1,7 +1,4 @@
-from entitites.bot import Bot
 from entitites.entity import Entity
-import pages.game.game
-from entitites.obstacle import Obstacle
 from utils.helpers import get_ms_from_tick
 import globals
 
@@ -11,30 +8,35 @@ class Fire(Entity):
 
         self.power = kwargs.get("power", 5)
         self.timer = kwargs.get("timer", 300)
+        self.spread_timer = kwargs.get("spread_timer", 0)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
         self.type = "bfs" # | "directional0" | "directional1" | "directional2" | "directional3"
-        self.exploded = False
-        self.initial_fire_key = kwargs.get("initial_fire_key", None)
-        if self.initial_fire_key:
-            self.key = f"f-{self.entity_id}"
+        self.fired = False
 
     def add_tick(self):
         self.tick += 1
-        if self.mounted and get_ms_from_tick(self.tick) > self.timer:
+
+        if self.mounted and not self.fired and get_ms_from_tick(self.tick) > self.spread_timer:
             self.spread()
+
+        if self.mounted and get_ms_from_tick(self.tick) > self.timer:
             self.self_destroy()
 
     def self_destroy(self):
-        self.unmount()
-
-        if self.entity_group:
-            self.entity_group.discard(self)
+        self.kill()
 
     def spread(self):
+        # To avoid circular import issue
+        from entitites.bomb import Bomb
+        from entitites.bot import Bot
+        from entitites.obstacle import Obstacle
+        from entitites.player import Player
+
         directions = []
-        if self.power < 1 or self.exploded:
+        if self.power < 1 or self.fired:
             return
-        self.exploded = True
+        self.fired = True
+
         if self.type == "bfs":
             directions = globals.directions
         elif self.type[:-1] == "directional":
@@ -67,11 +69,11 @@ class Fire(Entity):
                 y=ny,
                 layer=self.layer + 1,
                 color=self.color,
-                power=self.power - 1,
                 timer=self.timer,
+                spread_timer=self.spread_timer,
+                power=self.power - 1,
                 type=self.type,
                 entity_group=globals.entities,
-                initial_fire_key=self.initial_fire_key
             )
             collision = False
             entity_lst = list(globals.entities)
@@ -85,7 +87,9 @@ class Fire(Entity):
                         collision = True
                     else:  # destroyable
                         entity.kill()
-                elif not isinstance(entity, Fire):
+                elif isinstance(entity, Bomb):
+                    entity.explode()
+                elif isinstance(entity, Player) or isinstance(entity, Bot):
                     entity.kill()
 
             if collision:
@@ -93,4 +97,5 @@ class Fire(Entity):
                 continue
 
             new_fire.mount()
-            new_fire.spread()
+            if self.spread_timer == 0:
+                new_fire.spread()

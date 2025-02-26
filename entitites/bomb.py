@@ -1,11 +1,7 @@
-from entitites.bot import Bot
 from entitites.entity import Entity
-import pages.game.game
 from entitites.fire import Fire
-from entitites.obstacle import Obstacle
 from utils.helpers import get_ms_from_tick, rand
 import globals
-from utils.paint_api import mount_sprite
 
 
 class Bomb(Entity):
@@ -15,16 +11,17 @@ class Bomb(Entity):
         self.timer = kwargs.get("timer", 0)  # in milliseconds
         self.power = kwargs.get("power", 1)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
-
+        self.exploded = kwargs.get("exploded", False)
 
     def add_tick(self):
         self.tick += 1
         if self.mounted and get_ms_from_tick(self.tick) > self.timer:
-            self.self_destroy()
-            self.spawner.bomb_allowed += 1
+            self.explode()
 
-    def spread(self):
+    def spread_fire(self):
         fire = Fire(
+            timer=600,
+            spread_timer=0,
             spawner=self,
             px_w=self.px_w,
             px_h=self.px_h,
@@ -36,19 +33,19 @@ class Bomb(Entity):
             color=(rand(128,256), 0, 0),
             power=self.power,
             entity_group=globals.entities,
-            initial_fire_key=f"{self.entity_id}"
         )
         fire.mount()
-        fire.spread()
-        self.entity_group.add(fire)
+        if fire.spread_timer == 0:
+            fire.spread()
 
-    def self_destroy(self):
-        self.unmount()
-
-        if self.entity_group:
-            self.entity_group.discard(self)
-
-        self.spread()
+    def explode(self):
+        if self.exploded:
+            return
+        self.exploded = True
 
         if self.spawner:
             self.spawner.bomb_allowed += 1
+
+        self.spread_fire()
+
+        self.kill()
