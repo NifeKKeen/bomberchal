@@ -1,10 +1,13 @@
 from entitites.entity import Entity
 from entitites.fire import Fire
+from entitites.interfaces.Collidable import Collidable
+from entitites.interfaces.Controllable import Controllable
+from entitites.interfaces.Movable import Movable
 from utils.helpers import get_ms_from_tick, rand
 import globals
 
 
-class Bomb(Entity):
+class Bomb(Movable, Controllable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -21,12 +24,12 @@ class Bomb(Entity):
     def spread_fire(self):
         fire = Fire(
             timer=600,
-            spread_timer=0,
+            spread_timer=100,
             spawner=self,
             px_w=self.px_w,
             px_h=self.px_h,
-            px_x=self.px_x,
-            px_y=self.px_y,
+            px_x=self.x * globals.cell_size,
+            px_y=self.y * globals.cell_size,
             x=self.x,
             y=self.y,
             layer=self.layer + 1,
@@ -39,7 +42,6 @@ class Bomb(Entity):
             fire.spread()
 
     def explode(self):
-
         if self.exploded:
             return
         self.exploded = True
@@ -50,3 +52,10 @@ class Bomb(Entity):
         self.spread_fire()
 
         self.kill()
+
+def get_bombs(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Bomb):
+            res.add(entity)
+    return res

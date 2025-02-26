@@ -22,8 +22,6 @@ frame_keys = None  # pygame.get_pressed()
 to_render_keys = set()
 map_key_sprite = dict()
 
-cell_size = 32
-
 # GAME STATES
 cols = 0
 rows = 0
@@ -36,6 +34,8 @@ events_stack = deque()  # TODO
 entities = set()
 
 # GAME CONSTRAINTS
+cell_size = 32
+player_cell_size = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # TODO
 D_OBSTACLE_CELL = 2  # destroyable obstacle

@@ -1,20 +1,17 @@
 from entitites.bonus import Bonus
-from entitites.fire import Fire
+from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
-from entitites.bomb import Bomb
 from pages.game import field_generator
 from utils import paint_api
 from pygame.locals import *
-
 from pages.navigation import navigate
-from entitites.bot import get_bots, Bot
-from entitites.player import get_players, Player, get_bombs
-from utils.helpers import rand, get_pos, get_field_pos
-from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
+from entitites.bot import Bot
+from entitites.player import Player
+from utils.helpers import rand
+from utils.interaction_api import is_clicked
 import globals
-from utils.paint_api import SurfaceSprite
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
@@ -31,7 +28,7 @@ def setup_game(**kwargs):
         rnd = rand(192, 256)
         player = Player(
             px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
-            px_w=globals.cell_size, px_h=globals.cell_size,
+            px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
             move_left_key=control_keys[2][i],
@@ -142,9 +139,9 @@ def game(**kwargs):
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
 
-        if isinstance(entity, Controllable) and entity.mounted:
+        if isinstance(entity, Controllable):
             entity.handle_event()
-        if isinstance(entity, Bot):
+        if isinstance(entity, BotIntellect):
             entity.think()
         if isinstance(entity, Collidable):
-            entity.check_collision()
+            entity.handle_collision()

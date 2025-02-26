@@ -1,6 +1,13 @@
 import globals
+from entitites.entity import Entity
+from entitites.interfaces.Movable import Movable
 
-class BotIntellect:
+
+class BotIntellect(Movable, Entity):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.direction = kwargs.get("direction", 1)
+
     def think(self):
         from entitites.player import Player
         from entitites.bomb import Bomb
@@ -22,7 +29,6 @@ class BotIntellect:
             # print("Smth on ", self.x, self.y, entity)
             if isinstance(entity, Player):
                 entity.kill()
-                #globals.entities.remove(entity)
                 break
             elif isinstance(entity, Fire):
                 self.kill()

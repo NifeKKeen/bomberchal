@@ -7,12 +7,8 @@ from utils.helpers import rand
 
 class Bot(BotIntellect, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
-        Entity.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
-        self.speed = kwargs.get("speed", 10)
-        self.bomb_allowed = kwargs.get("bomb_allowed", 4)
-        self.bomb_timer = kwargs.get("bomb_timer", 3000)
-        self.bomb_power = kwargs.get("bomb_power", 1)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
         self.direction = kwargs.get("direction", (self.y % 2) * 2) # index in globals.directions
