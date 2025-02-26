@@ -5,7 +5,12 @@ from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
 
-def menu():
+def menu(is_setup):
+    if is_setup:
+        pygame.mixer.music.load("assets/sound/menu3.mp3")
+        pygame.mixer.music.set_volume(.5)
+        pygame.mixer.music.play(-1)
+
     play_button_sprite = paint_api.mount_rect(
         px_x=300,
         px_y=30,

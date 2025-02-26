@@ -37,12 +37,16 @@ if __name__ == "__main__":
 
         # Page navigation
 
+        if globals.switched_page_this_frame and not globals.current_page.startswith("game"):
+            reset_game()
+
         if globals.current_page == "menu":
-            globals.menu_background_img = pygame.image.load("images/background.jpg")
+            globals.menu_background_img = pygame.image.load("assets/images/background.jpg")
             globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
-            menu()
+            menu(is_setup=globals.switched_page_this_frame)
+
         elif globals.current_page == "menu/settings":
-            globals.menu_background_img = pygame.image.load("images/background.jpg")
+            globals.menu_background_img = pygame.image.load("assets/images/background.jpg")
             globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu_settings()
         # elif globals.current_page == "menu/customization":
@@ -52,9 +56,6 @@ if __name__ == "__main__":
         elif globals.current_page == "game":
             globals.menu_background_img = None
             game.game(is_setup=globals.switched_page_this_frame)
-
-        if not globals.current_page.startswith("game"):
-            reset_game()
 
         draw_sprites()
 
