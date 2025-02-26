@@ -1,4 +1,3 @@
-import globals
 from entitites.entity import Entity
 
 class Bonus(Entity):
@@ -12,6 +11,5 @@ class Bonus(Entity):
 
     def collect(self, collector):
         self.collector = collector
-        print("Collected by ", self.collector)
-        self.unmount()
-        globals.entities.remove(self)
+        # print("Collected by ", self.collector)
+        self.kill()

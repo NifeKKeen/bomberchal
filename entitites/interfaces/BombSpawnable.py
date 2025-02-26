@@ -25,11 +25,12 @@ class BombSpawnable(Entity):
         if not collision:
             return
 
-        print(self.x, self.y, self.px_x, self.px_y)
+        # print(self.x, self.y, self.px_x, self.px_y)
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
 
         self.bomb_allowed -= 1
         bomb = Bomb(
+            mounted=True,
             spawner=self,
             px_w=globals.cell_size,
             px_h=globals.cell_size,
@@ -48,4 +49,3 @@ class BombSpawnable(Entity):
             move_right_key=K_l,
             speed=10,
         )
-        bomb.mount()

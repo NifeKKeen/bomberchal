@@ -1,6 +1,5 @@
 import globals
 from entitites.interfaces.Movable import Movable
-from entitites.player import get_players
 
 
 class BotIntellect(Movable):
@@ -50,9 +49,14 @@ class BotIntellect(Movable):
 
             for entity in list(globals.entities):
                 if isinstance(entity, Bomb) or isinstance(entity, Player) or isinstance(entity, Fire):
-                    x, y = int(entity.x), int(entity.y)
-                    if isinstance(entity, Player):
-                        print(x, y)
+                    x, y = entity.x, entity.y
+
+                    if x < 0 or x >= globals.rows or y < 0 or y >= globals.cols:
+                        continue
+
+
+            # if isinstance(entity, Player):
+                    #     # print(x, y)
                     used[x][y] = True
                     dist[x][y] = 0
                     prev[x][y] = (x, y)
@@ -77,7 +81,7 @@ class BotIntellect(Movable):
 
             destx, desty = int(self.x), int(self.y)
             dst = -1
-            print("Initially ", destx, desty, dist[destx][desty])
+            # print("Initially ", destx, desty, dist[destx][desty])
 
 
             for dx, dy in globals.directions:
@@ -96,11 +100,11 @@ class BotIntellect(Movable):
 
                 if collision:
                     continue
-                print("Now ", destx, desty, dist[destx][desty])
+                # print("Now ", destx, desty, dist[destx][desty])
                 if dist[nx][ny] >= dst:
                     dst = dist[nx][ny]
                     destx, desty = nx, ny
-            print("Now ", destx, desty, dst)
+            # print("Now ", destx, desty, dst)
 
             if destx - self.x == 1:
                 self.direction = 3
@@ -111,11 +115,11 @@ class BotIntellect(Movable):
             elif desty - self.y == -1:
                 self.direction = 0
             else:
-                print("Locked")
+                # print("Locked")
                 return
             self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
 
-            print(self.x, self.y, destx, desty, self.direction, globals.directions[self.direction])
+            # print(self.x, self.y, destx, desty, self.direction, globals.directions[self.direction])
 
 
         else:
@@ -138,7 +142,7 @@ class BotIntellect(Movable):
                 self.kill()
                 break
             elif isinstance(entity, Bonus):
-                entity.collect()
+                entity.collect(self)
                 break
             elif self.type == 1 and (isinstance(entity, Obstacle) or isinstance(entity, Bot)
                   or (isinstance(entity, Bomb) and entity.spawner != self)):

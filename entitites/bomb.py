@@ -23,8 +23,11 @@ class Bomb(Movable, Controllable, Collidable, Entity):
 
     def spread_fire(self):
         fire = Fire(
+            mounted=True,
+            is_initial=True,
+            power=self.power,
             timer=600,
-            spread_timer=100,
+            spread_timer=1,
             spawner=self,
             px_w=self.px_w,
             px_h=self.px_h,
@@ -34,10 +37,8 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             y=self.y,
             layer=self.layer + 1,
             color=(rand(128,256), 0, 0),
-            power=self.power,
             entity_group=globals.entities,
         )
-        fire.mount()
         if fire.spread_timer == 0:
             fire.spread()
 

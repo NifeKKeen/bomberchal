@@ -23,29 +23,22 @@ class Controllable(Entity, ControllableProtocol):
         if not self.mounted:
             return
 
-        moved_x = False
-        moved_y = False
+        total_move_x = 0
+        total_move_y = 0
 
         if self.move_left_key and is_pressed(self.move_left_key):
-            self.move_px(-self.speed, 0)
-            moved_x = True
+            total_move_x -= self.speed
 
         if self.move_right_key and is_pressed(self.move_right_key):
-            self.move_px(+self.speed, 0)
-            moved_x = True
+            total_move_x += self.speed
 
         if self.move_up_key and is_pressed(self.move_up_key):
-            self.move_px(0, -self.speed)
-            moved_y = True
+            total_move_y -= self.speed
 
         if self.move_down_key and is_pressed(self.move_down_key):
-            self.move_px(0, +self.speed)
-            moved_y = True
+            total_move_y += self.speed
 
-        if not moved_x:
-            self.vel_px_x = 0
-        if not moved_y:
-            self.vel_px_y = 0
+        self.move_px(total_move_x, total_move_y)
 
         if self.attack_key and is_pressed_once(self.attack_key):
             self.attack_func(self)

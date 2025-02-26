@@ -21,12 +21,16 @@ def setup_game(**kwargs):
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
     globals.field = kwargs.get("field", field_generator.generate(globals.rows, globals.cols))
+    globals.field_fire_state = kwargs.get("field_fired",
+        [[0] * globals.cols for _ in range(globals.rows)]
+    )
 
     control_keys = [(K_w, K_UP), (K_s, K_DOWN), (K_a, K_LEFT), (K_d, K_RIGHT), (K_SPACE, K_RSHIFT)]
 
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
+            mounted=True,
             px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
@@ -44,7 +48,6 @@ def setup_game(**kwargs):
             entity_group=globals.entities,
             key=f"p-{i}"
         )
-        player.mount()
 
     render_field()
 
@@ -58,39 +61,41 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
                     key = f"o-{x};{y}",
                     color=(64, 64, 64),
                     type=field[x][y],
-                    entity_group=globals.entities)
-                obstacle_sprite.mount()
+                    entity_group=globals.entities
+                )
 
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
                     key = f"o-{x};{y}",
                     color=(255, 255, 64),
                     type=field[x][y],
-                    entity_group=globals.entities)
-                obstacle_sprite.mount()
+                    entity_group=globals.entities
+                )
 
 
             elif field[x][y] == globals.BOT_CELL:
                 bot = Bot(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    px_w=globals.player_cell_size, px_h=globals.player_cell_size,
                     x=x, y=y,
                     speed=1,
                     color=((13*x) % 256, (13*y) % 256 , 255 * ((x + y) % 2)),
                     layer=256,
                     entity_group=globals.entities,
                 )
-                bot.mount()
 
 def reset_game():
     globals.entities.clear()
@@ -108,6 +113,7 @@ def spawn_bonus():
             continue
         # found position
         bonus = Bonus(
+            mounted=True,
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
@@ -116,7 +122,6 @@ def spawn_bonus():
             layer=251,
             entity_group=globals.entities
         )
-        bonus.mount()
         break
 
 def game(**kwargs):

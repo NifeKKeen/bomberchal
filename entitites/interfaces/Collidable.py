@@ -27,13 +27,21 @@ class Collidable(Entity):
             for entity in list(self.entity_group):
                 if entity == self or not entity.collides_with(self):
                     continue
+                # now entity collides and it is not ourselves
 
-                if isinstance(entity, Obstacle) and entity.collides_with(self):
+                if isinstance(entity, Obstacle):
                     if isinstance(self, Movable):
-                        if self.vel_px_y:
-                            self.adjust_from(entity, priority_for_x=False)
+                        self_c_x = self.px_x + self.px_w // 2
+                        self_c_y = self.px_y + self.px_h // 2
+                        ent_c_x = entity.px_x + entity.px_w // 2
+                        ent_c_y = entity.px_y + entity.px_h // 2
+
+                        # if self_c_x < ent_c_x and self_c_y < ent_c_y:  # top left
+                        if abs(self_c_x - ent_c_x) <= abs(self_c_y - ent_c_y):
+                            self.adjust_from_y(entity)
                         else:
-                            self.adjust_from(entity, priority_for_x=True)
+                            self.adjust_from_x(entity)
+
                     else:
                         self.adjust_from(entity)
                 elif isinstance(entity, Bonus):
@@ -43,8 +51,9 @@ class Collidable(Entity):
             for entity in list(self.entity_group):
                 if entity == self or not entity.collides_with(self):
                     continue
+                # now entity collides and it is not ourselves
 
-                if isinstance(entity, Obstacle) and entity.collides_with(self):
+                if isinstance(entity, Obstacle):
                     if entity.type == globals.D_OBSTACLE_CELL:
                         entity.kill()
                 if isinstance(entity, Bomb):
@@ -53,19 +62,11 @@ class Collidable(Entity):
                     entity.kill()
 
 
-    def adjust_from(self, entity, priority_for_x=True):
-        if priority_for_x:
-            self._adjust_for_x(entity)
-            if not entity.collides_with(self):
-                return
-            self._adjust_for_y(entity)
-        else:
-            self._adjust_for_y(entity)
-            if not entity.collides_with(self):
-                return
-            self._adjust_for_x(entity)
+    def adjust_from(self, entity):
+        self.adjust_from_x(entity)
+        self.adjust_from_y(entity)
 
-    def _adjust_for_x(self, entity):
+    def adjust_from_x(self, entity):
         ent_px_w = entity.px_w
         ent_px_start_x = entity.px_x
         ent_px_end_x = entity.px_x + ent_px_w
@@ -76,7 +77,7 @@ class Collidable(Entity):
             # print("ADJUSTED TO RIGHT")
             self.set_px(ent_px_end_x, self.px_y)  # set righter entity
 
-    def _adjust_for_y(self, entity):
+    def adjust_from_y(self, entity):
         ent_px_h = entity.px_h
         ent_px_start_y = entity.px_y
         ent_px_end_y = entity.px_y + ent_px_h
