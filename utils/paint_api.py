@@ -29,6 +29,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.mounted = False  # is visible in screen
 
         self.image_path = kwargs.get("image_path", None)
+        self.align = kwargs.get("align", "topleft")
 
         if kwargs.get("should_init_surface", True):
             self.__init_surface__()
@@ -43,8 +44,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
 
         self.rect = self.image.get_rect()
-        self.rect.x = self.px_x
-        self.rect.y = self.px_y
+        self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
     def unmount(self):
         self.mounted = False
@@ -122,16 +122,13 @@ def _get_text_surface(**kwargs):
 
 
 def mount_rect(**kwargs):
-    # key should be specified in order to decrease the number of renders
-    # otherwise a new surface will be created and rendered each frame
-
+    if kwargs.get("align", "topleft") == "center":
+        kwargs["px_x"] = globals.center_x
     sprite = _get_surface(**kwargs)
     sprite.mounted = True
-
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite
     globals.to_render_keys.add(sprite.key)
-
     return sprite
 
 
@@ -170,7 +167,9 @@ def unmount_sprite(sprite):
 
 
 def refill_screen():
-    if globals.menu_background_img:
+    if globals.current_page == "menu/settings" and globals.settings_background_img:
+        globals.DISPLAYSURF.blit(globals.settings_background_img, (0, 0))
+    elif globals.menu_background_img:
         globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))
     else:
         globals.DISPLAYSURF.fill((0, 0, 20))

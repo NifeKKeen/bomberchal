@@ -41,13 +41,13 @@ if __name__ == "__main__":
             reset_game()
 
         if globals.current_page == "menu":
-            globals.menu_background_img = pygame.image.load("assets/images/background.jpg")
+            globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
             globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu(is_setup=globals.switched_page_this_frame)
 
         elif globals.current_page == "menu/settings":
-            globals.menu_background_img = pygame.image.load("assets/images/background.jpg")
-            globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+            globals.settings_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
+            globals.settings_background_img = pygame.transform.scale(globals.settings_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu_settings()
         # elif globals.current_page == "menu/customization":
         #     menu_customization()

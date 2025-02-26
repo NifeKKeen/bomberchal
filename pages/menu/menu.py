@@ -4,6 +4,7 @@ from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
+import globals
 
 def menu(is_setup):
     if is_setup:
@@ -12,22 +13,32 @@ def menu(is_setup):
         pygame.mixer.music.play(-1)
 
     play_button_sprite = paint_api.mount_rect(
-        px_x=300,
-        px_y=30,
+        px_y=globals.center_y - 90,
         px_w=200,
         px_h=80,
         key="play",
-        title="Play",
+        image_path="assets/images/buttons/play.png",
+        align="center"
     )
     settings_button_sprite = paint_api.mount_rect(
-        px_x=300, px_y=120, px_w=200, px_h=80, key="settings"
+        px_y=globals.center_y,
+        px_w=350,
+        px_h=90, 
+        key="settings", 
+        image_path="assets/images/buttons/settings.png",
+        align="center"
     )
-    test_button_sprite = paint_api.mount_rect(
-        px_x=300, px_y=210, px_w=200, px_h=80
-    )  # if key is not specified, it will render over and over
     quit_button_sprite = paint_api.mount_rect(
-        px_x=300, px_y=300, px_w=200, px_h=80, key="quit", title="Quit"
+        px_y=globals.center_y + 90,
+        px_w=200,
+        px_h=80, 
+        key="quit", 
+        image_path="assets/images/buttons/quit.png",
+        align="center"
     )
+    # test_button_sprite = paint_api.mount_rect(
+    #     px_x=300, px_y= 410, px_w=200, px_h=80
+    # )  # if key is not specified, it will render over and over
 
     if is_clicked(play_button_sprite):
         navigate("game")
