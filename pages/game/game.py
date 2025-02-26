@@ -1,5 +1,7 @@
 from entitites.bonus import Bonus
 from entitites.fire import Fire
+from entitites.interfaces.Collidable import Collidable
+from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
 from entitites.bomb import Bomb
 from pages.game import field_generator
@@ -22,11 +24,20 @@ def setup_game(**kwargs):
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
     globals.field = kwargs.get("field", field_generator.generate(globals.rows, globals.cols))
+
+    control_keys = [(K_w, K_UP), (K_s, K_DOWN), (K_a, K_LEFT), (K_d, K_RIGHT), (K_SPACE, K_RSHIFT)]
+
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
             px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
+            move_up_key=control_keys[0][i],
+            move_down_key=control_keys[1][i],
+            move_left_key=control_keys[2][i],
+            move_right_key=control_keys[3][i],
+            attack_key=control_keys[4][i],
+            attack_func=Player.spawn_bomb,
             speed=2,
             color=(0, rnd / 2, rnd),
             bomb_power=3,
@@ -87,68 +98,6 @@ def render_field(**kwargs):
 def reset_game():
     globals.entities.clear()
 
-def player_movement(player_sprites):
-    players_params = []
-    if len(player_sprites) >= 1:
-        players_params.append([player_sprites[0], K_w, K_s, K_a, K_d, K_SPACE])
-    if len(player_sprites) >= 2:
-        players_params.append([player_sprites[1], K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN])
-
-    for player in players_params:
-        if player[0].alive():
-            entity_lst = list(globals.entities)
-            for i in range(0, 4):
-                if is_pressed(player[i + 1]):
-                    player[0].move_px(*tuple(x * player[0].speed for x in globals.directions[i]))
-                    player[0].x, player[0].y = get_pos(player[0].px_x, player[0].px_y)
-                    for entity in entity_lst:
-                        if entity.x != player[0].x or entity.y != player[0].y:
-                            continue
-                        if isinstance(entity, Bot):
-                            player[0].kill()
-                            # globals.entities.remove(entity)
-                            break
-                        elif isinstance(entity, Obstacle):
-                            player[0].move_px(*tuple(x * -player[0].speed for x in globals.directions[i]))
-                            break
-                        elif isinstance(entity, Bonus):
-                            #globals.entities.remove(entity)
-                            entity.kill()
-                            break
-
-            if is_pressed_once(player[5]):
-                player[0].spawn_bomb()
-
-def bot_movement(bot_sprites):
-    for bot in bot_sprites:
-        # if is_clicked(bot):
-        #     bot.unmount()
-
-        if bot.alive():
-            bot.move_px(*tuple(x * bot.speed for x in globals.directions[bot.direction]))
-            bot.x, bot.y = get_pos(bot.px_x, bot.px_y)
-            entity_lst = list(globals.entities)
-            for entity in entity_lst:
-                if entity == bot:
-                    continue
-                if entity.x != bot.x or entity.y != bot.y:
-                    continue
-                # print("Smth on ", bot.x, bot.y, entity)
-                if isinstance(entity, Player):
-                    entity.kill()
-                    #globals.entities.remove(entity)
-                    break
-                elif isinstance(entity, Fire):
-                    bot.kill()
-                    break
-                elif isinstance(entity, Obstacle) or isinstance(entity, Bot) or isinstance(entity, Bomb):
-                    bot.move_px(*tuple(x * -bot.speed for x in globals.directions[bot.direction]))
-                    bot.x, bot.y = get_pos(bot.px_x, bot.px_y)
-                    bot.direction ^= 1 # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
-                    # if random.randint(1, 100) <= 50: # Randomly change direction, intended to work if there is more than one direction to which we can go
-                    #     bot.direction ^= 2
-                    break
-
 def spawn_bonus():
     while True:
         bonus_x, bonus_y = rand(0, globals.rows), rand(0, globals.cols)
@@ -181,19 +130,6 @@ def game(**kwargs):
 
     go_menu_button_sprite = paint_api.mount_rect(px_x=0, px_y=0, px_w=40, px_h=40, layer=300, key="go_menu")
 
-    player_sprites = []
-    bot_sprites = []
-    player_entities = sorted(list(get_players(globals.entities)), key=lambda e: e.entity_id )
-    bot_entities = sorted(list(get_bots(globals.entities)), key=lambda e: e.entity_id )
-
-    for player in player_entities:
-        player_sprites.append(player)
-    for bot in bot_entities:
-        bot_sprites.append(bot)
-
-    player_movement(player_sprites)
-    bot_movement(bot_sprites)
-
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
@@ -205,6 +141,10 @@ def game(**kwargs):
         spawn_bonus()
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
-        # if isinstance(entity, Fire):
-            # entity.explode()
-            # entity.exploded = True
+
+        if isinstance(entity, Controllable) and entity.mounted:
+            entity.handle_event()
+        if isinstance(entity, Bot):
+            entity.think()
+        if isinstance(entity, Collidable):
+            entity.check_collision()

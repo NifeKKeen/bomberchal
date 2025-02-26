@@ -1,18 +1,19 @@
 from entitites.bomb import Bomb
 from entitites.entity import Entity
+from entitites.interfaces.BombSpawnable import BombSpawnable
+from entitites.interfaces.Collidable import Collidable
+from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
-from utils.helpers import get_pos, get_field_pos
-from utils.helpers import rand
-import globals
 
 
-class Player(Movable, Entity):
+class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
+        Controllable.__init__(self, **kwargs)
         Entity.__init__(self, **kwargs)
 
         self.bomb_allowed = kwargs.get("bomb_allowed", 1)
         self.bomb_power = kwargs.get("bomb_power", 1)
-        self.speed = kwargs.get("speed", 2)
+        self.speed = kwargs.get("speed", 10)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bomb_timer = kwargs.get("bomb_timer", 2000)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
@@ -20,43 +21,8 @@ class Player(Movable, Entity):
     def is_alive(self):
         return bool(self.lives)
 
-    def spawn_bomb(self):
-        collision = True
-        for bomb in get_bombs(globals.entities):
-            if self.x == bomb.x and self.y == bomb.y:
-                collision = False #there's already bomb in this position
-        if not collision:
-            return
-
-        if self.bomb_allowed <= 0:
-            return
-
-        #print(self.x, self.y, self.px_x, self.px_y)
-        bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
-
-        self.bomb_allowed -= 1
-        bomb = Bomb(
-            spawner=self,
-            px_w=globals.cell_size,
-            px_h=globals.cell_size,
-            x=self.x,
-            y=self.y,
-            px_x=bombpx_x,
-            px_y=bombpx_y,
-            layer=255,
-            timer=self.bomb_timer,
-            color=([rand(64, 128)] * 3),
-            entity_group=globals.entities,
-            power=self.bomb_power,
-        )
-        bomb.mount()
-
     def add_tick(self):
         self.tick += 1
-
-        # TEST
-        # if self.tick % 120 == 0:
-        #     self.mount()
 
 def get_players(entities):
     res = set()
