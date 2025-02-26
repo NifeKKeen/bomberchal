@@ -39,6 +39,7 @@ class Bomb(Entity):
             fire.spread()
 
     def explode(self):
+
         if self.exploded:
             return
         self.exploded = True

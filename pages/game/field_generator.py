@@ -25,7 +25,11 @@ def generate(rows, cols):
         for y in range(1, cols - 1):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 continue
-            if objects[current] < obstacle_count:
+            if max(x, y) <= 5: # Ability for player 1 to leave and not insta-die, should be changed as there might be general case
+                field[x][y] = globals.VOID_CELL
+            elif x >= rows - 5 and y >= cols - 5: # Same for player 2
+                field[x][y] = globals.VOID_CELL
+            elif objects[current] < obstacle_count:
                 field[x][y] = globals.D_OBSTACLE_CELL
             elif objects[current] < obstacle_count + bot_count:
                 field[x][y] = globals.BOT_CELL

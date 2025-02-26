@@ -11,7 +11,7 @@ class Player(Entity):
 
         self.bomb_allowed = kwargs.get("bomb_allowed", 1)
         self.bomb_power = kwargs.get("bomb_power", 1)
-        self.speed = kwargs.get("speed", 1)
+        self.speed = kwargs.get("speed", 2)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bomb_timer = kwargs.get("bomb_timer", 2000)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
@@ -20,6 +20,13 @@ class Player(Entity):
         return bool(self.lives)
 
     def spawn_bomb(self):
+        collision = True
+        for bomb in get_bombs(globals.entities):
+            if self.x == bomb.x and self.y == bomb.y:
+                collision = False #there's already bomb in this position
+        if not collision:
+            return
+
         if self.bomb_allowed <= 0:
             return
 

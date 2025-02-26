@@ -1,5 +1,7 @@
+from entitites.bonus import Bonus
 from entitites.fire import Fire
 from entitites.obstacle import Obstacle
+from entitites.bomb import Bomb
 from pages.game import field_generator
 from utils import paint_api
 from pygame.locals import *
@@ -75,7 +77,7 @@ def render_field(**kwargs):
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     x=x, y=y,
-                    speed=2,
+                    speed=1,
                     color=((13*x) % 256, (13*y) % 256 , 92 * ((x + y) % 2)),
                     layer=250,
                     entity_group=globals.entities,
@@ -95,9 +97,9 @@ def player_movement(player_sprites):
     for player in players_params:
         if player[0].alive():
             entity_lst = list(globals.entities)
-            for i in range(1, 5):
-                if is_pressed(player[i]):
-                    player[0].move_px(*tuple(x * player[0].speed for x in globals.directions[i - 1]))
+            for i in range(0, 4):
+                if is_pressed(player[i + 1]):
+                    player[0].move_px(*tuple(x * player[0].speed for x in globals.directions[i]))
                     player[0].x, player[0].y = get_pos(player[0].px_x, player[0].px_y)
                     for entity in entity_lst:
                         if entity.x != player[0].x or entity.y != player[0].y:
@@ -107,7 +109,11 @@ def player_movement(player_sprites):
                             # globals.entities.remove(entity)
                             break
                         elif isinstance(entity, Obstacle):
-                            player[0].move_px(*tuple(x * -player[0].speed for x in globals.directions[i - 1]))
+                            player[0].move_px(*tuple(x * -player[0].speed for x in globals.directions[i]))
+                            break
+                        elif isinstance(entity, Bonus):
+                            #globals.entities.remove(entity)
+                            entity.kill()
                             break
 
             if is_pressed_once(player[5]):
@@ -121,7 +127,6 @@ def bot_movement(bot_sprites):
         if bot.alive():
             bot.move_px(*tuple(x * bot.speed for x in globals.directions[bot.direction]))
             bot.x, bot.y = get_pos(bot.px_x, bot.px_y)
-            # print(tuple(x * bot.speed for x in globals.directions[bot.direction]), "MOVEMENT DLYA BOTA", bot.direction, bot)
             entity_lst = list(globals.entities)
             for entity in entity_lst:
                 if entity == bot:
@@ -136,13 +141,37 @@ def bot_movement(bot_sprites):
                 elif isinstance(entity, Fire):
                     bot.kill()
                     break
-                elif isinstance(entity, Obstacle) or isinstance(entity, Bot):
+                elif isinstance(entity, Obstacle) or isinstance(entity, Bot) or isinstance(entity, Bomb):
                     bot.move_px(*tuple(x * -bot.speed for x in globals.directions[bot.direction]))
                     bot.x, bot.y = get_pos(bot.px_x, bot.px_y)
                     bot.direction ^= 1 # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
                     # if random.randint(1, 100) <= 50: # Randomly change direction, intended to work if there is more than one direction to which we can go
                     #     bot.direction ^= 2
                     break
+
+def spawn_bonus():
+    while True:
+        bonus_x, bonus_y = rand(0, globals.rows), rand(0, globals.cols)
+        collision = False
+        #print(len(globals.entities))
+        for entity in globals.entities:
+            if entity.x == bonus_x and entity.y == bonus_y:
+                collision = True
+                break
+        if collision:
+            continue
+        # found position
+        bonus = Bonus(
+            px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
+            px_w=globals.cell_size, px_h=globals.cell_size,
+            speed = 0,
+            x=bonus_x, y=bonus_y,
+            color=(255, 255, 255),
+            layer=251,
+            entity_group=globals.entities
+        )
+        bonus.mount()
+        break
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
@@ -172,6 +201,8 @@ def game(**kwargs):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
+    if globals.tick % 50 == 0:
+        spawn_bonus()
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
         # if isinstance(entity, Fire):
