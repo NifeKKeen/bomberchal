@@ -1,11 +1,17 @@
 import globals
 from entitites.interfaces.Movable import Movable
+from utils.helpers import get_field_pos
 
 
 class BotIntellect(Movable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.direction = kwargs.get("direction", (self.y % 2) * 2) # index in globals.directions
+        self.moving = kwargs.get("moving", False)
+        self.x = kwargs.get("x", 0)
+        self.y = kwargs.get("y", 0)
+        self.destx = kwargs.get("destx", 0) # destination
+        self.desty = kwargs.get("desty", 0)
 
     def think(self):
         from entitites.player import Player
@@ -25,10 +31,19 @@ class BotIntellect(Movable):
             self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
 
         elif self.type == 2:
-            # in this algo, bot is moving into direction of the farthest cell from all bombs
+            # if self.moving:
+            #     curx, cury = self.destx, self.desty
+            #     while prev[curx][cury] != (self.x, self.y):
+            #         curx, cury = prev[curx][cury]
+            #     self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+            #     return
+            # in this algo, bot is moving into direction of the farthest cell from all bombs, fires and players
             from entitites.bomb import get_bombs
             queue = []
             used = [
+                [False for j in range(globals.cols)] for i in range(globals.rows)
+            ]
+            blocked = [
                 [False for j in range(globals.cols)] for i in range(globals.rows)
             ]
             dist = [
@@ -50,16 +65,18 @@ class BotIntellect(Movable):
             for entity in list(globals.entities):
                 if isinstance(entity, Bomb) or isinstance(entity, Player) or isinstance(entity, Fire):
                     x, y = entity.x, entity.y
-
                     if x < 0 or x >= globals.rows or y < 0 or y >= globals.cols:
                         continue
 
-
-            # if isinstance(entity, Player):
-                    #     # print(x, y)
                     used[x][y] = True
-                    dist[x][y] = 0
+                    dist[x][y] = 0 #(-1e18 if isinstance(entity, Obstacle) else 0)
                     prev[x][y] = (x, y)
+
+                if isinstance(entity, Obstacle):
+                    x, y = entity.x, entity.y
+                    if x < 0 or x >= globals.rows or y < 0 or y >= globals.cols:
+                        continue
+                    blocked[x][y] = True
 
             for x in range(globals.rows):
                 for y in range(globals.cols):
@@ -73,38 +90,81 @@ class BotIntellect(Movable):
                     nx, ny = x + dx, y + dy
                     if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
                         continue
+                    if blocked[nx][ny]:
+                        continue
                     if not used[nx][ny]:
                         used[nx][ny] = True
                         prev[nx][ny] = (x, y)
                         dist[nx][ny] = dist[x][y] + 1
                         queue.append((nx, ny))
 
-            destx, desty = int(self.x), int(self.y)
             dst = -1
-            # print("Initially ", destx, desty, dist[destx][desty])
 
+            for x in range(globals.rows):
+                for y in range(globals.cols):
+                    #print("DIST", x, y, dist[x][y], blocked[x][y], used[x][y])
+                    if not blocked[x][y] and used[x][y] and prev[x][y] != (-1, -1):
+                        print(dist[x][y], end='\t')
+                        if dist[x][y] > dst:
+                            destx, desty = x, y
+                            dst = dist[x][y]
+                    else:
+                        print("-1", end='\t')
+                print()
+            print("Initially ", self.x, self.y, destx, desty, prev[destx][desty], used[destx][desty], dst, dist[destx][desty])
+            if dst == -1:
+                return
 
-            for dx, dy in globals.directions:
-                nx, ny = int(self.x) + dx, int(self.y) + dy
-                if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
-                    continue
-
-                collision = False
-                for entity in list(globals.entities):
-                    if entity.x != nx or entity.y != ny:
+            queue = []
+            used = [
+                [False for j in range(globals.cols)] for i in range(globals.rows)
+            ]
+            blocked = [
+                [False for j in range(globals.cols)] for i in range(globals.rows)
+            ]
+            dist = [
+                [0 for j in range(globals.cols)] for i in range(globals.rows)
+            ]
+            prev = [
+                [(-1, -1) for j in range(globals.cols)] for i in range(globals.rows)
+            ]
+            queue.append((destx, desty))
+            used[destx][desty] = True
+            prev[destx][desty] = (destx, desty)
+            while len(queue) > 0:
+                x, y = queue[0]
+                queue.pop(0)
+                for dx, dy in globals.directions:
+                    nx, ny = x + dx, y + dy
+                    if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
                         continue
-                    if isinstance(entity, Bonus) or isinstance(entity, Obstacle):
+                    if blocked[nx][ny]:
                         continue
-                    collision = True
-                    break
+                    if not used[nx][ny]:
+                        used[nx][ny] = True
+                        prev[nx][ny] = (x, y)
+                        dist[nx][ny] = dist[x][y] + 1
+                        queue.append((nx, ny))
 
-                if collision:
-                    continue
-                # print("Now ", destx, desty, dist[destx][desty])
-                if dist[nx][ny] >= dst:
-                    dst = dist[nx][ny]
-                    destx, desty = nx, ny
-            # print("Now ", destx, desty, dst)
+            print("NEW DISTSTUISTHUISTIST")
+            for x in range(globals.rows):
+                for y in range(globals.cols):
+                    #print("DIST", x, y, dist[x][y], blocked[x][y], used[x][y])
+                    if not blocked[x][y] and used[x][y] and prev[x][y] != (-1, -1):
+                        print(dist[x][y], end='\t')
+                        if dist[x][y] > dst:
+                            destx, desty = x, y
+                            dst = dist[x][y]
+                    else:
+                        print("-1", end='\t')
+                print()
+
+            print("ww ", self.x, self.y, destx, desty, dst)
+            while prev[destx][desty] != (self.x, self.y):
+                print(destx, desty, prev[destx][desty], dist[destx][desty], dst, self.x, self.y)
+                destx, desty = prev[destx][desty]
+
+            print("qwe ", self.x, self.y, destx, desty, dst)
 
             if destx - self.x == 1:
                 self.direction = 3
@@ -115,15 +175,22 @@ class BotIntellect(Movable):
             elif desty - self.y == -1:
                 self.direction = 0
             else:
-                # print("Locked")
+                print("Locked")
                 return
+            #if not blocked[destx][desty]:
             self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+            self.moving = True
 
-            # print(self.x, self.y, destx, desty, self.direction, globals.directions[self.direction])
+            # if collision:
+            #     bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
+            #     self.move_px(bombpx_x - self.px_x, bombpx_y - self.px_y)
+
+            #print(self.x, self.y, destx, desty, dst, self.direction, globals.directions[self.direction])
 
 
         else:
             raise Exception("Unknown type of bot!")
+
         entity_lst = list(globals.entities)
         for entity in entity_lst:
             if entity == self:

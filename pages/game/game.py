@@ -1,4 +1,4 @@
-from entitites.bonus import Bonus
+from entitites.bonus import Bonus, bomb_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
@@ -100,7 +100,7 @@ def render_field(**kwargs):
 def reset_game():
     globals.entities.clear()
 
-def spawn_bonus():
+def spawn_bonus(bonus_type = "Speed"):
     while True:
         bonus_x, bonus_y = rand(0, globals.rows), rand(0, globals.cols)
         collision = False
@@ -117,6 +117,7 @@ def spawn_bonus():
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
+            type=bonus_type,
             x=bonus_x, y=bonus_y,
             color=(255, 255, 255),
             layer=251,
@@ -139,8 +140,8 @@ def game(**kwargs):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
-    if globals.tick % 50 == 0:
-        spawn_bonus()
+    if globals.tick % 150 == 0:
+        spawn_bonus(bomb_types()[rand(0, 2)])
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
 
