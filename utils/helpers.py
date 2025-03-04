@@ -14,12 +14,14 @@ def rand(l, r):
 def get_field_pos(x, y):
     px_x = x * globals.cell_size
     px_y = y * globals.cell_size
-    #print(x, y, px_x, px_y, "GET FIELD POS")
     return px_x, px_y
-
 
 def get_pos(px_x, px_y):
     x = int(px_x + globals.cell_size * 0.5) // globals.cell_size
     y = int(px_y + globals.cell_size * 0.5) // globals.cell_size
-    #print(px_x, px_y, x, y, "GET COORD POS")
+    return x, y
+
+def get_pos_upper_left(px_x, px_y):
+    x = int(px_x) // globals.cell_size
+    y = int(px_y) // globals.cell_size
     return x, y

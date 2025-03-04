@@ -1,3 +1,5 @@
+from requests.utils import is_ipv4_address
+
 import globals
 from entitites.bonus import Bonus
 from entitites.entity import Entity
@@ -53,8 +55,12 @@ class Collidable(Entity):
 
                     else:
                         self.adjust_from(entity)
+
                 elif isinstance(entity, Bonus):
-                    entity.collect(self)
+                    if isinstance(self, Bomb):
+                        entity.kill()
+                    else:
+                        entity.collect(self)
 
         elif isinstance(self, Fire):
             for entity in list(self.entity_group):

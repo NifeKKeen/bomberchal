@@ -1,4 +1,4 @@
-from entitites.bonus import Bonus, bomb_types
+from entitites.bonus import Bonus, bonus_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
@@ -41,7 +41,7 @@ def setup_game(**kwargs):
             attack_func=Player.spawn_bomb,
             speed=2,
             color=(0, rnd / 2, rnd),
-            bomb_power=10,
+            bomb_power=7,
             bomb_allowed=5,
             layer=260,
             bomb_timer=3000,
@@ -89,7 +89,8 @@ def render_field(**kwargs):
                 bot = Bot(
                     mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                    px_w=globals.player_cell_size, px_h=globals.player_cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
                     x=x, y=y,
                     speed=1,
                     color=((13*x) % 256, (13*y) % 256 , 255 * ((x + y) % 2)),
@@ -141,7 +142,7 @@ def game(**kwargs):
     # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
     if globals.tick % 150 == 0:
-        spawn_bonus(bomb_types()[rand(0, 2)])
+        spawn_bonus(bonus_types()[rand(0, 3)])
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
 
