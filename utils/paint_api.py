@@ -76,7 +76,7 @@ class TextSprite(SurfaceSprite):
         self.font_size = kwargs.get("key", None)
         self.color = kwargs.get("color", (0, 0, 0))
         self.font_size = kwargs.get("font_size", 14)
-        self.font = kwargs.get("font_family", None)
+        self.font = kwargs.get("font_family", globals.text_font)
         self.text = kwargs.get("text", "-")
         self.align = kwargs.get("align", "topleft")
 
@@ -191,3 +191,18 @@ def draw_sprites():
 
     globals.all_sprites.draw(globals.DISPLAYSURF)
     pygame.display.flip()
+
+def update_text(key, text):
+    """
+    Обновляет текст спрайта (TextSprite), если он уже создан.
+    Каждый раз при обновлении экрана выводит обновлённый текст.
+    """
+    # Предполагаем, что globals.map_key_sprite содержит все спрайты.
+    sprite = globals.map_key_sprite.get(key)
+    
+    if sprite and hasattr(sprite, "text"):
+        sprite.text = text
+        sprite.__init_surface__()
+        print("Updated text for", key, ":", text)
+    else:
+        print("Sprite с ключом", key, "не найден или не имеет свойства 'text'.")

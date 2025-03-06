@@ -1,26 +1,14 @@
 import pygame
-import configparser
 import globals
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 from utils.interaction_api import get_pressed_key
 
-CONFIG_FILE = "settings.ini"
 
-def save_settings():
-    config = configparser.ConfigParser()
-    config["CONTROLS"] = {
-        "player1_explosion_key": str(globals.controls_players[0]["explosion_key"])
-    }
-    with open(CONFIG_FILE, "w") as configfile:
-        config.write(configfile)
+# def save_settings():
+#     settings.save_settings()
 
-def load_settings():
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILE)
-    if "CONTROLS" in config:
-        globals.controls_players[0]["explosion_key"] = int(config["CONTROLS"].get("player1_explosion_key", pygame.K_SPACE))
 
 def settings():
     offered_keys_p0 = [pygame.K_SPACE, pygame.K_a, pygame.K_m, "custom"]
@@ -28,13 +16,6 @@ def settings():
         current_index0 = offered_keys_p0.index(globals.controls_players[0]["explosion_key"])
     except ValueError:
         current_index0 = len(offered_keys_p0) - 1
-
-    def update_display():
-        current_key_text_p0 = pygame.key.name(
-            globals.controls_players[0]["explosion_key"]
-        )
-        paint_api.update_text("display_p0", text=current_key_text_p0)
-
 
     paint_api.mount_text(
         px_x=globals.center_x - 350,
@@ -76,7 +57,6 @@ def settings():
         new_key0 = offered_keys_p0[new_index0]
         if new_key0 == "custom":
             new_key0 = get_pressed_key()
-        update_display()
         globals.controls_players[0]["explosion_key"] = new_key0
         print("Player1 bomb key:", globals.controls_players[0]["explosion_key"])
         # save_settings()

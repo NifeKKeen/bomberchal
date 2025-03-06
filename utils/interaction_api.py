@@ -21,3 +21,10 @@ def is_pressed(event_key):
 
 def is_pressed_once(event_key):
     return is_fired(KEYDOWN, event_key)
+
+def get_pressed_key():
+    while True:
+        event = pygame.event.wait()
+        if event.type == pygame.KEYDOWN:
+            return event.key
+

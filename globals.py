@@ -12,6 +12,7 @@ menu_background_img = None
 settings_background_img = None
 center_x = SCREEN_WIDTH // 2
 center_y = SCREEN_HEIGHT // 2
+text_font = "assets/font/Pixeloid_Sans.ttf"
 all_sprites = None #  pygame.sprite.LayeredUpdates()
 
 # NAVIGATION
@@ -46,21 +47,21 @@ entities = set()
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # TODO
 
-EXPLOSION_KEY_DEFAULT = K_SPACE  # Изменяемая кнопка взрыва
-
+EXPLOSION_KEY_DEFAULT1 = K_SPACE
+EXPLOSION_KEY_DEFAULT2 = K_RETURN
 controls_players = [
     {
         "to_left_key": K_a,
         "to_right_key": K_d,
         "to_up_key": K_w,
         "to_down_key": K_s,
-        "explosion_key": EXPLOSION_KEY_DEFAULT
+        "explosion_key": EXPLOSION_KEY_DEFAULT1
     },
     {
         "to_left_key": K_LEFT,
         "to_right_key": K_RIGHT,
         "to_up_key": K_UP,
         "to_down_key": K_DOWN,
-        "explosion_key": K_RETURN
+        "explosion_key": EXPLOSION_KEY_DEFAULT2
     }
 ]
