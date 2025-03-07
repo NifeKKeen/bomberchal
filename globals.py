@@ -22,8 +22,10 @@ switched_page_this_frame = True # will be updated when frame ends
 
 
 # EVENTS
-frame_events = set()  # {(event_type, event_code)}
-frame_keys = None  # pygame.get_pressed()
+frame_event_code_pairs = set()  # {(event_type, event_code)}
+frame_event_types = set()  # {event_type}
+frame_keys_map = None  # pygame.get_pressed()
+frame_keys = []  # list of currently pressed keys
 
 # FOR PAINT RENDER API
 to_render_keys = set()

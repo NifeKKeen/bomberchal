@@ -18,19 +18,15 @@ def is_clicked(sprite):
 
 
 def is_pressed(event_key):
-    return globals.frame_keys[event_key]
+    return globals.frame_keys_map[event_key]
 
 def is_pressed_once(event_key):
     return is_fired(KEYDOWN, event_key)
 
-def get_pressed_key():
-    global is_waiting_for_key
-    is_waiting_for_key = True  # устанавливаем режим ожидания
-    # вместо блокировки ждем один проход событий
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            is_waiting_for_key = False
-            return event.key
-    is_waiting_for_key = False
-    return None
 
+def get_pressed_keys():  # is already called in main.py, use globals.frame_keys instead
+    keys = []
+    for event_type, key in globals.frame_event_code_pairs:
+        if event_type == KEYDOWN:
+            keys.append(key)
+    return keys
