@@ -4,6 +4,7 @@ from pygame.locals import *
 import globals
 from utils.event_api import is_fired
 
+is_waiting_for_key = False  # глобальное состояние ожидания нажатия клавиши
 
 def is_clicked(sprite):
     if not sprite.mounted:
@@ -23,8 +24,13 @@ def is_pressed_once(event_key):
     return is_fired(KEYDOWN, event_key)
 
 def get_pressed_key():
-    while True:
-        event = pygame.event.wait()
+    global is_waiting_for_key
+    is_waiting_for_key = True  # устанавливаем режим ожидания
+    # вместо блокировки ждем один проход событий
+    for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
+            is_waiting_for_key = False
             return event.key
+    is_waiting_for_key = False
+    return None
 

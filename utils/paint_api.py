@@ -193,11 +193,7 @@ def draw_sprites():
     pygame.display.flip()
 
 def update_text(key, text):
-    """
-    Обновляет текст спрайта (TextSprite), если он уже создан.
-    Каждый раз при обновлении экрана выводит обновлённый текст.
-    """
-    # Предполагаем, что globals.map_key_sprite содержит все спрайты.
+
     sprite = globals.map_key_sprite.get(key)
     
     if sprite and hasattr(sprite, "text"):

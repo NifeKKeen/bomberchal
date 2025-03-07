@@ -3,8 +3,7 @@ import configparser
 import globals
 from utils import paint_api
 from pages.navigation import navigate
-from utils.interaction_api import is_clicked
-from utils.interaction_api import get_pressed_key
+from utils.interaction_api import is_clicked, get_pressed_key
 
 CONFIG_FILE = "settings.ini"
 
@@ -30,11 +29,11 @@ def settings():
         current_index0 = len(offered_keys_p0) - 1
 
     def update_display():
-        current_key_text_p0 = pygame.key.name(
-            globals.controls_players[0]["explosion_key"]
-        )
+        key_val = globals.controls_players[0]["explosion_key"]
+        if key_val is None:
+            key_val = pygame.K_SPACE  
+        current_key_text_p0 = pygame.key.name(key_val)
         paint_api.update_text("display_p0", text=current_key_text_p0)
-
 
     paint_api.mount_text(
         px_x=globals.center_x - 350,
@@ -47,16 +46,19 @@ def settings():
 
     left_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
-        px_y=globals.center_y - 170,
-        px_w=50,
-        px_h=50,
+        px_y=globals.center_y - 185,
+        px_w=64,
+        px_h=64,
         key="left_arrow_p0",
-        # image_path="assets/images/buttons/arrow_left.png",
+        image_path="assets/images/buttons/left.png",
     )
     current_key_text_p0 = pygame.key.name(
-        offered_keys_p0[current_index0] if offered_keys_p0[current_index0] != "custom" else pygame.K_0)
+        offered_keys_p0[current_index0] 
+        if offered_keys_p0[current_index0] != "custom" 
+        else pygame.K_0
+    )
     display_p0 = paint_api.mount_text(
-        px_x=globals.center_x - 20,
+        px_x=globals.center_x ,
         px_y=globals.center_y - 170,
         key="display_p0",
         text=current_key_text_p0,
@@ -65,28 +67,30 @@ def settings():
     )
     right_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
-        px_y=globals.center_y - 170,
-        px_w=50,
-        px_h=50,
+        px_y=globals.center_y - 185,
+        px_w=64,
+        px_h=64,
         key="right_arrow_p0",
-        # image_path="assets/images/buttons/arrow_right.png",
+        image_path="assets/images/buttons/right.png",
     )
-    if is_clicked(left_arrow_p0 ):
+    if is_clicked(left_arrow_p0):
         new_index0 = (current_index0 - 1) % len(offered_keys_p0)
         new_key0 = offered_keys_p0[new_index0]
         if new_key0 == "custom":
-            new_key0 = get_pressed_key()
-        update_display()
+            new_key0 = get_pressed_key()  # ожидаем ввод с таймаутом
         globals.controls_players[0]["explosion_key"] = new_key0
+        update_display()
         print("Player1 bomb key:", globals.controls_players[0]["explosion_key"])
-        # save_settings()
+        save_settings()
     if is_clicked(right_arrow_p0):
         new_index0 = (current_index0 + 1) % len(offered_keys_p0)
         new_key0 = offered_keys_p0[new_index0]
         if new_key0 == "custom":
-            new_key0 = get_pressed_key()
+            new_key0 = get_pressed_key()  # ожидаем ввод с таймаутом
+        globals.controls_players[0]["explosion_key"] = new_key0
+        update_display()
         print("Player1 bomb key:", globals.controls_players[0]["explosion_key"])
-        # save_settings()
+        save_settings()
 
     back_button = paint_api.mount_rect(
         px_y=globals.center_y + (globals.center_y // 2),
