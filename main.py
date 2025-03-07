@@ -7,6 +7,7 @@ from pages.game import reset_game
 from utils import paint_api
 from pages import game
 import globals
+from utils.interaction_api import get_pressed_keys
 from utils.paint_api import draw_sprites
 
 if __name__ == "__main__":
@@ -25,17 +26,20 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()  # тут завершаем программу, чтобы рендеринг не продолжался
+                sys.exit()
 
             if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
-                globals.frame_events.add((event.type, event.button))
+                globals.frame_event_code_pairs.add((event.type, event.button))
             if event.type in (KEYDOWN, KEYUP):
-                globals.frame_events.add((event.type, event.key))
+                globals.frame_event_code_pairs.add((event.type, event.key))
+            globals.frame_event_types.add(event.type)
 
-            globals.frame_keys = pygame.key.get_pressed()
+            globals.frame_keys_map = pygame.key.get_pressed()
+            globals.frame_keys = get_pressed_keys()
 
 
         # Page navigation
+        print(globals.frame_keys)
 
         if globals.switched_page_this_frame and not globals.current_page.startswith("game"):
             reset_game()
@@ -62,7 +66,8 @@ if __name__ == "__main__":
         globals.Frame.tick(globals.FPS)
 
         # Clean up
-        globals.frame_events.clear()
+        globals.frame_event_code_pairs.clear()
+        globals.frame_event_types.clear()
 
         # Check if the page was NOT switched during this frame
         if not globals.switched_page:
