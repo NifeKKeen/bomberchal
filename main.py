@@ -68,6 +68,7 @@ if __name__ == "__main__":
         # Clean up
         globals.frame_event_code_pairs.clear()
         globals.frame_event_types.clear()
+        globals.frame_keys.clear()
 
         # Check if the page was NOT switched during this frame
         if not globals.switched_page:
