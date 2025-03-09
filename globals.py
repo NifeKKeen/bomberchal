@@ -8,12 +8,20 @@ SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None #  pygame.time.Clock()
 FPS = 60
-FONT_PARAMETER = (None, 36)
-menu_background_img = None
-settings_background_img = None
+
 center_x = SCREEN_WIDTH // 2
 center_y = SCREEN_HEIGHT // 2
+
+current_music = None  # currently playing music name (as relative path to a file)
+menu_music_path = "assets/sound/menu3.mp3"
+game_music_path = "assets/sound/BG.mpeg"
+
+menu_background_img = None
+settings_background_img = None
+
+FONT_PARAMETER = (None, 36)
 text_font = "assets/font/Pixeloid_Sans.ttf"
+
 all_sprites = None #  pygame.sprite.LayeredUpdates()
 
 # NAVIGATION
