@@ -27,7 +27,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.key = kwargs.get("key", format_surface_id_to_key(self.surface_id))
         SurfaceSprite.SurfaceId += 1
 
-        self.mounted = False  # is visible in screen
+        self.mounted = kwargs.get("mounted", False)  # is visible in screen
 
         self.image_path = kwargs.get("image_path", None)
         self.align = kwargs.get("align", "topleft")
@@ -35,7 +35,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         if kwargs.get("should_init_surface", True):
             self.__init_surface__()
 
-    def __init_surface__(self):
+    def __init_surface__(self, **kwargs):
         if self.image_path is not None:
             self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
         else:
@@ -48,7 +48,6 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.x = self.px_x
         self.rect.y = self.px_y
 
-        self.mounted = kwargs.get("mounted", False)  # is visible in screen
         if self.mounted:
             self.mount()
 

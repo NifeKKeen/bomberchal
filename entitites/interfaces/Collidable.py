@@ -1,5 +1,3 @@
-from requests.utils import is_ipv4_address
-
 import globals
 from entitites.bonus import Bonus
 from entitites.entity import Entity
