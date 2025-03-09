@@ -4,7 +4,8 @@ tempCodeRunnerFile.*
 __pycache__/
 *.py[cod]
 *$py.class
-
+.idea
+.DS_Store
 # C extensions
 *.so
 

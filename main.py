@@ -1,11 +1,14 @@
 import pygame, sys
 from pygame.locals import *
 
-from pages.game.game import reset_game
+from pages.menu.menu import menu
+from pages.menu.settings import settings
 from utils import paint_api
-from pages import menu, game
+from pages.game.game import reset_game, game
 import globals
+from utils.interaction_api import get_pressed_keys
 from utils.paint_api import draw_sprites
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -26,35 +29,45 @@ if __name__ == "__main__":
                 sys.exit()
 
             if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
-                globals.frame_events.add((event.type, event.button))
+                globals.frame_event_code_pairs.add((event.type, event.button))
             if event.type in (KEYDOWN, KEYUP):
-                globals.frame_events.add((event.type, event.key))
+                globals.frame_event_code_pairs.add((event.type, event.key))
+            globals.frame_event_types.add(event.type)
 
-            globals.frame_keys = pygame.key.get_pressed()
+            globals.frame_keys_map = pygame.key.get_pressed()
+            globals.frame_keys = get_pressed_keys()
 
 
         # Page navigation
 
+        if globals.switched_page_this_frame and not globals.current_page.startswith("game"):
+            reset_game()
+
         if globals.current_page == "menu":
-            menu.menu()
-        # elif globals.current_page == "menu/settings":
-        #     menu_settings()
+            globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
+            globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+            menu(is_setup=globals.switched_page_this_frame)
+
+        elif globals.current_page == "menu/settings":
+            globals.settings_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
+            globals.settings_background_img = pygame.transform.scale(globals.settings_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+            settings()
         # elif globals.current_page == "menu/customization":
         #     menu_customization()
         # elif globals.current_page == "menu/scoreboard":
         #     menu_scoreboard()
         elif globals.current_page == "game":
-            game.game.game(is_setup=globals.switched_page_this_frame)
-
-        if not globals.current_page.startswith("game"):
-            reset_game()
+            globals.menu_background_img = None
+            game(is_setup=globals.switched_page_this_frame)
 
         draw_sprites()
 
         globals.Frame.tick(globals.FPS)
 
         # Clean up
-        globals.frame_events.clear()
+        globals.frame_event_code_pairs.clear()
+        globals.frame_event_types.clear()
+        globals.frame_keys.clear()
 
         # Check if the page was NOT switched during this frame
         if not globals.switched_page:
