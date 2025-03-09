@@ -1,6 +1,6 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
-from pages.menu.config import load_controls  
+from pages.menu.config import load_controls
 
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
@@ -32,8 +32,6 @@ frame_keys = []  # list of currently pressed keys
 to_render_keys = set()
 map_key_sprite = dict()
 
-cell_size = 32
-
 # GAME STATES
 cols = 0
 rows = 0
@@ -45,11 +43,15 @@ tick = 0
 events_stack = deque()  # TODO
 entities = set()
 
-
 # GAME CONSTRAINTS
+cell_size = 32
+player_cell_size = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # TODO
+D_OBSTACLE_CELL = 2  # destroyable obstacle
+BOT_CELL = 3  # starting cell for bot
 
+directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 exp_key_p1, exp_key_p2 = load_controls()
 
 controls_players = [

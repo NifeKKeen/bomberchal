@@ -2,13 +2,13 @@ import pygame, sys
 from pygame.locals import *
 
 from pages.menu.menu import menu
-from pages.menu.settings import settings as menu_settings
-from pages.game import reset_game
+from pages.menu.settings import settings
 from utils import paint_api
-from pages import game
+from pages.game.game import reset_game, game
 import globals
 from utils.interaction_api import get_pressed_keys
 from utils.paint_api import draw_sprites
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -39,7 +39,6 @@ if __name__ == "__main__":
 
 
         # Page navigation
-        print(globals.frame_keys)
 
         if globals.switched_page_this_frame and not globals.current_page.startswith("game"):
             reset_game()
@@ -52,14 +51,14 @@ if __name__ == "__main__":
         elif globals.current_page == "menu/settings":
             globals.settings_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
             globals.settings_background_img = pygame.transform.scale(globals.settings_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
-            menu_settings()
+            settings()
         # elif globals.current_page == "menu/customization":
         #     menu_customization()
         # elif globals.current_page == "menu/scoreboard":
         #     menu_scoreboard()
         elif globals.current_page == "game":
             globals.menu_background_img = None
-            game.game(is_setup=globals.switched_page_this_frame)
+            game(is_setup=globals.switched_page_this_frame)
 
         draw_sprites()
 

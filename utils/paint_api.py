@@ -1,6 +1,7 @@
 import pygame
 
 import globals
+from utils.helpers import  get_pos, get_field_pos
 from utils.helpers import rand
 
 
@@ -44,6 +45,11 @@ class SurfaceSprite(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
 
         self.rect = self.image.get_rect()
+        self.rect.x = self.px_x
+        self.rect.y = self.px_y
+
+        self.mounted = False  # is visible in screen
+
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
     def unmount(self):
@@ -134,7 +140,7 @@ def mount_rect(**kwargs):
 
 def mount_text(**kwargs):
     # key should be specified in order to decrease the number of renders
-    # otherwise a new surface will be created and rendered each frame   
+    # otherwise a new surface will be created and rendered each frame
     sprite = _get_text_surface(**kwargs)
     sprite.mounted = True
 
@@ -195,7 +201,7 @@ def draw_sprites():
 def update_text(key, text):
 
     sprite = globals.map_key_sprite.get(key)
-    
+
     if sprite and hasattr(sprite, "text"):
         sprite.text = text
         sprite.__init_surface__()

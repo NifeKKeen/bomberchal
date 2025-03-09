@@ -1,14 +1,29 @@
 from entitites.entity import Entity
+from entitites.interfaces.BombSpawnable import BombSpawnable
+from entitites.interfaces.BotIntellect import BotIntellect
+from entitites.interfaces.Movable import Movable
+from entitites.interfaces.Collidable import Collidable
+from utils.helpers import rand
 
-class Bot(Entity):
+
+class Bot(Collidable, BotIntellect, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.bomb_allowed = kwargs.get("bomb_allowed", 1)
-        self.bomb_power = kwargs.get("bomb_power", 1)
-        self.speed = kwargs.get("speed", 1)
         self.lives = kwargs.get("bomb_lives", 1)
         self.bonuses = kwargs.get("bomb_bonuses", [])  # BonusItem instances
 
     def is_alive(self):
         return bool(self.lives)
+
+    def add_tick(self):
+        self.tick += 1
+        if rand(1, 1000) < 1: # test
+            self.spawn_bomb()
+
+def get_bots(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Bot):
+            res.add(entity)
+    return res
