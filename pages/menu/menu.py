@@ -20,7 +20,7 @@ def menu(is_setup = False):
         px_w=65,
         px_h=65,
         key="mute",
-        image_path="assets/images/buttons/bar_button.png",
+        image_path="assets/images/mute/volume.png",
     )
     play_button_sprite = paint_api.mount_rect(
         px_y=globals.center_y - 100,
@@ -117,8 +117,16 @@ def menu(is_setup = False):
         pygame.quit()
         sys.exit()
     elif is_clicked(mute_button_sprite):
-        current_volume = pygame.mixer.music.get_volume()
-        if current_volume > 0:
+        globals.is_muted = not globals.is_muted
+        if globals.is_muted:
             pygame.mixer.music.set_volume(0)
+            mute_button_sprite.image = pygame.transform.scale(
+                pygame.image.load("assets/images/mute/mute.png").convert_alpha(),
+                (mute_button_sprite.px_w, mute_button_sprite.px_h)
+            )
         else:
             pygame.mixer.music.set_volume(0.5)
+            mute_button_sprite.image = pygame.transform.scale(
+                pygame.image.load("assets/images/mute/volume.png").convert_alpha(),
+                (mute_button_sprite.px_w, mute_button_sprite.px_h)
+            )
