@@ -120,33 +120,37 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-
     players_params = [
-        [player1_sprite, K_w, K_s, K_a, K_d, K_SPACE],
-        [player2_sprite, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN],
+    [
+        player1_sprite,
+        globals.controls_players[0]["to_up_key"],
+        globals.controls_players[0]["to_down_key"],
+        globals.controls_players[0]["to_left_key"],
+        globals.controls_players[0]["to_right_key"],
+        globals.controls_players[0]["explosion_key"]
+    ],
+    [
+        player2_sprite,
+        globals.controls_players[1]["to_up_key"],
+        globals.controls_players[1]["to_down_key"],
+        globals.controls_players[1]["to_left_key"],
+        globals.controls_players[1]["to_right_key"],
+        globals.controls_players[1]["explosion_key"]
     ]
+]
 
     for player in players_params:
         if is_clicked(player[0]):
             player[0].unmount()
-
         if player[0].alive():
             if is_pressed(player[1]):
                 player[0].move_px(0, -player[0].speed)
-                # if player[0].collides_with(player2_sprite):
-                #     player[0].move_px(0, +player[0].speed)
-                # for obstacle in Obstacles:
-                #     if player[0].collides_with(obstacle[0]):
-                #         player[0].move_px(0, obstacle[0].px_y - player[0].y)
-                #         break
-
             if is_pressed(player[2]):
                 player[0].move_px(0, +player[0].speed)
             if is_pressed(player[3]):
                 player[0].move_px(-player[0].speed, 0)
             if is_pressed(player[4]):
                 player[0].move_px(+player[0].speed, 0)
-
             if is_pressed(player[5]):
                 player[0].spawn_bomb()
 

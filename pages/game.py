@@ -70,7 +70,7 @@ def game(**kwargs):
             player1_sprite.move_px(-player1_sprite.speed, 0)
         if is_pressed(K_d):
             player1_sprite.move_px(player1_sprite.speed, 0)
-        if is_pressed_once(K_SPACE):
+        if is_pressed_once(globals.controls_players[0]["explosion_key"]):
             player1_sprite.spawn_bomb()
     if player2_sprite.alive():
         if is_pressed(K_UP):
@@ -81,7 +81,7 @@ def game(**kwargs):
             player2_sprite.move_px(-player2_sprite.speed, 0)
         if is_pressed(K_RIGHT):
             player2_sprite.move_px(player2_sprite.speed, 0)
-        if is_pressed_once(K_RETURN):
+        if is_pressed_once(globals.controls_players[1]["explosion_key"]):
             player2_sprite.spawn_bomb()
 
     if player1_sprite.collides_with(player2_sprite):

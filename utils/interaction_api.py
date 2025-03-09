@@ -30,3 +30,7 @@ def get_pressed_keys():  # is already called in main.py, use globals.frame_keys 
         if event_type == KEYDOWN:
             keys.append(key)
     return keys
+
+def get_last_pressed_key():
+    keys = get_pressed_keys()
+    return keys[-1] if keys else None
