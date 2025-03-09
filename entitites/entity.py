@@ -20,7 +20,6 @@ class Entity(SurfaceSprite):
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
 
-        self.mounted = False
         if kwargs.get("key") is None:
             self.key = f"e-{self.entity_id}"
 

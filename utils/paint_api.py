@@ -48,7 +48,9 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.x = self.px_x
         self.rect.y = self.px_y
 
-        self.mounted = False  # is visible in screen
+        self.mounted = kwargs.get("mounted", False)  # is visible in screen
+        if self.mounted:
+            self.mount()
 
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
@@ -191,7 +193,8 @@ def draw_sprites():
 
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
-            globals.all_sprites.remove(sprite.key)
+            # globals.all_sprites.remove(sprite.key)
+            pass
 
     # all_sprites.update()
 

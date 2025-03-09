@@ -1,5 +1,7 @@
 from typing import Protocol
 
+import globals
+from entitites.bot import get_bots
 from entitites.entity import Entity
 from utils.interaction_api import is_pressed, is_pressed_once
 
@@ -18,34 +20,48 @@ class Controllable(Entity, ControllableProtocol):
         self.move_down_key = kwargs.get("move_down_key", None)
         self.attack_key = kwargs.get("attack_key", None)
         self.attack_func = kwargs.get("attack_func", None)
+        self.movement_timer = 0 # maybe should be renamed. Means time in ticks during which a movement and/or attack occurs
 
     def handle_event(self):
         if not self.mounted:
             return
 
-        moved_x = False
-        moved_y = False
+        total_move_x = 0
+        total_move_y = 0
 
         if self.move_left_key and is_pressed(self.move_left_key):
-            self.move_px(-self.speed, 0)
-            moved_x = True
+            total_move_x -= self.speed
 
         if self.move_right_key and is_pressed(self.move_right_key):
-            self.move_px(+self.speed, 0)
-            moved_x = True
+            total_move_x += self.speed
 
         if self.move_up_key and is_pressed(self.move_up_key):
-            self.move_px(0, -self.speed)
-            moved_y = True
+            total_move_y -= self.speed
 
         if self.move_down_key and is_pressed(self.move_down_key):
-            self.move_px(0, +self.speed)
-            moved_y = True
+            total_move_y += self.speed
 
-        if not moved_x:
-            self.vel_px_x = 0
-        if not moved_y:
-            self.vel_px_y = 0
+
+        self.move_px(total_move_x, total_move_y)
+
+        changes = False
+        if total_move_x != 0 or total_move_y != 0:
+            changes = True
 
         if self.attack_key and is_pressed_once(self.attack_key):
             self.attack_func(self)
+            changes = True
+
+        if not changes:
+            return
+        else:
+            self.movement_timer += 1
+
+        print(self.movement_timer)
+
+        if self.movement_timer >= 5:
+            self.movement_timer = 0
+
+            # if any player moves, recalculate distances (=> destination)
+            for entity in get_bots(list(self.entity_group)):
+                entity.moving = 0

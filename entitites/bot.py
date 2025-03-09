@@ -6,7 +6,7 @@ from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand
 
 
-class Bot(Collidable, BotIntellect, BombSpawnable, Movable, Entity):
+class Bot(BotIntellect, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -18,7 +18,7 @@ class Bot(Collidable, BotIntellect, BombSpawnable, Movable, Entity):
 
     def add_tick(self):
         self.tick += 1
-        if rand(1, 1000) < 1: # test
+        if rand(1, 1000) <= 0: # test
             self.spawn_bomb()
 
 def get_bots(entities):

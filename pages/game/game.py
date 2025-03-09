@@ -1,4 +1,4 @@
-from entitites.bonus import Bonus
+from entitites.bonus import Bonus, bonus_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
@@ -21,6 +21,9 @@ def setup_game(**kwargs):
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
     globals.field = kwargs.get("field", field_generator.generate(globals.rows, globals.cols))
+    globals.field_fire_state = kwargs.get("field_fired",
+        [[0] * globals.cols for _ in range(globals.rows)]
+    )
 
     control_keys = [
         (K_w, K_UP),
@@ -33,6 +36,7 @@ def setup_game(**kwargs):
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
+            mounted=True,
             px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
@@ -43,14 +47,13 @@ def setup_game(**kwargs):
             attack_func=Player.spawn_bomb,
             speed=2,
             color=(0, rnd / 2, rnd),
-            bomb_power=3,
+            bomb_power=7,
             bomb_allowed=5,
             layer=260,
             bomb_timer=3000,
             entity_group=globals.entities,
             key=f"p-{i}"
         )
-        player.mount()
 
     render_field()
 
@@ -64,44 +67,47 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
                     key = f"o-{x};{y}",
                     color=(64, 64, 64),
                     type=field[x][y],
-                    entity_group=globals.entities)
-                obstacle_sprite.mount()
+                    entity_group=globals.entities
+                )
 
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
                     key = f"o-{x};{y}",
                     color=(255, 255, 64),
                     type=field[x][y],
-                    entity_group=globals.entities)
-                obstacle_sprite.mount()
+                    entity_group=globals.entities
+                )
 
 
             elif field[x][y] == globals.BOT_CELL:
                 bot = Bot(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
+                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
                     x=x, y=y,
                     speed=1,
                     color=((13*x) % 256, (13*y) % 256 , 255 * ((x + y) % 2)),
                     layer=256,
                     entity_group=globals.entities,
                 )
-                bot.mount()
 
 def reset_game():
     globals.entities.clear()
 
-def spawn_bonus():
+def spawn_bonus(bonus_type = "Speed"):
     while True:
         bonus_x, bonus_y = rand(0, globals.rows), rand(0, globals.cols)
         collision = False
@@ -114,15 +120,16 @@ def spawn_bonus():
             continue
         # found position
         bonus = Bonus(
+            mounted=True,
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
+            type=bonus_type,
             x=bonus_x, y=bonus_y,
             color=(255, 255, 255),
             layer=251,
             entity_group=globals.entities
         )
-        bonus.mount()
         break
 
 def game(**kwargs):
@@ -140,8 +147,8 @@ def game(**kwargs):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
-    if globals.tick % 50 == 0:
-        spawn_bonus()
+    if globals.tick % 150 == 0:
+        spawn_bonus(bonus_types()[rand(0, 3)])
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
 

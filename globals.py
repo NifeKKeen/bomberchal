@@ -36,6 +36,7 @@ map_key_sprite = dict()
 cols = 0
 rows = 0
 field = None
+field_fire_state = None  # power of fire in specific cell in ticks
 paused = False
 game_mode = None
 scores = dict()
