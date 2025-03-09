@@ -15,7 +15,7 @@ center_x = SCREEN_WIDTH // 2
 center_y = SCREEN_HEIGHT // 2
 text_font = "assets/font/Pixeloid_Sans.ttf"
 all_sprites = None #  pygame.sprite.LayeredUpdates()
-
+is_muted = False
 # NAVIGATION
 current_page = "menu"
 switched_page = False  # can change in current frame
