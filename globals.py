@@ -4,7 +4,7 @@ from pages.menu.config import load_controls
 
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None #  pygame.time.Clock()
 FPS = 60

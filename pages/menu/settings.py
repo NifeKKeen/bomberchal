@@ -61,8 +61,8 @@ def settings():
     left_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
         px_y=globals.center_y - 185,
-        px_w=64,
-        px_h=64,
+        px_w=75,
+        px_h=75,
         key="left_arrow_p0",
         image_path="assets/images/buttons/left.png",
     )
@@ -76,14 +76,14 @@ def settings():
         px_y=globals.center_y - 170,
         key="display_p0",
         text=current_key_text_p0,
-        font_size=20,
+        font_size=25,
         color=(255, 255, 0)
     )
     right_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
         px_y=globals.center_y - 185,
-        px_w=64,
-        px_h=64,
+        px_w=75,
+        px_h=75,
         key="right_arrow_p0",
         image_path="assets/images/buttons/right.png",
     )
@@ -121,7 +121,7 @@ def settings():
 
     paint_api.mount_text(
         px_x=globals.center_x - 350,
-        px_y=globals.center_y + 30,  
+        px_y=globals.center_y + 25,  
         key="label_p1",
         text="for player2",
         font_size=30,
@@ -131,8 +131,8 @@ def settings():
     left_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
         px_y=globals.center_y + 15,  
-        px_w=64,
-        px_h=64,
+        px_w=75,
+        px_h=75,
         key="left_arrow_p1",
         image_path="assets/images/buttons/left.png",
     )
@@ -143,17 +143,17 @@ def settings():
     )
     display_p1 = paint_api.mount_text(
         px_x=globals.center_x,
-        px_y=globals.center_y + 30, 
+        px_y=globals.center_y + 25, 
         key="display_p1",
         text=current_key_text_p1,
-        font_size=20,
+        font_size=25,
         color=(255, 255, 0)
     )
     right_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
         px_y=globals.center_y + 15, 
-        px_w=64,
-        px_h=64,
+        px_w=75,
+        px_h=75,
         key="right_arrow_p1",
         image_path="assets/images/buttons/right.png",
     )

@@ -12,10 +12,18 @@ def menu(is_setup):
         pygame.mixer.music.set_volume(.5)
         pygame.mixer.music.play(-1)
 
+    mute_button_sprite = paint_api.mount_rect(
+        px_x=globals.center_x - 380,
+        px_y=globals.center_y - 200,    
+        px_w=65,
+        px_h=65,
+        key="mute",
+        image_path="assets/images/buttons/bar_button.png",
+    )
     play_button_sprite = paint_api.mount_rect(
         px_y=globals.center_y - 100,
-        px_w=350,
-        px_h=85,
+        px_w=460,
+        px_h=90,
         key="play",
         image_path="assets/images/buttons/bar_button.png",
         align="center"
@@ -41,8 +49,8 @@ def menu(is_setup):
 
     settings_button_sprite = paint_api.mount_rect(
         px_y=globals.center_y,
-        px_w=350,
-        px_h=85, 
+        px_w=460,
+        px_h=90, 
         key="settings", 
         image_path="assets/images/buttons/bar_button.png",
         align="center"
@@ -67,8 +75,8 @@ def menu(is_setup):
 
     quit_button_sprite = paint_api.mount_rect(
         px_y=globals.center_y + 100,
-        px_w=350,
-        px_h=85, 
+        px_w=460,
+        px_h=90, 
         key="quit", 
         image_path="assets/images/buttons/bar_button.png",
         align="center"
@@ -106,3 +114,9 @@ def menu(is_setup):
     elif is_clicked(quit_button_sprite):
         pygame.quit()
         sys.exit()
+    elif is_clicked(mute_button_sprite):
+        current_volume = pygame.mixer.music.get_volume()
+        if current_volume > 0:
+            pygame.mixer.music.set_volume(0)
+        else:
+            pygame.mixer.music.set_volume(0.5)
