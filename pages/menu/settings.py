@@ -34,7 +34,14 @@ def save_config():
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
-def settings():
+def settings(is_setup = False):
+    if is_setup:
+        if globals.current_music != globals.menu_music_path:
+            globals.current_music = globals.menu_music_path
+            pygame.mixer.music.load(globals.menu_music_path)
+            pygame.mixer.music.set_volume(.5)
+            pygame.mixer.music.play(-1)
+
     load_config()
     offered_keys_p0 = [pygame.K_SPACE, pygame.K_v, pygame.K_x, "custom"]
     try:

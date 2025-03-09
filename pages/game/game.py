@@ -1,3 +1,5 @@
+import pygame.mixer
+
 from entitites.bonus import Bonus, bonus_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
@@ -18,6 +20,11 @@ DEFAULT_FIELD = [
 ]
 
 def setup_game(**kwargs):
+    globals.current_music = globals.game_music_path
+    pygame.mixer.music.load(globals.game_music_path)
+    pygame.mixer.music.set_volume(.2)
+    pygame.mixer.music.play(-1)
+
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
     globals.field = kwargs.get("field", field_generator.generate(globals.rows, globals.cols))

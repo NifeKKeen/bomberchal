@@ -51,7 +51,7 @@ if __name__ == "__main__":
         elif globals.current_page == "menu/settings":
             globals.settings_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
             globals.settings_background_img = pygame.transform.scale(globals.settings_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
-            settings()
+            settings(is_setup=globals.switched_page_this_frame)
         # elif globals.current_page == "menu/customization":
         #     menu_customization()
         # elif globals.current_page == "menu/scoreboard":

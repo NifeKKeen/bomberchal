@@ -6,11 +6,13 @@ from utils.interaction_api import is_clicked
 
 import globals
 
-def menu(is_setup):
+def menu(is_setup = False):
     if is_setup:
-        pygame.mixer.music.load("assets/sound/menu3.mp3")
-        pygame.mixer.music.set_volume(.5)
-        pygame.mixer.music.play(-1)
+        if globals.current_music != globals.menu_music_path:
+            globals.current_music = globals.menu_music_path
+            pygame.mixer.music.load(globals.menu_music_path)
+            pygame.mixer.music.set_volume(.5)
+            pygame.mixer.music.play(-1)
 
     mute_button_sprite = paint_api.mount_rect(
         px_x=globals.center_x - 380,
