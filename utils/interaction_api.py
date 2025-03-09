@@ -32,5 +32,4 @@ def get_pressed_keys():  # is already called in main.py, use globals.frame_keys 
     return keys
 
 def get_last_pressed_key():
-    keys = get_pressed_keys()
-    return keys[-1] if keys else None
+    return globals.frame_keys[-1] if globals.frame_keys else None
