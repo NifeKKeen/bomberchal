@@ -20,10 +20,11 @@ DEFAULT_FIELD = [
 ]
 
 def setup_game(**kwargs):
-    globals.current_music = globals.game_music_path
-    pygame.mixer.music.load(globals.game_music_path)
-    pygame.mixer.music.set_volume(.2)
-    pygame.mixer.music.play(-1)
+    if not globals.is_muted:
+        globals.current_music = globals.game_music_path
+        pygame.mixer.music.load(globals.game_music_path)
+        pygame.mixer.music.set_volume(.2)
+        pygame.mixer.music.play(-1)
 
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)

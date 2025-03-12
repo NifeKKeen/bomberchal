@@ -3,6 +3,8 @@ from pygame.locals import *
 
 from pages.menu.menu import menu
 from pages.menu.settings import settings
+from pages.menu.customization import menu_customization
+from pages.menu.scoreboard import menu_scoreboard 
 from utils import paint_api
 from pages.game.game import reset_game, game
 import globals
@@ -49,13 +51,15 @@ if __name__ == "__main__":
             menu(is_setup=globals.switched_page_this_frame)
 
         elif globals.current_page == "menu/settings":
-            globals.settings_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
-            globals.settings_background_img = pygame.transform.scale(globals.settings_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+            globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
+            globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             settings(is_setup=globals.switched_page_this_frame)
-        # elif globals.current_page == "menu/customization":
-        #     menu_customization()
-        # elif globals.current_page == "menu/scoreboard":
-        #     menu_scoreboard()
+        elif globals.current_page == "menu/customization":
+            globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
+            globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+            menu_customization()
+        elif globals.current_page == "menu/scoreboard":
+            menu_scoreboard()
         elif globals.current_page == "game":
             globals.menu_background_img = None
             game(is_setup=globals.switched_page_this_frame)

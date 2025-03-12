@@ -57,6 +57,15 @@ def settings(is_setup = False):
         paint_api.update_text("display_p0", text=display_text)
 
     paint_api.mount_text(
+        px_x=globals.center_x,
+        px_y=globals.center_y - 250,
+        key="change_bomb_button",
+        text="Change bomb button",
+        font_size=40,
+        color=(255, 255, 255),
+        align="center"
+    )
+    paint_api.mount_text(
         px_x=globals.center_x - 350,
         px_y=globals.center_y - 170,
         key="label_p0",

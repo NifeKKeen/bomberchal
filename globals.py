@@ -17,7 +17,7 @@ menu_music_path = "assets/sound/menu3.mp3"
 game_music_path = "assets/sound/BG.mpeg"
 
 menu_background_img = None
-settings_background_img = None
+brown_background_img = None
 
 FONT_PARAMETER = (None, 36)
 text_font = "assets/font/Pixeloid_Sans.ttf"
@@ -78,4 +78,12 @@ controls_players = [
         "to_down_key": K_DOWN,
         "explosion_key": exp_key_p2
     }
+]
+
+
+skins = [
+    "assets/characters/ch1/11.png",
+    "assets/characters/ch2/22.png",
+    "assets/characters/ch3/33.png",
+    "assets/characters/ch4/44.png"
 ]
