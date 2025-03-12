@@ -1,11 +1,12 @@
 import globals
-from entitites.bonus import Bonus
 from entitites.entity import Entity
+from globals import directions
 from utils.helpers import rand
 
 
 class Collidable(Entity):
     def get_collisions(self):
+        from entitites.bonus import Bonus
         res = []
 
         for entity in self.entity_group:
@@ -20,7 +21,8 @@ class Collidable(Entity):
         from entitites.bomb import Bomb
         from entitites.bot import Bot
         from entitites.fire import Fire
-        from entitites.player import Player
+        from entitites.bonus import Bonus
+        from entitites.player import Player, get_players
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
@@ -29,6 +31,10 @@ class Collidable(Entity):
                 if entity == self or not entity.collides_with(self):
                     continue
                 # now entity collides and it is not ourselves
+
+                if isinstance(self, Bot):
+                    if isinstance(entity, Player):
+                        entity.kill()
 
                 if isinstance(entity, Obstacle):
                     if isinstance(self, Movable):
@@ -60,6 +66,7 @@ class Collidable(Entity):
                     else:
                         entity.collect(self)
 
+
         elif isinstance(self, Fire):
             for entity in list(self.entity_group):
                 if entity == self or not entity.collides_with(self):
@@ -72,6 +79,8 @@ class Collidable(Entity):
                 if isinstance(entity, Bomb):
                     entity.explode()
                 if isinstance(entity, Player) or isinstance(entity, Bot):
+                    entity.kill()
+                if isinstance(entity, Bonus):
                     entity.kill()
 
 

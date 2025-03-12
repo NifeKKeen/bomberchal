@@ -57,9 +57,9 @@ class Controllable(Entity, ControllableProtocol):
         else:
             self.movement_timer += 1
 
-        print(self.movement_timer)
+        # print(self.movement_timer)
 
-        if self.movement_timer >= 5:
+        if self.movement_timer >= 20: # if something controllable changes for more than 20 ticks, distances recalculating
             self.movement_timer = 0
 
             # if any player moves, recalculate distances (=> destination)

@@ -10,7 +10,7 @@ from utils import paint_api
 from pygame.locals import *
 from pages.navigation import navigate
 from entitites.bot import Bot
-from entitites.player import Player
+from entitites.player import Player, get_players
 from utils.helpers import rand
 from utils.interaction_api import is_clicked
 import globals
@@ -99,6 +99,7 @@ def render_field(**kwargs):
 
 
             elif field[x][y] == globals.BOT_CELL:
+                bot_type = rand(1, 4)
                 bot = Bot(
                     mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
@@ -106,9 +107,10 @@ def render_field(**kwargs):
                     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
                     x=x, y=y,
                     speed=1,
-                    color=((13*x) % 256, (13*y) % 256 , 255 * ((x + y) % 2)),
+                    color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
                     layer=256,
                     entity_group=globals.entities,
+                    type=bot_type
                 )
 
 def reset_game():
@@ -153,9 +155,13 @@ def game(**kwargs):
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
-    globals.tick += 1
-    if globals.tick % 150 == 0:
+    if globals.tick % 200 == 0:
         spawn_bonus(bonus_types()[rand(0, 3)])
+    globals.tick += 1
+
+    # if len(get_players(globals.entities)) == 0:
+    #     raise Exception("You lost")
+
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
 
