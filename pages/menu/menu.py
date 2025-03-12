@@ -8,7 +8,7 @@ import globals
 
 def menu(is_setup = False):
     if is_setup:
-        if not globals.is_muted and globals.current_music != globals.menu_music_path:
+        if globals.current_music != globals.menu_music_path:
             globals.current_music = globals.menu_music_path
             pygame.mixer.music.load(globals.menu_music_path)
             pygame.mixer.music.set_volume(.5)
