@@ -24,12 +24,12 @@ class Collidable(Entity):
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
-        if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
-            for entity in list(self.entity_group):
-                if entity == self or not entity.collides_with(self):
-                    continue
-                # now entity collides and it is not ourselves
+        for entity in list(self.entity_group):
+            if entity == self or not entity.collides_with(self):
+                continue
+            # now entity collides and it is not ourselves
 
+            if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
                 if isinstance(entity, Obstacle):
                     if isinstance(self, Movable):
                         self_c_x = self.px_x + self.px_w // 2
@@ -60,15 +60,11 @@ class Collidable(Entity):
                     else:
                         entity.collect(self)
 
-        elif isinstance(self, Fire):
-            for entity in list(self.entity_group):
-                if entity == self or not entity.collides_with(self):
-                    continue
-                # now entity collides and it is not ourselves
-
+            elif isinstance(self, Fire):
                 if isinstance(entity, Obstacle):
                     if entity.type == globals.D_OBSTACLE_CELL:
                         entity.kill()
+                        self.self_destroy()
                 if isinstance(entity, Bomb):
                     entity.explode()
                 if isinstance(entity, Player) or isinstance(entity, Bot):

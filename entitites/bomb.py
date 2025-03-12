@@ -5,6 +5,7 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
 from utils.helpers import get_ms_from_tick, rand
 import globals
+from utils.sound_api import play_explosion_sound
 
 
 class Bomb(Movable, Controllable, Collidable, Entity):
@@ -23,11 +24,12 @@ class Bomb(Movable, Controllable, Collidable, Entity):
 
     def spread_fire(self):
         fire = Fire(
+            type="bfs",
             mounted=True,
             is_initial=True,
             power=self.power,
             timer=500,
-            spread_timer=25,
+            spread_timer=0,
             spawner=self,
             px_w=self.px_w,
             px_h=self.px_h,
@@ -46,6 +48,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         if self.exploded:
             return
         self.exploded = True
+        play_explosion_sound(volume=.2)
 
         if self.spawner:
             self.spawner.bomb_allowed += 1

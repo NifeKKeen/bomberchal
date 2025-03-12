@@ -1,5 +1,3 @@
-import pygame.mixer
-
 from entitites.bonus import Bonus, bonus_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
@@ -14,16 +12,14 @@ from entitites.player import Player
 from utils.helpers import rand
 from utils.interaction_api import is_clicked
 import globals
+from utils.sound_api import play_music
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
 
 def setup_game(**kwargs):
-    globals.current_music = globals.game_music_path
-    pygame.mixer.music.load(globals.game_music_path)
-    pygame.mixer.music.set_volume(.2)
-    pygame.mixer.music.play(-1)
+    play_music(globals.game_music_path, .1, override=True)
 
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
@@ -150,9 +146,6 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    # if player1_sprite.collides_with(player2_sprite):
-    #     print("Che tam")
-    # print(SurfaceSprite.SurfaceId)
     globals.tick += 1
     if globals.tick % 150 == 0:
         spawn_bonus(bonus_types()[rand(0, 3)])

@@ -1,18 +1,15 @@
 import sys
-import pygame
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
 import globals
+from utils.sound_api import play_menu_music, stop_music
+
 
 def menu(is_setup = False):
     if is_setup:
-        if globals.current_music != globals.menu_music_path:
-            globals.current_music = globals.menu_music_path
-            pygame.mixer.music.load(globals.menu_music_path)
-            pygame.mixer.music.set_volume(.5)
-            pygame.mixer.music.play(-1)
+        play_menu_music(volume=.2)
 
     mute_button_sprite = paint_api.mount_rect(
         px_x=globals.center_x - 380,
@@ -114,11 +111,11 @@ def menu(is_setup = False):
     elif is_clicked(settings_button_sprite):
         navigate("menu/settings")
     elif is_clicked(quit_button_sprite):
-        pygame.quit()
         sys.exit()
     elif is_clicked(mute_button_sprite):
-        current_volume = pygame.mixer.music.get_volume()
-        if current_volume > 0:
-            pygame.mixer.music.set_volume(0)
+        if globals.music_muted:
+            globals.music_muted = False
+            play_menu_music(volume=.2)
         else:
-            pygame.mixer.music.set_volume(0.5)
+            globals.music_muted = True
+            stop_music()

@@ -46,7 +46,7 @@ class BotIntellect(Movable, Collidable, Entity):
             return
 
         if self.type == 1:
-            self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+            self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
 
         elif self.type == 5:
             pass
@@ -66,9 +66,9 @@ class BotIntellect(Movable, Collidable, Entity):
                 else:
                     self.moving = 0
 
-                self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+                self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 if len(Collidable.get_collisions(self)) > 0:
-                    self.move_px(*tuple(-x * self.speed for x in globals.directions[self.direction]))
+                    self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                     self.moving = 2
 
             if self.moving == 2:
@@ -124,7 +124,7 @@ class BotIntellect(Movable, Collidable, Entity):
                     while queue:
                         x, y = queue[0]
                         queue.pop(0)
-                        for dx, dy in globals.directions:
+                        for dx, dy in globals.BFS_DIRECTIONS:
                             nx, ny = x + dx, y + dy
                             if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
                                 continue
@@ -195,7 +195,7 @@ class BotIntellect(Movable, Collidable, Entity):
             # again, 1 is bot that moves left-right or up-down
             elif self.type == 1 and (isinstance(entity, Obstacle) or isinstance(entity, Bot)
                   or (isinstance(entity, Bomb) and entity.spawner != self)):
-                self.move_px(*tuple(x * -self.speed for x in globals.directions[self.direction]))
+                self.move_px(*tuple(x * -self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 self.direction ^= 1  # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
                 # if random.randint(1, 100) <= 50: # Randomly change direction, intended to work if there is more than one direction to which we can go
                 #     self.direction ^= 2
