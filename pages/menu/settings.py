@@ -88,12 +88,13 @@ def settings(is_setup = False):
         else pygame.K_0
     )
     display_p0 = paint_api.mount_text(
-        px_x=globals.center_x ,
-        px_y=globals.center_y - 170,
+        px_x=globals.center_x + 35,
+        px_y=globals.center_y - 150,
         key="display_p0",
         text=current_key_text_p0,
         font_size=25,
-        color=(255, 255, 0)
+        color=(255, 255, 0),
+        align="center"
     )
     right_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
@@ -141,7 +142,8 @@ def settings(is_setup = False):
         key="label_p1",
         text="for player2",
         font_size=30,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
+
     )
 
     left_arrow_p1 = paint_api.mount_rect(
@@ -158,12 +160,13 @@ def settings(is_setup = False):
         else pygame.K_0
     )
     display_p1 = paint_api.mount_text(
-        px_x=globals.center_x,
-        px_y=globals.center_y + 25, 
+        px_x=globals.center_x + 35,
+        px_y=globals.center_y + 50, 
         key="display_p1",
         text=current_key_text_p1,
         font_size=25,
-        color=(255, 255, 0)
+        color=(255, 255, 0),
+        align = "center"
     )
     right_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
@@ -194,7 +197,7 @@ def settings(is_setup = False):
 
 
     back_button = paint_api.mount_rect(
-        px_y=globals.center_y + (globals.center_y // 2),
+        px_y=globals.center_y + 300,
         px_w=350,
         px_h=80,
         key="back",
