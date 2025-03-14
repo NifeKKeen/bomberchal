@@ -119,12 +119,12 @@ class AnimatedSprite(SurfaceSprite):
         if self.frames and now - self.last_update > self.delay:
             self.last_update = now
             print(globals.tick)
-            self.kwargs["image_path"] = self.frames[self.current_frame]
-            self.kwargs["key"] = None
-            self.image = mount_image(**self.kwargs).image
-            self.rect = self.image.get_rect()
-
+            # Обновляем номер кадра
             self.current_frame = (self.current_frame + 1) % len(self.frames)
+            # Обновляем путь к изображению для текущего кадра
+            self.image_path = self.frames[self.current_frame]
+            # Перезагружаем поверхность с новым изображением
+            self.__init_surface__()
 
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
