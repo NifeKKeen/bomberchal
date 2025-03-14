@@ -82,8 +82,22 @@ controls_players = [
 
 
 skins = [
-    "assets/characters/ch1/11.png",
-    "assets/characters/ch2/22.png",
-    "assets/characters/ch3/33.png",
-    "assets/characters/ch4/44.png"
+    {
+        "ch1": "assets/characters/ch1/11.png",
+        "ch2": "assets/characters/ch2/22.png",
+        "ch3": "assets/characters/ch3/33.png",
+        "ch4": "assets/characters/ch4/44.png"
+    }
 ]
+
+
+skins_gifs = [
+    "assets/characters/ch1/11.gif",
+    "assets/characters/ch2/22.gif",
+    "assets/characters/ch3/33.gif",
+    "assets/characters/ch4/44.gif"
+]
+player_skins = {
+    "ch1": skins[0]["ch1"],
+    "ch2": skins[0]["ch2"]
+}

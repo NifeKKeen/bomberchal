@@ -153,12 +153,9 @@ def game(**kwargs):
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
-    globals.tick += 1
     if globals.tick % 150 == 0:
         spawn_bonus(bonus_types()[rand(0, 3)])
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
-        entity.add_tick()
-
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, BotIntellect):

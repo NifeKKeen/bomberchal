@@ -1,7 +1,7 @@
 import pygame
 
 import globals
-from utils.helpers import  get_pos, get_field_pos
+from utils.helpers import  get_tick_from_ms
 from utils.helpers import rand
 
 
@@ -14,6 +14,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
     def __init__(self, **kwargs):
         super().__init__()
+        self.kwargs = kwargs
 
         self.px_x = kwargs.get("px_x", 0)  # position x in pixels (from left) [пиксельные коорды]
         self.px_y = kwargs.get("px_y", 0)  # position y in pixels (from top) [пиксельные коорды]
@@ -32,6 +33,8 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.image_path = kwargs.get("image_path", None)
         self.align = kwargs.get("align", "topleft")
 
+        self.image = None
+        self.rect = None
         if kwargs.get("should_init_surface", True):
             self.__init_surface__()
 
@@ -86,6 +89,7 @@ class TextSprite(SurfaceSprite):
         self.font = kwargs.get("font_family", globals.text_font)
         self.text = kwargs.get("text", "-")
         self.align = kwargs.get("align", "topleft")
+        self.text_rect = None
 
         self.font_obj = pygame.font.Font(self.font, self.font_size)
 
@@ -95,10 +99,32 @@ class TextSprite(SurfaceSprite):
     def __init_surface__(self):
         self.image = self.font_obj.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
 
+# Добавляем новый класс для анимированных гифок
+class AnimatedSprite(SurfaceSprite):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, should_init_surface=False)
+        self.delay = get_tick_from_ms(kwargs.get("delay", 350))  # задержка между кадрами в мс
+        self.last_update = float("-inf")
+        self.current_frame = 0
+        self.frames = kwargs.get("frames", [])
+        if len(self.frames) == 0:
+            raise "No frames provided for AnimatedSprite"
+        self.update()
+
+    def update(self):
+        now = globals.tick
+        if self.frames and now - self.last_update > self.delay:
+            self.last_update = now
+            print(globals.tick)
+            self.kwargs["image_path"] = self.frames[self.current_frame]
+            self.kwargs["key"] = None
+            self.image = mount_image(**self.kwargs).image
+            self.rect = self.image.get_rect()
+
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
 
 def _get_surface(**kwargs):
     # if surface_id is not specified, generate a new surface with its unique id
@@ -134,6 +160,8 @@ def mount_rect(**kwargs):
     sprite = _get_surface(**kwargs)
     sprite.mounted = True
     globals.all_sprites.add(sprite)
+    if "layer" in kwargs:
+        globals.all_sprites.change_layer(sprite, kwargs["layer"])
     globals.map_key_sprite[sprite.key] = sprite
     globals.to_render_keys.add(sprite.key)
     return sprite
@@ -151,6 +179,24 @@ def mount_text(**kwargs):
 
     return sprite
 
+def mount_image(**kwargs):
+    # Функция для монтирования изображения (например, GIF)
+    sprite = _get_surface(**kwargs)
+    sprite.mounted = True
+    globals.all_sprites.add(sprite)
+    globals.map_key_sprite[sprite.key] = sprite
+    globals.to_render_keys.add(sprite.key)
+    return sprite
+
+def mount_animated_gif(**kwargs):
+    sprite = AnimatedSprite(**kwargs)
+    sprite.mounted = True
+    globals.all_sprites.add(sprite)
+    globals.map_key_sprite[sprite.key] = sprite
+    globals.to_render_keys.add(sprite.key)
+    if "layer" in kwargs:
+        globals.all_sprites.change_layer(sprite, kwargs["layer"])
+    return sprite
 
 def mount_sprite(sprite):
     if sprite.key in globals.to_render_keys:
@@ -190,11 +236,13 @@ def reset():
 
 def draw_sprites():
     refill_screen()
-
+    # Обновляем анимированные спрайты
+    for sprite in globals.all_sprites.sprites():
+        if isinstance(sprite, AnimatedSprite):
+            sprite.update()
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
-            # globals.all_sprites.remove(sprite.key)
-            pass
+            globals.all_sprites.remove(sprite.key)
 
     # all_sprites.update()
 

@@ -66,6 +66,9 @@ if __name__ == "__main__":
 
         draw_sprites()
 
+        globals.tick += 1
+        for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
+            entity.add_tick()
         globals.Frame.tick(globals.FPS)
 
         # Clean up
