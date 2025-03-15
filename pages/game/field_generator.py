@@ -9,7 +9,7 @@ def generate(rows, cols):
                                     for j in range(cols)] for i in range(rows)
     ]
     bot_count = 10
-    obstacle_count = 25
+    obstacle_count = 220
     objects = []
     current = 0
     for x in range(1, rows - 1):
@@ -49,7 +49,7 @@ def generate_maze(rows, cols):
     field[1][1] = globals.VOID_CELL
 
     max_depth = 3
-    directions = globals.directions
+    directions = globals.BFS_DIRECTIONS
 
     def dfs(x, y):
         if random.randint(1, 50) <= 30: #for more straight passes

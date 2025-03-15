@@ -4,6 +4,7 @@ import globals
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked, get_last_pressed_key
+from utils.sound_api import play_menu_music
 
 CONFIG_FILE = "pages/menu/config.ini"
 def load_config():
@@ -36,11 +37,7 @@ def save_config():
 
 def settings(is_setup = False):
     if is_setup:
-        if globals.current_music != globals.menu_music_path:
-            globals.current_music = globals.menu_music_path
-            pygame.mixer.music.load(globals.menu_music_path)
-            pygame.mixer.music.set_volume(.5)
-            pygame.mixer.music.play(-1)
+        play_menu_music(volume=.2)
 
     load_config()
     offered_keys_p0 = [pygame.K_SPACE, pygame.K_v, pygame.K_x, "custom"]

@@ -1,5 +1,3 @@
-import pygame.mixer
-
 from entitites.bonus import Bonus, bonus_types
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
@@ -14,16 +12,14 @@ from entitites.player import Player
 from utils.helpers import rand
 from utils.interaction_api import is_clicked
 import globals
+from utils.sound_api import play_music
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
 
 def setup_game(**kwargs):
-    globals.current_music = globals.game_music_path
-    pygame.mixer.music.load(globals.game_music_path)
-    pygame.mixer.music.set_volume(.2)
-    pygame.mixer.music.play(-1)
+    play_music(globals.game_music_path, .1, override=True)
 
     globals.cols = kwargs.get("cols", 21)
     globals.rows = kwargs.get("rows", 21)
@@ -43,6 +39,7 @@ def setup_game(**kwargs):
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
+            mounted=True,
             px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
@@ -73,6 +70,7 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -85,6 +83,7 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -97,6 +96,7 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.BOT_CELL:
                 bot = Bot(
+                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
@@ -123,6 +123,7 @@ def spawn_bonus(bonus_type = "Speed"):
             continue
         # found position
         bonus = Bonus(
+            mounted=True,
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
@@ -145,9 +146,6 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    # if player1_sprite.collides_with(player2_sprite):
-    #     print("Che tam")
-    # print(SurfaceSprite.SurfaceId)
     if globals.tick % 150 == 0:
         spawn_bonus(bonus_types()[rand(0, 3)])
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error

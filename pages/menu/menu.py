@@ -1,18 +1,15 @@
 import sys
-import pygame
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
 import globals
+from utils.sound_api import play_menu_music, stop_music
+
 
 def menu(is_setup = False):
     if is_setup:
-        if globals.current_music != globals.menu_music_path:
-            globals.current_music = globals.menu_music_path
-            pygame.mixer.music.load(globals.menu_music_path)
-            pygame.mixer.music.set_volume(.5)
-            pygame.mixer.music.play(-1)
+        play_menu_music(volume=.2)
 
     mute_button_sprite = paint_api.mount_rect(
         px_x=globals.center_x - 380,
@@ -20,7 +17,7 @@ def menu(is_setup = False):
         px_w=65,
         px_h=65,
         key="mute",
-        image_path="assets/images/mute/volume.png",
+        image_path=globals.muted_img if globals.music_muted else globals.unmuted_img,
     )
     play_button_sprite = paint_api.mount_rect(
         px_y=globals.center_y - 100,
@@ -52,7 +49,7 @@ def menu(is_setup = False):
         px_y=globals.center_y,
         px_w=500,
         px_h=90, 
-        key="customization", 
+        key="customization",
         image_path="assets/images/buttons/bar_button.png",
         align="center"
     )
@@ -77,8 +74,8 @@ def menu(is_setup = False):
         px_x=globals.center_x - 250,
         px_y=globals.center_y + 55,
         px_w=240,
-        px_h=90, 
-        key="settings", 
+        px_h=90,
+        key="settings",
         image_path="assets/images/buttons/bar_button.png",
         # align="center"
     )
@@ -102,8 +99,8 @@ def menu(is_setup = False):
     # scoreboard_button_sprite = paint_api.mount_rect(
     #     px_y=globals.center_y + 200,
     #     px_w=230,
-    #     px_h=90, 
-    #     key="scoreboard", 
+    #     px_h=90,
+    #     key="scoreboard",
     #     image_path="assets/images/buttons/bar_button.png",
     #     align="center"
     # )
@@ -164,21 +161,7 @@ def menu(is_setup = False):
         button_text.rect.center = center
         button_shadow.rect.center = (center[0] + 4, center[1] + 4)
 
-    if is_clicked(mute_button_sprite):
-        globals.is_muted = not globals.is_muted
-        if globals.is_muted:
-            pygame.mixer.music.set_volume(0)
-            mute_button_sprite.image = pygame.transform.scale(
-                pygame.image.load("assets/images/mute/mute.png").convert_alpha(),
-                (mute_button_sprite.px_w, mute_button_sprite.px_h)
-            )
-        else:
-            pygame.mixer.music.set_volume(0.5)
-            mute_button_sprite.image = pygame.transform.scale(
-                pygame.image.load("assets/images/mute/volume.png").convert_alpha(),
-                (mute_button_sprite.px_w, mute_button_sprite.px_h)
-            )
-    elif is_clicked(play_button_sprite):
+    if is_clicked(play_button_sprite):
         navigate("game")
     elif is_clicked(settings_button_sprite):
         navigate("menu/settings")
@@ -187,5 +170,14 @@ def menu(is_setup = False):
     elif is_clicked(customization_button_sprite):
         navigate("menu/customization")
     elif is_clicked(quit_button_sprite):
-        pygame.quit()
         sys.exit()
+
+    elif is_clicked(mute_button_sprite):
+        if globals.music_muted:
+            globals.music_muted = False
+            play_menu_music(volume=.2)
+            mute_button_sprite.set_image_path(globals.unmuted_img)
+        else:
+            globals.music_muted = True
+            stop_music()
+            mute_button_sprite.set_image_path(globals.muted_img)
