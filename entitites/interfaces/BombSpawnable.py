@@ -30,7 +30,6 @@ class BombSpawnable(Entity):
 
         self.bomb_allowed -= 1
         bomb = Bomb(
-            mounted=True,
             spawner=self,
             px_w=globals.cell_size,
             px_h=globals.cell_size,

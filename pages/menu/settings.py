@@ -51,10 +51,10 @@ def settings(is_setup = False):
         
     waiting_for_key = globals.controls_players[0]["explosion_key"] == "custom"
 
-    def update_display():
+    def update_display(text_sprite):
         key_val = globals.controls_players[0]["explosion_key"]
         display_text = "Press key..." if waiting_for_key else pygame.key.name(key_val)
-        paint_api.update_text("display_p0", text=display_text)
+        text_sprite.set_text(display_text)
 
     paint_api.mount_text(
         px_x=globals.center_x,
@@ -113,14 +113,14 @@ def settings(is_setup = False):
         else:
             globals.controls_players[0]["explosion_key"] = new_key0
             waiting_for_key = False
-        update_display()
+        update_display(display_p0)
         save_config()  
     if waiting_for_key:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             globals.controls_players[0]["explosion_key"] = pressed_key
             waiting_for_key = False
-            update_display()
+            update_display(display_p0)
             save_config()
 
     offered_keys_p1 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
@@ -131,11 +131,6 @@ def settings(is_setup = False):
 
     waiting_for_key2 = globals.controls_players[1]["explosion_key"] == "custom"
 
-    def update_display2():
-        key_val = globals.controls_players[1]["explosion_key"]
-        display_text = "Press key..." if waiting_for_key2 else pygame.key.name(key_val)
-        paint_api.update_text("display_p1", text=display_text)
-
     paint_api.mount_text(
         px_x=globals.center_x - 350,
         px_y=globals.center_y + 25,  
@@ -143,7 +138,6 @@ def settings(is_setup = False):
         text="for player2",
         font_size=30,
         color=(255, 255, 255),
-
     )
 
     left_arrow_p1 = paint_api.mount_rect(
@@ -185,14 +179,14 @@ def settings(is_setup = False):
         else:
             globals.controls_players[1]["explosion_key"] = new_key1
             waiting_for_key2 = False
-        update_display2()
+        update_display(display_p1)
         save_config()
     if waiting_for_key2:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             globals.controls_players[1]["explosion_key"] = pressed_key
             waiting_for_key2 = False
-            update_display2()
+            update_display(display_p1)
             save_config()
 
 

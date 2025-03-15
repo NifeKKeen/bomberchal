@@ -20,9 +20,6 @@ class Entity(SurfaceSprite):
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
 
-        if kwargs.get("key") is None:
-            self.key = f"e-{self.entity_id}"
-
         self.tick = 0  # lifespan
 
     def kill(self):

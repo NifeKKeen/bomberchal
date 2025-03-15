@@ -40,7 +40,9 @@ CONFIG_FILE = "pages/menu/config.ini"
 #         new_index = (new_index + direction) % len(SKINS)
 #     player_skins[player] = SKINS[new_index]
 
+show_popup_window = False
 def pop_up_window():
+    global show_popup_window
     # paint_api.mount_rect(
     #     px_x=globals.center_x,
     #     px_y=globals.center_y,
@@ -60,7 +62,7 @@ def pop_up_window():
     #     align="center",
     #     # layer=10  # ниже, чем кнопка закрытия
     # )
-    demo_gif = paint_api.mount_animated_gif(
+    demo_gif = paint_api.mount_gif(
         px_x=globals.center_x,
         px_y=globals.center_y,
         px_w=280,
@@ -70,7 +72,7 @@ def pop_up_window():
         align="center",
         # layer=10  # ниже, чем кнопка закрытия
     )
-    print(demo_gif.frames)
+
     close_button = paint_api.mount_rect(
         px_x=globals.center_x - 150,
         px_y=globals.center_y - 150,
@@ -81,31 +83,33 @@ def pop_up_window():
         layer=100  # устанавливаем высокий слой для кнопки
     )
     close_center = close_button.rect.center
-    close_button_shadow = paint_api.mount_text(
-        px_x=close_center[0] + 4,
-        px_y=close_center[1] + 4,
-        key="close_text_shadow",
-        text="x",
-        font_size=30,
-        color=(0, 0, 0)
-    )
     close_button_text = paint_api.mount_text(
         px_x=close_center[0],
         px_y=close_center[1],
         key="close_text",
         text="x",
         font_size=30,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
+        layer=102
+    )
+    close_button_shadow = paint_api.mount_text(
+        px_x=close_center[0] + 4,
+        px_y=close_center[1] + 4,
+        key="close_text_shadow",
+        text="x",
+        font_size=30,
+        color=(0, 0, 0),
+        layer=101
     )
     close_button_text.rect.center = close_center
     close_button_shadow.rect.center = (close_center[0] + 4, close_center[1] + 4)
     if is_clicked(close_button):
-        # print("close clicked")
-        paint_api.unmount("pop_up")
-        paint_api.unmount("demo_gif")
-        paint_api.unmount("close")
-        paint_api.unmount("close_text_shadow")
-        paint_api.unmount("close_text")
+        print("close clicked")
+        show_popup_window = False
+        demo_gif.unmount()
+        close_button.unmount()
+        close_button_shadow.unmount()
+        close_button_text.unmount()
 
 def menu_customization():
     # load_config()
@@ -113,7 +117,7 @@ def menu_customization():
     #     "ch1": config.get("Skins", "player1", fallback=globals.skins["ch1"]),
     #     "ch2": config.get("Skins", "player2", fallback=globals.skins["ch2"])
     # }
-    global player_skins
+    global player_skins, show_popup_window
     player_skins = globals.skins
     skin_display_index = 1
 
@@ -181,6 +185,8 @@ def menu_customization():
         color=(255, 255, 255)
     )
     if(is_clicked(preview_button_p0)):
+        show_popup_window = True
+    if show_popup_window:
         pop_up_window()
 
     display_p0 = paint_api.mount_rect(

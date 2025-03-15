@@ -1,6 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 
+from entitites.entity import Entity
 from pages.menu.menu import menu
 from pages.menu.settings import settings
 from pages.menu.customization import menu_customization
@@ -9,8 +10,7 @@ from utils import paint_api
 from pages.game.game import reset_game, game
 import globals
 from utils.interaction_api import get_pressed_keys
-from utils.paint_api import draw_sprites
-
+from utils.paint_api import draw_sprites, GIFSprite
 
 if __name__ == "__main__":
     pygame.init()
@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     while True:
         if globals.switched_page:
-            paint_api.reset()
+            paint_api.reset_frame()
             globals.switched_page = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -49,7 +49,6 @@ if __name__ == "__main__":
             globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
             globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu(is_setup=globals.switched_page_this_frame)
-
         elif globals.current_page == "menu/settings":
             globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
             globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
@@ -67,8 +66,11 @@ if __name__ == "__main__":
         draw_sprites()
 
         globals.tick += 1
-        for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
-            entity.add_tick()
+        for sprite in list(globals.all_sprites):  # list to avoid "Set changed size during iteration" error
+            if isinstance(sprite, Entity):
+                sprite.add_tick()
+            if isinstance(sprite, GIFSprite):
+                sprite.process_gif()
         globals.Frame.tick(globals.FPS)
 
         # Clean up
