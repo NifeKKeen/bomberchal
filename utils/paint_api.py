@@ -45,6 +45,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
 
     def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
+        self.should_refresh = False
         print("REQUESTED REFRESH")
         if self.image_path is not None:
             self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
@@ -128,7 +129,6 @@ class GIFSprite(SurfaceSprite):
 
     def process_gif(self):
         now = globals.tick
-        print(now, self.last_update, self.delay, now - self.last_update > self.delay)
         if now - self.last_update > self.delay:
             self.last_update = now
 

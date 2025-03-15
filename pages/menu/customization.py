@@ -68,6 +68,7 @@ def pop_up_window():
         px_w=280,
         px_h=280,
         key="demo_gif",
+        delay=1000,
         frames=[f"assets/gifs/ch{1}/{i}.png" for i in range(1, 5)],
         align="center",
         # layer=10  # ниже, чем кнопка закрытия
