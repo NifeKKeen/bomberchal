@@ -67,7 +67,6 @@ class Fire(Collidable, Entity):
             #     continue
 
             new_fire = Fire(
-                mounted=True,
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,

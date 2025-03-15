@@ -51,11 +51,20 @@ def settings(is_setup = False):
         
     waiting_for_key = globals.controls_players[0]["explosion_key"] == "custom"
 
-    def update_display():
+    def update_display(text_sprite):
         key_val = globals.controls_players[0]["explosion_key"]
         display_text = "Press key..." if waiting_for_key else pygame.key.name(key_val)
-        paint_api.update_text("display_p0", text=display_text)
+        text_sprite.set_text(display_text)
 
+    paint_api.mount_text(
+        px_x=globals.center_x,
+        px_y=globals.center_y - 250,
+        key="change_bomb_button",
+        text="Change bomb button",
+        font_size=40,
+        color=(255, 255, 255),
+        align="center"
+    )
     paint_api.mount_text(
         px_x=globals.center_x - 350,
         px_y=globals.center_y - 170,
@@ -79,12 +88,13 @@ def settings(is_setup = False):
         else pygame.K_0
     )
     display_p0 = paint_api.mount_text(
-        px_x=globals.center_x ,
-        px_y=globals.center_y - 170,
+        px_x=globals.center_x + 35,
+        px_y=globals.center_y - 150,
         key="display_p0",
         text=current_key_text_p0,
         font_size=25,
-        color=(255, 255, 0)
+        color=(255, 255, 0),
+        align="center"
     )
     right_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
@@ -103,14 +113,14 @@ def settings(is_setup = False):
         else:
             globals.controls_players[0]["explosion_key"] = new_key0
             waiting_for_key = False
-        update_display()
+        update_display(display_p0)
         save_config()  
     if waiting_for_key:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             globals.controls_players[0]["explosion_key"] = pressed_key
             waiting_for_key = False
-            update_display()
+            update_display(display_p0)
             save_config()
 
     offered_keys_p1 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
@@ -121,18 +131,13 @@ def settings(is_setup = False):
 
     waiting_for_key2 = globals.controls_players[1]["explosion_key"] == "custom"
 
-    def update_display2():
-        key_val = globals.controls_players[1]["explosion_key"]
-        display_text = "Press key..." if waiting_for_key2 else pygame.key.name(key_val)
-        paint_api.update_text("display_p1", text=display_text)
-
     paint_api.mount_text(
         px_x=globals.center_x - 350,
         px_y=globals.center_y + 25,  
         key="label_p1",
         text="for player2",
         font_size=30,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
     )
 
     left_arrow_p1 = paint_api.mount_rect(
@@ -149,12 +154,13 @@ def settings(is_setup = False):
         else pygame.K_0
     )
     display_p1 = paint_api.mount_text(
-        px_x=globals.center_x,
-        px_y=globals.center_y + 25, 
+        px_x=globals.center_x + 35,
+        px_y=globals.center_y + 50, 
         key="display_p1",
         text=current_key_text_p1,
         font_size=25,
-        color=(255, 255, 0)
+        color=(255, 255, 0),
+        align = "center"
     )
     right_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
@@ -173,19 +179,19 @@ def settings(is_setup = False):
         else:
             globals.controls_players[1]["explosion_key"] = new_key1
             waiting_for_key2 = False
-        update_display2()
+        update_display(display_p1)
         save_config()
     if waiting_for_key2:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             globals.controls_players[1]["explosion_key"] = pressed_key
             waiting_for_key2 = False
-            update_display2()
+            update_display(display_p1)
             save_config()
 
 
     back_button = paint_api.mount_rect(
-        px_y=globals.center_y + (globals.center_y // 2),
+        px_y=globals.center_y + 300,
         px_w=350,
         px_h=80,
         key="back",
