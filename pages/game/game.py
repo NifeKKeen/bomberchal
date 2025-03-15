@@ -43,7 +43,6 @@ def setup_game(**kwargs):
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
-            mounted=True,
             px_x=(1 if i == 0 else globals.cols - 1) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 1) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
@@ -74,7 +73,6 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -87,7 +85,6 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -101,7 +98,6 @@ def render_field(**kwargs):
             elif field[x][y] == globals.BOT_CELL:
                 bot_type = rand(1, 4)
                 bot = Bot(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
