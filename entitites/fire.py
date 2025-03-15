@@ -15,7 +15,7 @@ class Fire(Collidable, Entity):
         self.type = "bfs" # | "directional0" | "directional1" | "directional2" | "directional3"
         self.fired = False
 
-        if self.mounted and self.is_initial and (0 <= self.x <  globals.rows and 0 <= self.y <  globals.cols):
+        if self.mounted and self.is_initial and (0 <= self.x <  globals.cols and 0 <= self.y <  globals.rows):
             globals.field_fire_state[self.x][self.y] = self.power
 
     def add_tick(self):
@@ -28,7 +28,7 @@ class Fire(Collidable, Entity):
             self.self_destroy()
 
     def self_destroy(self):
-        if 0 <= self.x <  globals.rows and 0 <= self.y <  globals.cols:
+        if 0 <= self.x <  globals.cols and 0 <= self.y <  globals.rows:
             globals.field_fire_state[self.x][self.y] = 0
         self.kill()
 
@@ -48,7 +48,7 @@ class Fire(Collidable, Entity):
         for dx, dy in directions:
             nx = self.x + dx
             ny = self.y + dy
-            if nx < 0 or nx >= globals.rows or ny < 0 or ny >= globals.cols:
+            if nx < 0 or nx >= globals.cols or ny < 0 or ny >= globals.rows:
                 continue
 
             if globals.field_fire_state[nx][ny] >= self.power:

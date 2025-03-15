@@ -11,7 +11,7 @@ from pygame.locals import *
 from pages.navigation import navigate
 from entitites.bot import Bot
 from entitites.player import Player, get_players
-from utils.helpers import rand
+from utils.helpers import rand, get_field_pos
 from utils.interaction_api import is_clicked
 import globals
 
@@ -25,11 +25,11 @@ def setup_game(**kwargs):
     pygame.mixer.music.set_volume(.2)
     pygame.mixer.music.play(-1)
 
-    globals.cols = kwargs.get("cols", 21)
-    globals.rows = kwargs.get("rows", 21)
-    globals.field = kwargs.get("field", field_generator.generate(globals.rows, globals.cols))
+    globals.rows = kwargs.get("rows", 23)
+    globals.cols = kwargs.get("cols", 25)
+    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows))
     globals.field_fire_state = kwargs.get("field_fired",
-        [[0] * globals.cols for _ in range(globals.rows)]
+        [[0] * globals.rows for _ in range(globals.cols)]
     )
 
     control_keys = [
@@ -44,7 +44,7 @@ def setup_game(**kwargs):
         rnd = rand(192, 256)
         player = Player(
             mounted=True,
-            px_x=(1 if i == 0 else 19) * globals.cell_size, px_y=(1 if i == 0 else 19) * globals.cell_size,
+            px_x=(1 if i == 0 else globals.cols - 1) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 1) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
@@ -68,8 +68,8 @@ def render_field(**kwargs):
     field = globals.field
     for i in field:
         print(i)
-    cols = globals.cols
     rows = globals.rows
+    cols = globals.cols
     for x in range(cols):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
@@ -116,9 +116,9 @@ def render_field(**kwargs):
 def reset_game():
     globals.entities.clear()
 
-def spawn_bonus(bonus_type = "Speed"):
+def spawn_bonus(bonus_type = 0):
     while True:
-        bonus_x, bonus_y = rand(0, globals.rows), rand(0, globals.cols)
+        bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
         collision = False
         #print(len(globals.entities))
         for entity in globals.entities:
@@ -133,13 +133,29 @@ def spawn_bonus(bonus_type = "Speed"):
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
-            type=bonus_type,
+            type=bonus_types()[bonus_type],
             x=bonus_x, y=bonus_y,
-            color=(255, 255, 255),
+            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123)][bonus_type],
             layer=251,
             entity_group=globals.entities
         )
         break
+
+def render_bonuses():
+    for entity in list(globals.entities):
+        if not isinstance(entity, Player) and not isinstance(entity, Bot):
+            continue
+        # Player or bot
+        for bonus in entity.bonuses:
+            if entity.key[-1] == '0':
+                bonus.x = 0
+                bonus.y = globals.rows
+            else:
+                bonus.x = 0
+                bonus.y = globals.rows + 1
+            bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
+            bonus.set_px(bonus.px_x, bonus.px_y)
+
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
@@ -156,11 +172,13 @@ def game(**kwargs):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
     if globals.tick % 200 == 0:
-        spawn_bonus(bonus_types()[rand(0, 3)])
+        spawn_bonus(rand(0, 3))
     globals.tick += 1
 
     # if len(get_players(globals.entities)) == 0:
     #     raise Exception("You lost")
+
+    render_bonuses()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()

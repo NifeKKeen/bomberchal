@@ -35,6 +35,8 @@ class Collidable(Entity):
                 if isinstance(self, Bot):
                     if isinstance(entity, Player):
                         entity.kill()
+                    elif isinstance(entity, Bomb) and entity.spawner == self:
+                        continue
 
                 if isinstance(entity, Obstacle):
                     if isinstance(self, Movable):
