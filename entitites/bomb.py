@@ -25,7 +25,6 @@ class Bomb(Movable, Controllable, Collidable, Entity):
     def spread_fire(self):
         fire = Fire(
             type="bfs",
-            mounted=True,
             is_initial=True,
             power=self.power,
             timer=500,

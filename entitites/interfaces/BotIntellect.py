@@ -12,7 +12,7 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
         self.moving = kwargs.get("moving", 0) # 0 if not moving (but calculating), 1 if moving by default, 2 if moves only to don't be stuck (to be entirely in the cell)
         self.x = kwargs.get("x", 0)
         self.y = kwargs.get("y", 0)
-        self.direction = kwargs.get("direction", (self.y % 2) * 2) # index in globals.directions
+        self.direction = kwargs.get("direction", (self.y % 2) * 2) # index in globals.BFS_DIRECTIONS
         self.dest_x = kwargs.get("dest_x", 0) # destination x
         self.dest_y = kwargs.get("dest_y", 0) # destination y
         self.dest_px_x = kwargs.get("dest_px_x", 0) # destination px_x
@@ -46,9 +46,9 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
             return
 
         if self.type == 1:
-            self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+            self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
             if len(Collidable.get_collisions(self)) > 0:
-                self.move_px(*tuple(-x * self.speed for x in globals.directions[self.direction]))
+                self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 self.direction ^= 1  # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
                 self.spawn_bomb()
                 # if random.randint(1, 100) <= 50:
@@ -71,11 +71,11 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                 else:
                     self.moving = 0
 
-                self.move_px(*tuple(x * self.speed for x in globals.directions[self.direction]))
+                self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 collisions = Collidable.get_collisions(self)
                 for entity in collisions:
                     if not isinstance(entity, Player) and not isinstance(entity, Bonus):
-                        self.move_px(*tuple(-x * self.speed for x in globals.directions[self.direction]))
+                        self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                         self.moving = 2
                         break
 
@@ -144,7 +144,7 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     while queue:
                         x, y = queue[0]
                         queue.pop(0)
-                        for dx, dy in globals.directions:
+                        for dx, dy in globals.BFS_DIRECTIONS:
                             nx, ny = x + dx, y + dy
                             if nx < 0 or nx >= globals.cols or ny < 0 or ny >= globals.rows:
                                 continue

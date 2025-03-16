@@ -24,7 +24,6 @@ def setup_game(**kwargs):
     pygame.mixer.music.load(globals.game_music_path)
     pygame.mixer.music.set_volume(.2)
     pygame.mixer.music.play(-1)
-
     globals.rows = kwargs.get("rows", 23)
     globals.cols = kwargs.get("cols", 25)
     globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows))
@@ -43,7 +42,6 @@ def setup_game(**kwargs):
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
-            mounted=True,
             px_x=(1 if i == 0 else globals.cols - 1) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 1) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
@@ -74,7 +72,6 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -87,7 +84,6 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
                     x=x, y=y,
@@ -101,7 +97,6 @@ def render_field(**kwargs):
             elif field[x][y] == globals.BOT_CELL:
                 bot_type = rand(1, 4)
                 bot = Bot(
-                    mounted=True,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
@@ -112,6 +107,18 @@ def render_field(**kwargs):
                     entity_group=globals.entities,
                     type=bot_type
                 )
+
+    for i in range(1, 10):
+        for player in range(2):
+            print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
+            paint_api.mount_text(
+                px_x=(i - 1) * globals.cell_size,
+                px_y=(globals.rows + player) * globals.cell_size,
+                key=f"bonus-{i}-{player}",
+                text=str(i),
+                font_size=30,
+                color=(255, 255, 255)
+            )
 
 def reset_game():
     globals.entities.clear()
@@ -129,7 +136,6 @@ def spawn_bonus(bonus_type = 0):
             continue
         # found position
         bonus = Bonus(
-            mounted=True,
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
             speed = 0,
@@ -143,16 +149,19 @@ def spawn_bonus(bonus_type = 0):
 
 def render_bonuses():
     for entity in list(globals.entities):
-        if not isinstance(entity, Player) and not isinstance(entity, Bot):
+        if not isinstance(entity, Player):# and not isinstance(entity, Bot):
             continue
         # Player or bot
         for bonus in entity.bonuses:
             if entity.key[-1] == '0':
-                bonus.x = 0
-                bonus.y = globals.rows
+                if bonus.y != globals.rows:
+                    bonus.x = len(entity.bonuses) - 1
+                    bonus.y = globals.rows
             else:
-                bonus.x = 0
-                bonus.y = globals.rows + 1
+                if bonus.y != globals.rows + 1:
+                    bonus.x = len(entity.bonuses) - 1
+                    bonus.y = globals.rows + 1
+
             bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
             bonus.set_px(bonus.px_x, bonus.px_y)
 
@@ -171,9 +180,8 @@ def game(**kwargs):
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
-    if globals.tick % 200 == 0:
+    if globals.tick % 20 == 0:
         spawn_bonus(rand(0, 3))
-    globals.tick += 1
 
     # if len(get_players(globals.entities)) == 0:
     #     raise Exception("You lost")
@@ -189,3 +197,5 @@ def game(**kwargs):
             entity.think()
         if isinstance(entity, Collidable):
             entity.handle_collision()
+        if isinstance(entity, Bonus) and entity.timer > 0:
+            entity.timer -= 1
