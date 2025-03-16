@@ -1,7 +1,7 @@
 import pygame
 
 import globals
-from utils.helpers import  get_pos, get_field_pos
+from utils.helpers import  get_tick_from_ms
 from utils.helpers import rand
 
 
@@ -14,6 +14,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
     def __init__(self, **kwargs):
         super().__init__()
+        self.kwargs = kwargs
 
         self.px_x = kwargs.get("px_x", 0)  # position x in pixels (from left) [пиксельные коорды]
         self.px_y = kwargs.get("px_y", 0)  # position y in pixels (from top) [пиксельные коорды]
@@ -27,15 +28,25 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.key = kwargs.get("key", format_surface_id_to_key(self.surface_id))
         SurfaceSprite.SurfaceId += 1
 
+        self.should_mount = kwargs.get("should_mount", True)
         self.mounted = kwargs.get("mounted", False)  # is visible in screen
 
         self.image_path = kwargs.get("image_path", None)
         self.align = kwargs.get("align", "topleft")
 
-        if kwargs.get("should_init_surface", True):
-            self.__init_surface__()
+        self.image = None
+        self.rect = None
+        self.should_refresh = False
+        if kwargs.get("should_refresh", True):
+            self.refresh()
 
-    def __init_surface__(self, **kwargs):
+        if not self.mounted and self.should_mount:
+            self.mount()
+
+
+    def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
+        self.should_refresh = False
+        print("REQUESTED REFRESH")
         if self.image_path is not None:
             self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
         else:
@@ -53,14 +64,17 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
+    def set_image_path(self, image_path):
+        self.image_path = image_path
+        self.should_refresh = True
+
     def unmount(self):
         self.mounted = False
         unmount_sprite(self)
 
-
     def mount(self):
         self.mounted = True
-        mount_sprite(self)
+        return mount_sprite(self)
 
     def move_px(self, x=0, y=0):
         self.px_x += x
@@ -79,77 +93,88 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
 class TextSprite(SurfaceSprite):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs, should_init_surface=False)
+        super().__init__(**kwargs, should_refresh=False)
         self.font_size = kwargs.get("key", None)
         self.color = kwargs.get("color", (0, 0, 0))
         self.font_size = kwargs.get("font_size", 14)
         self.font = kwargs.get("font_family", globals.text_font)
         self.text = kwargs.get("text", "-")
         self.align = kwargs.get("align", "topleft")
+        self.text_rect = None
 
         self.font_obj = pygame.font.Font(self.font, self.font_size)
 
-        if kwargs.get("should_init_surface", True):
-            self.__init_surface__()
+        if kwargs.get("should_refresh", True):
+            self.refresh()
 
-    def __init_surface__(self):
+    def refresh(self):
         self.image = self.font_obj.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
+    def set_text(self, text):
+        self.text = text
+        self.should_refresh = True
+
+class GIFSprite(SurfaceSprite):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, should_refresh=False)
+        self.delay = get_tick_from_ms(kwargs.get("delay", 350))  # задержка между кадрами в мс
+        self.last_update = float("-inf")
+        self.current_frame = 0
+        self.frames = kwargs.get("frames", [])  # image paths
+        if len(self.frames) == 0:
+            raise "No frames provided for GifSprite"
+        self.process_gif()
+
+    def process_gif(self):
+        now = globals.tick
+        if now - self.last_update > self.delay:
+            self.last_update = now
+
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.set_image_path(self.frames[self.current_frame])
 
 
-def _get_surface(**kwargs):
+def _get_sprite(constructor, **kwargs):
+    # allowed constructors: SurfaceSprite, TextSprite, GIFSprite
     # if surface_id is not specified, generate a new surface with its unique id
     # otherwise, try to get surface from globals.map_key_sprite with this surface_id
-    surface_key = kwargs.get("key", None)
+    key = kwargs.get("key", None)
 
-    if surface_key not in globals.to_render_keys:
-        surface_sprite = SurfaceSprite(**kwargs)
-        print("Rendered", surface_sprite.key)
+    if key not in globals.to_render_keys:
+        sprite = constructor(**kwargs)
+        print("Rendered", sprite.key)
     else:
-        surface_sprite = globals.map_key_sprite[surface_key]
+        sprite = globals.map_key_sprite[key]
 
-    return surface_sprite
-
-
-def _get_text_surface(**kwargs):
-    # if surface_id is not specified, generate a new surface with its unique id
-    # otherwise, try to get surface from globals.map_key_sprite with this surface_id
-    surface_key = kwargs.get("key", None)
-
-    if surface_key not in globals.to_render_keys:
-        surface_sprite = TextSprite(**kwargs)
-        print("Rendered", surface_sprite.key)
-    else:
-        surface_sprite = globals.map_key_sprite[surface_key]
-
-    return surface_sprite
+    return sprite
 
 
 def mount_rect(**kwargs):
+    # key should be specified in order to decrease the number of renders
+    # otherwise a new surface will be created and rendered each frame
     if kwargs.get("align", "topleft") == "center":
         kwargs["px_x"] = globals.center_x
-    sprite = _get_surface(**kwargs)
-    sprite.mounted = True
-    globals.all_sprites.add(sprite)
-    globals.map_key_sprite[sprite.key] = sprite
-    globals.to_render_keys.add(sprite.key)
-    return sprite
+    sprite = _get_sprite(SurfaceSprite, **kwargs)
+
+    return sprite.mount()
 
 
 def mount_text(**kwargs):
     # key should be specified in order to decrease the number of renders
     # otherwise a new surface will be created and rendered each frame
-    sprite = _get_text_surface(**kwargs)
-    sprite.mounted = True
+    sprite = _get_sprite(TextSprite, **kwargs)
 
-    globals.all_sprites.add(sprite)
-    globals.map_key_sprite[sprite.key] = sprite
-    globals.to_render_keys.add(sprite.key)
+    return sprite.mount()
 
-    return sprite
+
+def mount_gif(**kwargs):
+    # key should be specified in order to decrease the number of renders
+    # otherwise a new surface will be created and rendered each frame
+    sprite = _get_sprite(GIFSprite, **kwargs)
+
+    return sprite.mount()
 
 
 def mount_sprite(sprite):
@@ -173,15 +198,24 @@ def unmount_sprite(sprite):
     return sprite
 
 
+def unmount(key):
+    sprite = globals.map_key_sprite[key]
+    globals.all_sprites.remove(sprite)
+    globals.to_render_keys.discard(key)
+
+    return sprite
+
+
 def refill_screen():
-    if globals.current_page == "menu/settings" and globals.settings_background_img:
-        globals.DISPLAYSURF.blit(globals.settings_background_img, (0, 0))
+    if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization") and globals.brown_background_img:
+        globals.DISPLAYSURF.blit(globals.brown_background_img, (0, 0))
     elif globals.menu_background_img:
         globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))
     else:
         globals.DISPLAYSURF.fill((0, 0, 20))
 
-def reset():
+
+def reset_frame():
     globals.to_render_keys.clear()
     globals.map_key_sprite.clear()
     globals.all_sprites.empty()
@@ -192,21 +226,12 @@ def draw_sprites():
 
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
-            # globals.all_sprites.remove(sprite.key)
-            pass
+            globals.all_sprites.remove(sprite)
+        else:
+            if sprite.should_refresh:
+                sprite.refresh()
 
     # all_sprites.update()
 
     globals.all_sprites.draw(globals.DISPLAYSURF)
     pygame.display.flip()
-
-def update_text(key, text):
-
-    sprite = globals.map_key_sprite.get(key)
-
-    if sprite and hasattr(sprite, "text"):
-        sprite.text = text
-        sprite.__init_surface__()
-        print("Updated text for", key, ":", text)
-    else:
-        print("Sprite с ключом", key, "не найден или не имеет свойства 'text'.")
