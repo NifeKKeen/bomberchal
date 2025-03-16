@@ -26,5 +26,5 @@ def get_pos_upper_left(px_x, px_y):
     y = int(px_y) // globals.cell_size
     return x, y
 
-def in_valid_range(i, j, rows, cols):
-    return 0 <= i < rows and 0 <= j < cols
+def in_valid_range(i, j, cols, rows):
+    return 0 <= i < cols and 0 <= j < rows

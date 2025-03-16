@@ -1,6 +1,6 @@
 import globals
 from entitites.entity import Entity
-from globals import directions
+from globals import BFS_DIRECTIONS
 from utils.helpers import rand
 
 

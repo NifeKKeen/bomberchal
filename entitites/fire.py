@@ -37,7 +37,7 @@ class Fire(Collidable, Entity):
         for dx, dy in directions:
             nx = self.x + dx
             ny = self.y + dy
-            if self.power - 1 <= 0 or not in_valid_range(nx, ny, globals.rows, globals.cols):
+            if self.power - 1 <= 0 or not in_valid_range(nx, ny, globals.cols, globals.rows):
                 continue
 
             if globals.field_fire_state[nx][ny] >= self.power:
