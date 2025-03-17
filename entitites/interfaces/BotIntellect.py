@@ -207,20 +207,20 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     [False for j in range(globals.rows)] for i in range(globals.cols)
                 ]
                 self.used[self.dest_x][self.dest_y] = True
-                self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 self.dist = [
                     [0 for j in range(globals.rows)] for i in range(globals.cols)
                 ]
                 self.prev = [
                     [(-1, -1) for j in range(globals.rows)] for i in range(globals.cols)
                 ]
+                self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 bfs()
-                print(self.x, self.y, self.dest_x, self.dest_y)
-                for i in self.prev:
-                    for j in range(len(i)):
-                        if i[j][1] == j:
-                            print(i[j], end = ',')
-                raise Exception("43w")
+                # print(self.x, self.y, self.dest_x, self.dest_y)
+                # for i in self.prev:
+                #     for j in range(len(i)):
+                #         if i[j][1] == j:
+                #             print(i[j], end = ',')
+                # raise Exception("43w")
                 self.moving = 1
 
         else:
