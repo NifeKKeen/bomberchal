@@ -9,7 +9,7 @@ from pages.game import field_generator
 from utils import paint_api
 from pygame.locals import *
 from pages.navigation import navigate
-from entitites.bot import Bot
+from entitites.bot import Bot, get_bots
 from entitites.player import Player, get_players
 from utils.helpers import rand, get_field_pos
 from utils.interaction_api import is_clicked
@@ -26,7 +26,8 @@ def setup_game(**kwargs):
     pygame.mixer.music.play(-1)
     globals.rows = kwargs.get("rows", 23)
     globals.cols = kwargs.get("cols", 25)
-    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows))
+    boss_fight = kwargs.get("boss_fight", False)
+    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows, boss_fight))
     globals.field_fire_state = kwargs.get("field_fired",
         [[0] * globals.rows for _ in range(globals.cols)]
     )
@@ -42,7 +43,7 @@ def setup_game(**kwargs):
     for i in range(2):
         rnd = rand(192, 256)
         player = Player(
-            px_x=(1 if i == 0 else globals.cols - 1) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 1) * globals.cell_size,
+            px_x=(1 if i == 0 else globals.cols - 2) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 2) * globals.cell_size,
             px_w=globals.player_cell_size, px_h=globals.player_cell_size,
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
@@ -60,10 +61,11 @@ def setup_game(**kwargs):
             key=f"p-{i}"
         )
 
-    render_field()
+    render_field(**kwargs)
 
 def render_field(**kwargs):
     field = globals.field
+    boss_fight = kwargs.get("boss_fight", False)
     for i in field:
         print(i)
     rows = globals.rows
@@ -105,20 +107,38 @@ def render_field(**kwargs):
                     color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
                     layer=256,
                     entity_group=globals.entities,
-                    type=bot_type
+                    type=bot_type,
+                    bomb_power=1
                 )
 
-    for i in range(1, 10):
+    for i in range(1, 11):
         for player in range(2):
             print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
             paint_api.mount_text(
                 px_x=(i - 1) * globals.cell_size,
                 px_y=(globals.rows + player) * globals.cell_size,
-                key=f"bonus-{i}-{player}",
-                text=str(i),
+                key=f"bonuskeys-{i}-{player}",
+                text=str(i % 10),
                 font_size=30,
                 color=(255, 255, 255)
             )
+
+    if boss_fight:
+        x, y = globals.cols // 2 - 1, globals.rows // 2 - 1
+        bot_type = 3
+        bot = Bot(
+            px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+            px_w=globals.cell_size * 3, px_h=globals.cell_size * 3,
+            # px_w=globals.player_cell_size, px_h=globals.player_cell_size,
+            x=x, y=y,
+            speed=4,
+            color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+            layer=256,
+            entity_group=globals.entities,
+            type=bot_type,
+            bomb_power=10,
+            lives=5000
+        )
 
 def reset_game():
     globals.entities.clear()
@@ -168,8 +188,12 @@ def render_bonuses():
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
+    boss_fight = kwargs.get("boss_fight", False)
+    if len(get_bots(globals.entities)) == 0:
+        boss_fight = True
+
     if is_setup:
-        setup_game(**kwargs)
+        setup_game(**{**kwargs, "boss_fight": boss_fight})
         return
 
     go_menu_button_sprite = paint_api.mount_rect(px_x=0, px_y=0, px_w=40, px_h=40, layer=300, key="go_menu")
@@ -180,7 +204,7 @@ def game(**kwargs):
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
-    if globals.tick % 20 == 0:
+    if globals.tick % 2000000 == 0:
         spawn_bonus(rand(0, 3))
 
     # if len(get_players(globals.entities)) == 0:
@@ -197,5 +221,6 @@ def game(**kwargs):
             entity.think()
         if isinstance(entity, Collidable):
             entity.handle_collision()
-        if isinstance(entity, Bonus) and entity.timer > 0:
-            entity.timer -= 1
+        if isinstance(entity, Bonus):
+            entity.update()
+            # print(entity, entity.timer)

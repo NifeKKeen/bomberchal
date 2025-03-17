@@ -9,11 +9,7 @@ class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.lives = kwargs.get("lives", 1)
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
-
-    def is_alive(self):
-        return bool(self.lives)
 
     def add_tick(self):
         self.tick += 1

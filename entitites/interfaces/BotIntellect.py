@@ -3,7 +3,7 @@ from entitites.entity import Entity
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Movable import Movable
-from utils.helpers import get_field_pos, get_pos, get_pos_upper_left, rand
+from utils.helpers import get_field_pos, get_pos, get_pos_upper_left, rand, in_valid_range
 
 
 class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
@@ -47,7 +47,7 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
 
         if self.type == 1:
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-            if len(Collidable.get_collisions(self)) > 0:
+            if len(Collidable.get_collisions(self)) > 0 or not in_valid_range(self.x, self.y, globals.cols, globals.rows):
                 self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 self.direction ^= 1  # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
                 self.spawn_bomb()
@@ -56,8 +56,10 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                 #     self.direction ^= 2
 
         elif 2 <= self.type <= 3:
+            # print(self.moving, self.dest_x, self.dest_y, self.x, self.y)
             # In this algorithm, bot moves into direction of the farthest cell from all bombs, fires and players. So, it just wanders
             if self.moving == 1:
+                # print(self.x, self.y)
                 nx, ny = self.prev[self.x][self.y]
                 # print(f"from ({self.x}, {self.y}) to ({nx}, {ny}). Goal is {self.dest_x}, {self.dest_y}")
                 if nx - self.x == 1:
@@ -74,7 +76,8 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                 self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 collisions = Collidable.get_collisions(self)
                 for entity in collisions:
-                    if not isinstance(entity, Player) and not isinstance(entity, Bonus):
+                    if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner == self))
+                            or not in_valid_range(self.x, self.y, globals.cols, globals.rows)):
                         self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                         self.moving = 2
                         break
@@ -183,12 +186,19 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     dst = float('inf')
                     for player in list(get_players(globals.entities)):
                         x, y = player.x, player.y
-                        if self.dist[x][y] < dst:
+                        if in_valid_range(x, y, globals.cols, globals.rows) and self.dist[x][y] < dst:
                             dst = self.dist[x][y]
                             nx, ny = x, y
 
-                    self.dest_x, self.dest_y = nx, ny
-                    self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
+                    if dst < float('inf'):
+                        self.dest_x, self.dest_y = nx, ny
+                        self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
+
+                    # print("!!!!", dst, self.bomb_power)
+                    # raise Exception("123")
+
+                if dst < self.bomb_power:
+                    self.spawn_bomb()
 
                 # path from destination to bot
                 queue = [(self.dest_x, self.dest_y)]
@@ -205,6 +215,12 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     [(-1, -1) for j in range(globals.rows)] for i in range(globals.cols)
                 ]
                 bfs()
+                print(self.x, self.y, self.dest_x, self.dest_y)
+                for i in self.prev:
+                    for j in range(len(i)):
+                        if i[j][1] == j:
+                            print(i[j], end = ',')
+                raise Exception("43w")
                 self.moving = 1
 
         else:

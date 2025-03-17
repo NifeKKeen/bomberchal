@@ -40,7 +40,7 @@ class Fire(Collidable, Entity):
             if self.power - 1 <= 0 or not in_valid_range(nx, ny, globals.cols, globals.rows):
                 continue
 
-            if globals.field_fire_state[nx][ny] >= self.power:
+            if globals.field_fire_state[nx][ny]:
                 continue
 
             if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:

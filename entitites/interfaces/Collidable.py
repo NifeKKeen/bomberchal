@@ -31,6 +31,8 @@ class Collidable(Entity):
                 if entity == self or not entity.collides_with(self):
                     continue
                 # now entity collides and it is not ourselves
+                #
+                # print(entity, self)
 
                 if isinstance(self, Bot):
                     if isinstance(entity, Player):

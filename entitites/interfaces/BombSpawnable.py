@@ -9,6 +9,7 @@ class BombSpawnable(Entity):
         self.bomb_allowed = kwargs.get("bomb_allowed", 4)
         self.bomb_timer = kwargs.get("bomb_timer", 3000)
         self.bomb_power = kwargs.get("bomb_power", 1)
+        self.bombs_spawned = kwargs.get("bombs_spawned", 0)
 
 
     def spawn_bomb(self):
@@ -28,7 +29,9 @@ class BombSpawnable(Entity):
         # print(self.x, self.y, self.px_x, self.px_y)
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
 
+        self.bombs_spawned += 1
         self.bomb_allowed -= 1
+
         bomb = Bomb(
             spawner=self,
             px_w=globals.cell_size,

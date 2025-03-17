@@ -21,8 +21,15 @@ class Entity(SurfaceSprite):
         Entity.EntityId += 1
 
         self.tick = 0  # lifespan
+        self.lives = kwargs.get("lives", 1)
+
+    def is_alive(self):
+        return bool(self.lives)
 
     def kill(self):
+        self.lives -= 1
+        if self.is_alive():
+            return
         self.unmount()
         self.mounted = False
         if self.entity_group:
