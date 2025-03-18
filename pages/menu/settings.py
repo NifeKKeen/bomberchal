@@ -1,13 +1,18 @@
 import pygame
 import configparser
 import globals
+import os
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked, get_last_pressed_key
 from utils.sound_api import play_menu_music
 
 CONFIG_FILE = "pages/menu/config.ini"
+
+
 def load_config():
+    if not os.path.exists(CONFIG_FILE):
+        return
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
     if "Controls" in config:
@@ -17,13 +22,14 @@ def load_config():
         globals.controls_players[0]["explosion_key"] = parse_key(key1_str)
         globals.controls_players[1]["explosion_key"] = parse_key(key2_str)
 
+
 def parse_key(key_str):
     if key_str.lower() == "custom":
         return "custom"
     try:
-        return int(key_str)  
+        return int(key_str)
     except ValueError:
-        return pygame.key.key_code(key_str.lower())  
+        return pygame.key.key_code(key_str.lower())
 
 
 def save_config():
@@ -35,7 +41,8 @@ def save_config():
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
-def settings(is_setup = False):
+
+def settings(is_setup=False):
     if is_setup:
         play_menu_music(volume=.2)
 
@@ -45,12 +52,12 @@ def settings(is_setup = False):
         current_index0 = offered_keys_p0.index(globals.controls_players[0]["explosion_key"])
     except ValueError:
         current_index0 = len(offered_keys_p0) - 1
-        
+
     waiting_for_key = globals.controls_players[0]["explosion_key"] == "custom"
 
-    def update_display(text_sprite):
-        key_val = globals.controls_players[0]["explosion_key"]
-        display_text = "Press key..." if waiting_for_key else pygame.key.name(key_val)
+    def update_display(text_sprite, player_index, waiting):
+        key_val = globals.controls_players[player_index]["explosion_key"]
+        display_text = "Press key..." if waiting else (pygame.key.name(key_val) if key_val != "custom" else "Custom")
         text_sprite.set_text(display_text)
 
     paint_api.mount_text(
@@ -79,11 +86,8 @@ def settings(is_setup = False):
         key="left_arrow_p0",
         image_path="assets/images/buttons/left.png",
     )
-    current_key_text_p0 = pygame.key.name(
-        offered_keys_p0[current_index0] 
-        if offered_keys_p0[current_index0] != "custom" 
-        else pygame.K_0
-    )
+    current_key_text_p0 = "Custom" if offered_keys_p0[current_index0] == "custom" else pygame.key.name(
+        offered_keys_p0[current_index0])
     display_p0 = paint_api.mount_text(
         px_x=globals.center_x + 35,
         px_y=globals.center_y - 150,
@@ -104,21 +108,27 @@ def settings(is_setup = False):
     if is_clicked(left_arrow_p0) or is_clicked(right_arrow_p0):
         new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p0) else 1)) % len(offered_keys_p0)
         new_key0 = offered_keys_p0[new_index0]
-        if new_key0 == "custom":
-            globals.controls_players[0]["explosion_key"] = "custom"
-            waiting_for_key = True
+        if new_key0 != "custom" and new_key0 == globals.controls_players[1]["explosion_key"]:
+            display_p0.set_text("Duplicate!")
         else:
-            globals.controls_players[0]["explosion_key"] = new_key0
-            waiting_for_key = False
-        update_display(display_p0)
-        save_config()  
+            if new_key0 == "custom":
+                globals.controls_players[0]["explosion_key"] = "custom"
+                waiting_for_key = True
+            else:
+                globals.controls_players[0]["explosion_key"] = new_key0
+                waiting_for_key = False
+            update_display(display_p0, 0, waiting_for_key)
+            save_config()
     if waiting_for_key:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
-            globals.controls_players[0]["explosion_key"] = pressed_key
-            waiting_for_key = False
-            update_display(display_p0)
-            save_config()
+            if pressed_key == globals.controls_players[1]["explosion_key"]:
+                display_p0.set_text("Duplicate!")
+            else:
+                globals.controls_players[0]["explosion_key"] = pressed_key
+                waiting_for_key = False
+                update_display(display_p0, 0, waiting_for_key)
+                save_config()
 
     offered_keys_p1 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
     try:
@@ -130,7 +140,7 @@ def settings(is_setup = False):
 
     paint_api.mount_text(
         px_x=globals.center_x - 350,
-        px_y=globals.center_y + 25,  
+        px_y=globals.center_y + 25,
         key="label_p1",
         text="for player2",
         font_size=30,
@@ -139,29 +149,26 @@ def settings(is_setup = False):
 
     left_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
-        px_y=globals.center_y + 15,  
+        px_y=globals.center_y + 15,
         px_w=75,
         px_h=75,
         key="left_arrow_p1",
         image_path="assets/images/buttons/left.png",
     )
-    current_key_text_p1 = pygame.key.name(
-        offered_keys_p1[current_index1]
-        if offered_keys_p1[current_index1] != "custom"
-        else pygame.K_0
-    )
+    current_key_text_p1 = "Custom" if offered_keys_p1[current_index1] == "custom" else pygame.key.name(
+        offered_keys_p1[current_index1])
     display_p1 = paint_api.mount_text(
         px_x=globals.center_x + 35,
-        px_y=globals.center_y + 50, 
+        px_y=globals.center_y + 50,
         key="display_p1",
         text=current_key_text_p1,
         font_size=25,
         color=(255, 255, 0),
-        align = "center"
+        align="center"
     )
     right_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
-        px_y=globals.center_y + 15, 
+        px_y=globals.center_y + 15,
         px_w=75,
         px_h=75,
         key="right_arrow_p1",
@@ -170,22 +177,27 @@ def settings(is_setup = False):
     if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
         new_index1 = (current_index1 + (-1 if is_clicked(left_arrow_p1) else 1)) % len(offered_keys_p1)
         new_key1 = offered_keys_p1[new_index1]
-        if new_key1 == "custom":
-            globals.controls_players[1]["explosion_key"] = "custom"
-            waiting_for_key2 = True
+        if new_key1 != "custom" and new_key1 == globals.controls_players[0]["explosion_key"]:
+            display_p1.set_text("Duplicate!")
         else:
-            globals.controls_players[1]["explosion_key"] = new_key1
-            waiting_for_key2 = False
-        update_display(display_p1)
-        save_config()
+            if new_key1 == "custom":
+                globals.controls_players[1]["explosion_key"] = "custom"
+                waiting_for_key2 = True
+            else:
+                globals.controls_players[1]["explosion_key"] = new_key1
+                waiting_for_key2 = False
+            update_display(display_p1, 1, waiting_for_key2)
+            save_config()
     if waiting_for_key2:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
-            globals.controls_players[1]["explosion_key"] = pressed_key
-            waiting_for_key2 = False
-            update_display(display_p1)
-            save_config()
-
+            if pressed_key == globals.controls_players[0]["explosion_key"]:
+                display_p1.set_text("Duplicate!")
+            else:
+                globals.controls_players[1]["explosion_key"] = pressed_key
+                waiting_for_key2 = False
+                update_display(display_p1, 1, waiting_for_key2)
+                save_config()
 
     back_button = paint_api.mount_rect(
         px_y=globals.center_y + 300,
@@ -215,4 +227,9 @@ def settings(is_setup = False):
     back_button_text.rect.center = back_center
     back_button_shadow.rect.center = (back_center[0] + 4, back_center[1] + 4)
     if is_clicked(back_button):
+        if globals.controls_players[0]["explosion_key"] == "custom":
+            globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
+        if globals.controls_players[1]["explosion_key"] == "custom":
+            globals.controls_players[1]["explosion_key"] = pygame.K_RETURN
+        save_config()
         navigate("menu")
