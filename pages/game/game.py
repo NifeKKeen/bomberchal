@@ -189,7 +189,17 @@ def render_bonuses():
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
     boss_fight = kwargs.get("boss_fight", False)
-    if len(get_bots(globals.entities)) == 0:
+    if len(get_players(globals.entities)) == 0:
+        for entity in globals.entities:
+            entity.unmount()
+        reset_game()
+        is_setup = True
+
+    elif len(get_bots(globals.entities)) == 0:
+        for entity in globals.entities:
+            entity.unmount()
+        reset_game()
+        is_setup = True
         boss_fight = True
 
     if is_setup:

@@ -61,17 +61,17 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
             if self.moving == 1:
                 # print(self.x, self.y)
                 nx, ny = self.prev[self.x][self.y]
-                # print(f"from ({self.x}, {self.y}) to ({nx}, {ny}). Goal is {self.dest_x}, {self.dest_y}")
                 if nx - self.x == 1:
-                    self.direction = 3
-                elif nx - self.x == -1:
-                    self.direction = 2
-                elif ny - self.y == 1:
                     self.direction = 1
+                elif nx - self.x == -1:
+                    self.direction = 3
+                elif ny - self.y == 1:
+                    self.direction = 2
                 elif ny - self.y == -1:
                     self.direction = 0
                 else:
                     self.moving = 0
+                # print(f"from ({self.x}, {self.y}) to ({nx}, {ny}). Direction - {self.direction}. Goal is {self.dest_x}, {self.dest_y}")
 
                 self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 collisions = Collidable.get_collisions(self)
@@ -96,7 +96,7 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                 if dy < -self.speed:
                     dy = -self.speed
                 if dx == 0 and dy == 0:
-                    self.moving = 1
+                    self.moving = 0
                 self.move_px(dx, dy)
                 self.x, self.y = get_pos(self.px_x, self.px_y)
 
@@ -215,12 +215,10 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                 ]
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 bfs()
-                # print(self.x, self.y, self.dest_x, self.dest_y)
                 # for i in self.prev:
                 #     for j in range(len(i)):
                 #         if i[j][1] == j:
                 #             print(i[j], end = ',')
-                # raise Exception("43w")
                 self.moving = 1
 
         else:
