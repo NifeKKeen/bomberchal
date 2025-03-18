@@ -27,14 +27,14 @@ muted_img = "assets/images/mute/mute.png"
 
 character_frames = {
     "ch1": {
-        "top_static": ["assets/images/characters/ch1/15.png"],
-        "top_moving": ["assets/images/characters/ch1/15.png"],
-        "right_static": ["assets/images/characters/ch1/12.png"],
-        "right_moving": ["assets/images/characters/ch1/13.png", "assets/images/characters/ch1/14.png"],
-        "down_static": ["assets/images/characters/ch1/11.png"],
-        "down_moving": ["assets/images/characters/ch1/11.png"],
-        "left_static": ["assets/images/characters/ch1/16.png"],
-        "left_moving": ["assets/images/characters/ch1/17.png", "assets/images/characters/ch1/18.png"]
+        "top_static": ["assets/images/characters/ch1/top.png"],
+        "top_moving": [f"assets/images/characters/ch1/top{i}.png" for i in range(1, 3)],
+        "right_static": ["assets/images/characters/ch1/right.png"],
+        "right_moving": [f"assets/images/characters/ch1/right{i}.png" for i in range(1, 3)],
+        "down_static": ["assets/images/characters/ch1/down.png"],
+        "down_moving": [f"assets/images/characters/ch1/down{i}.png" for i in range(1, 3)],
+        "left_static": ["assets/images/characters/ch1/left.png"],
+        "left_moving": [f"assets/images/characters/ch1/left{i}.png" for i in range(1, 3)]
     }
 }
 explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
