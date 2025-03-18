@@ -1,32 +1,46 @@
+import globals
+from utils.helpers import get_tick_from_ms, in_valid_range, rand, get_ms_from_tick
 from entitites.entity import Entity
 from entitites.interfaces.Collidable import Collidable
-from utils.helpers import get_ms_from_tick, get_tick_from_ms, in_valid_range
-import globals
+
 
 class Fire(Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self.power = kwargs.get("power", 1)
-        self.timer = kwargs.get("timer", 300)
-        self.spread_timer = kwargs.get("spread_timer", 0)
+        self.timer = kwargs.get("timer", get_tick_from_ms(300))
+        self.spread_timer = kwargs.get("spread_timer", get_tick_from_ms(0))
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
         self.is_initial = kwargs.get("is_initial", False)
-        self.type = kwargs.get("type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
-        self.fired = False
+        self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
+        self.did_spread = False
+
         if self.mounted:
             globals.field_fire_state[self.x][self.y] = self.power
+            self.set_image_path(globals.explosion_frames[0])
             if self.spread_timer == 0:
                 self.handle_collision()
 
 
     def add_tick(self):
         self.tick += 1
-        if self.mounted and not self.fired and get_ms_from_tick(self.tick) > self.spread_timer:
+        if not self.mounted:
+            return
+
+        if not self.did_spread and self.tick > self.spread_timer:
             self.spread()
 
-        if self.mounted and get_ms_from_tick(self.tick) > self.timer:
+        if self.tick > self.timer:
             self.self_destroy()
+
+        if self.tick < self.timer // 3:
+            self.set_image_path(globals.explosion_frames[0])
+        elif self.tick < (self.timer // 3) * 2:
+            self.set_image_path(globals.explosion_frames[1])
+        else:
+            self.set_image_path(globals.explosion_frames[2])
+
 
     def self_destroy(self):
         globals.field_fire_state[self.x][self.y] = 0
@@ -37,13 +51,15 @@ class Fire(Collidable, Entity):
         for dx, dy in directions:
             nx = self.x + dx
             ny = self.y + dy
-            if self.power - 1 <= 0 or not in_valid_range(nx, ny, globals.cols, globals.rows):
+            if (self.power - 1 <= 0 or
+                not in_valid_range(nx, ny, globals.cols, globals.rows) or
+                globals.field[nx][ny] == globals.U_OBSTACLE_CELL
+            ):
                 continue
 
-            if globals.field_fire_state[nx][ny] >= self.power:
-                continue
-
-            if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
+            # if globals.field_fire_state[nx][ny] >= self.power - 1:
+            #     continue
+            if globals.field_fire_state[nx][ny] and (rand(0, 2) or globals.field_fire_state[nx][ny] >= self.power - 1):  # with 50% chance it the fire with higher power will proceed
                 continue
 
             new_fire = Fire(
@@ -52,16 +68,18 @@ class Fire(Collidable, Entity):
                 timer=self.timer,
                 spread_timer=self.spread_timer,
                 spawner=self.spawner,
-                type=self.type,
-                px_w=self.px_w,
-                px_h=self.px_h,
-                px_x=self.px_x + dx * globals.cell_size,
-                px_y=self.px_y + dy * globals.cell_size,
-                x=nx,
-                y=ny,
+                spread_type=self.spread_type,
+
                 layer=self.layer,
                 color=self.color,
                 entity_group=globals.entities,
+
+                x=nx,
+                y=ny,
+                px_x=self.px_x + dx * globals.cell_size,
+                px_y=self.px_y + dy * globals.cell_size,
+                px_w=self.px_w,
+                px_h=self.px_h,
             )
 
             if new_fire.spread_timer == 0:
@@ -77,29 +95,30 @@ class Fire(Collidable, Entity):
                 continue
 
             new_fire = Fire(
-                mounted=True,
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,
                 spread_timer=self.spread_timer,
                 spawner=self.spawner,
-                type=spread_type,
-                px_w=self.px_w,
-                px_h=self.px_h,
-                px_x=self.px_x + dx * globals.cell_size,
-                px_y=self.px_y + dy * globals.cell_size,
-                x=nx,
-                y=ny,
+                spread_type=spread_type,
+
                 layer=self.layer,
                 color=self.color,
                 entity_group=globals.entities,
+
+                x=nx,
+                y=ny,
+                px_x=self.px_x + dx * globals.cell_size,
+                px_y=self.px_y + dy * globals.cell_size,
+                px_w=self.px_w,
+                px_h=self.px_h,
             )
 
             if new_fire.spread_timer == 0:
                 new_fire.spread()
 
     def spread_straight(self):
-        dx, dy = globals.MAP_DIRECTION[self.type]
+        dx, dy = globals.MAP_DIRECTION[self.spread_type]
         nx = self.x + dx
         ny = self.y + dy
         if not in_valid_range(nx, ny, globals.rows, globals.cols):
@@ -108,22 +127,23 @@ class Fire(Collidable, Entity):
             return
 
         new_fire = Fire(
-            mounted=True,
             is_initial=False,
             power=self.power - 1,
             timer=self.timer,
             spread_timer=self.spread_timer,
             spawner=self.spawner,
-            type=self.type,
-            px_w=self.px_w,
-            px_h=self.px_h,
-            px_x=self.px_x + dx * globals.cell_size,
-            px_y=self.px_y + dy * globals.cell_size,
-            x=nx,
-            y=ny,
+            spread_type=self.spread_type,
+
             layer=self.layer,
             color=self.color,
             entity_group=globals.entities,
+
+            x=nx,
+            y=ny,
+            px_x=self.px_x + dx * globals.cell_size,
+            px_y=self.px_y + dy * globals.cell_size,
+            px_w=self.px_w,
+            px_h=self.px_h,
         )
 
         if new_fire.spread_timer == 0:
@@ -133,15 +153,15 @@ class Fire(Collidable, Entity):
         if not self.mounted:
             return
 
-        if self.power < 1 or self.fired:
+        if self.power < 1 or self.did_spread:
             return
-        self.fired = True
+        self.did_spread = True
 
-        if self.type == "bfs":
+        if self.spread_type == "bfs":
             self.spread_bfs()
-        elif self.type == "star":
+        elif self.spread_type == "star":
             self.spread_star()
-        elif self.type in globals.MAP_DIRECTION:
+        elif self.spread_type in globals.MAP_DIRECTION:
             self.spread_straight()
         else:
             raise Exception("Unknown type of spread!")

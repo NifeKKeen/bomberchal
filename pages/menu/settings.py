@@ -1,10 +1,9 @@
-import pygame
-import configparser
-import globals
+import globals, pygame, configparser
 from utils import paint_api
-from pages.navigation import navigate
 from utils.interaction_api import is_clicked, get_last_pressed_key
 from utils.sound_api import play_menu_music
+from pages.navigation import navigate
+
 
 CONFIG_FILE = "pages/menu/config.ini"
 def load_config():

@@ -1,3 +1,5 @@
+import globals
+from utils.helpers import get_tick_from_ms
 from entitites.entity import Entity
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
@@ -9,14 +11,29 @@ class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.lives = kwargs.get("lives", 1)
+        self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(3000))
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
-
-    def is_alive(self):
-        return bool(self.lives)
+        self.set_image_path(globals.character_frames["ch1"]["top_static"][0])
 
     def add_tick(self):
         self.tick += 1
+        if self.moved_this_frame:
+            image_key = f"{self.last_direction}_moving"
+            idx = (self.tick // 8) % len(globals.character_frames["ch1"][image_key])
+            self.set_image_path(globals.character_frames["ch1"][image_key][idx])
+        else:
+            image_key = f"{self.last_direction}_static"
+            idx = (self.tick // 8) % len(globals.character_frames["ch1"][image_key])
+            self.set_image_path(globals.character_frames["ch1"][image_key][idx])
+
+        if self.cur_damage_countdown > 0:
+            self.hidden = self.cur_damage_countdown % 8 < 4
+        else:
+            self.hidden = False
+
+    # def kill(self):  # noclip
+    #     return
+
 
 def get_players(entities):
     res = set()

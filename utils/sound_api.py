@@ -1,5 +1,4 @@
 from os import path
-
 import globals, pygame
 from utils.helpers import rand
 

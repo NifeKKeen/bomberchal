@@ -25,6 +25,24 @@ brown_background_img = None
 unmuted_img = "assets/images/mute/volume.png"
 muted_img = "assets/images/mute/mute.png"
 
+character_frames = {
+    "ch1": {
+        "top_static": ["assets/images/characters/ch1/15.png"],
+        "top_moving": ["assets/images/characters/ch1/15.png"],
+        "right_static": ["assets/images/characters/ch1/12.png"],
+        "right_moving": ["assets/images/characters/ch1/13.png", "assets/images/characters/ch1/14.png"],
+        "down_static": ["assets/images/characters/ch1/11.png"],
+        "down_moving": ["assets/images/characters/ch1/11.png"],
+        "left_static": ["assets/images/characters/ch1/16.png"],
+        "left_moving": ["assets/images/characters/ch1/17.png", "assets/images/characters/ch1/18.png"]
+    }
+}
+explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
+bomb_frames = [f"assets/images/bomb/{i}.png" for i in range(1, 4)]
+box_frames = [f"assets/images/terrain/box{i}.png" for i in range(1, 3)]
+bricks_frames = [f"assets/images/terrain/wall{i}.png" for i in range(1, 3)]
+unbreakable_obstacle_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
+
 FONT_PARAMETER = (None, 36)
 text_font = "assets/font/Pixeloid_Sans.ttf"
 

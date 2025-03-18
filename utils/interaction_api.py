@@ -1,8 +1,7 @@
-import pygame
+import globals, pygame
 from pygame.locals import *
-
-import globals
 from utils.event_api import is_fired
+
 
 is_waiting_for_key = False  # глобальное состояние ожидания нажатия клавиши
 

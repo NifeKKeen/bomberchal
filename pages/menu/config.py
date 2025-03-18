@@ -1,7 +1,5 @@
-import configparser
-import pygame
+import pygame, configparser
 
-pygame.init()
 
 def parse_key(key_str, default_key):
 

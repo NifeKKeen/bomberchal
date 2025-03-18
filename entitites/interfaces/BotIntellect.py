@@ -1,9 +1,9 @@
 import globals
+from utils.helpers import get_field_pos, get_pos, get_pos_upper_left, rand
 from entitites.entity import Entity
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Movable import Movable
-from utils.helpers import get_field_pos, get_pos, get_pos_upper_left, rand
 
 
 class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
