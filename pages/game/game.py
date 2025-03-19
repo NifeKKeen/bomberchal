@@ -57,6 +57,7 @@ def setup_game(**kwargs):
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
+            character_skin_key=f"ch{rand(1, 5)}",
 
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
@@ -86,25 +87,35 @@ def render_field(**kwargs):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
                 obstacle_sprite = Obstacle(
+                    type=field[x][y],
+                    seed=0,
+
+                    color=(64, 64, 64),
+                    entity_group=globals.entities,
+
+                    key = f"o-{x};{y}",
+                    x=x,
+                    y=y,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
-                    x=x, y=y,
-                    key = f"o-{x};{y}",
-                    color=(64, 64, 64),
-                    type=field[x][y],
-                    entity_group=globals.entities
                 )
 
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
+                obstacle_seed = rand(1, 3)
+
                 obstacle_sprite = Obstacle(
+                    type=field[x][y],
+                    seed=obstacle_seed,
+
+                    color=(255, 255, 64),
+                    entity_group=globals.entities,
+
+                    key = f"o-{x};{y}",
+                    x=x,
+                    y=y,
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w = globals.cell_size, px_h = globals.cell_size,
-                    x=x, y=y,
-                    key = f"o-{x};{y}",
-                    color=(255, 255, 64),
-                    type=field[x][y],
-                    entity_group=globals.entities
                 )
 
 
@@ -126,12 +137,13 @@ def render_field(**kwargs):
         for player in range(2):
             print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
             paint_api.mount_text(
-                px_x=(i - 1) * globals.cell_size,
-                px_y=(globals.rows + player) * globals.cell_size,
-                key=f"bonus-{i}-{player}",
                 text=str(i),
                 font_size=30,
-                color=(255, 255, 255)
+                color=(255, 255, 255),
+
+                key=f"bonus-{i}-{player}",
+                px_x=(i - 1) * globals.cell_size,
+                px_y=(globals.rows + player) * globals.cell_size,
             )
 
 def reset_game():
@@ -150,14 +162,17 @@ def spawn_bonus(bonus_type = 0):
             continue
         # found position
         bonus = Bonus(
+            type=bonus_types()[bonus_type],
+
+            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123)][bonus_type],
+
+            layer=251,
+            entity_group=globals.entities,
+
+            x=bonus_x,
+            y=bonus_y,
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
             px_w=globals.cell_size, px_h=globals.cell_size,
-            speed = 0,
-            type=bonus_types()[bonus_type],
-            x=bonus_x, y=bonus_y,
-            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123)][bonus_type],
-            layer=251,
-            entity_group=globals.entities
         )
         break
 

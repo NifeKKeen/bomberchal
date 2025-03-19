@@ -14,7 +14,8 @@ class Entity(SurfaceSprite):
         if self.x is None or self.y is None:
             self.x, self.y = get_pos(self.px_x, self.px_y)
 
-        self.lives = kwargs.get("lives", 1)
+        self.initial_lives = kwargs.get("lives", 1)
+        self.lives = self.initial_lives
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(0))
         self.cur_damage_countdown = kwargs.get("cur_damage_countdown", get_tick_from_ms(0))
 
