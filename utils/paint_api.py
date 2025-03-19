@@ -45,7 +45,6 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
 
     def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
-        self.should_refresh = False
         print("REQUESTED REFRESH")
         if self.image_path is not None:
             self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
@@ -110,10 +109,16 @@ class TextSprite(SurfaceSprite):
     def refresh(self):
         self.image = self.font_obj.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
+        self.rect.x = self.px_x
+        self.rect.y = self.px_y
         self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
     def set_text(self, text):
         self.text = text
+        self.should_refresh = True
+    
+    def set_color(self, color):
+        self.color = color
         self.should_refresh = True
 
 class GIFSprite(SurfaceSprite):
@@ -230,6 +235,8 @@ def draw_sprites():
         else:
             if sprite.should_refresh:
                 sprite.refresh()
+                sprite.should_refresh = False
+
 
     # all_sprites.update()
 

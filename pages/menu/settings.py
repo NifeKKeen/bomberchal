@@ -10,6 +10,7 @@ from utils.sound_api import play_menu_music
 CONFIG_FILE = "pages/menu/config.ini"
 def load_config():
     if not os.path.exists(CONFIG_FILE):
+        globals.game_mode = "default"
         return
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
@@ -19,6 +20,10 @@ def load_config():
 
         globals.controls_players[0]["explosion_key"] = parse_key(key1_str)
         globals.controls_players[1]["explosion_key"] = parse_key(key2_str)
+    if "Game" in config:
+        globals.game_mode = config.get("Game", "mode", fallback="default")  # исправлено: читаем ключ "mode"
+    else:
+        globals.game_mode = "default"
 
 def parse_key(key_str):
     if key_str.lower() == "custom":
@@ -35,6 +40,7 @@ def save_config():
         "explosion_key_p1": str(globals.controls_players[0]["explosion_key"]),
         "explosion_key_p2": str(globals.controls_players[1]["explosion_key"])
     }
+    config["Game"] = {"mode": str(globals.game_mode)}
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
@@ -135,7 +141,7 @@ def settings(is_setup = False):
 
     paint_api.mount_text(
         px_x=globals.center_x - 350,
-        px_y=globals.center_y + 25,  
+        px_y=globals.center_y - 50,  
         key="label_p1",
         text="for player2",
         font_size=30,
@@ -144,7 +150,7 @@ def settings(is_setup = False):
 
     left_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
-        px_y=globals.center_y + 15,  
+        px_y=globals.center_y - 65,  
         px_w=75,
         px_h=75,
         key="left_arrow_p1",
@@ -153,7 +159,7 @@ def settings(is_setup = False):
     current_key_text_p1 = "Custom" if offered_keys_p1[current_index1] == "custom" else pygame.key.name(offered_keys_p1[current_index1])
     display_p1 = paint_api.mount_text(
         px_x=globals.center_x + 35,
-        px_y=globals.center_y + 50, 
+        px_y=globals.center_y - 35, 
         key="display_p1",
         text=current_key_text_p1,
         font_size=25,
@@ -162,7 +168,7 @@ def settings(is_setup = False):
     )
     right_arrow_p1 = paint_api.mount_rect(
         px_x=globals.center_x + 150,
-        px_y=globals.center_y + 15, 
+        px_y=globals.center_y - 65, 
         px_w=75,
         px_h=75,
         key="right_arrow_p1",
@@ -193,6 +199,86 @@ def settings(is_setup = False):
                 update_display(display_p1, 1, waiting_for_key2)
                 save_config()
 
+    
+    paint_api.mount_text(
+        px_x=globals.center_x - 350,
+        px_y=globals.center_y + 50,  
+        key="game_mode",
+        text="Game mode",
+        font_size=30,
+        color=(255, 255, 255),
+    )
+
+    default_button = paint_api.mount_rect(
+        px_x=globals.center_x - 130,
+        px_y=globals.center_y + 40,
+        px_w=170,
+        px_h=60,
+        key="default",
+        image_path="assets/images/buttons/bar_button.png",
+    )
+    default_center = default_button.rect.center
+    default_button_shadow = paint_api.mount_text(
+        px_x=default_center[0] + 4,
+        px_y=default_center[1] + 4,
+        key="default_text_shadow",
+        text="Default",
+        font_size=40,
+        color=(0, 0, 0)
+    )
+    default_button_text = paint_api.mount_text(
+        px_x=default_center[0],
+        px_y=default_center[1],
+        key="default_text",
+        text="Default",
+        font_size=40,
+        color=(255, 255, 255),
+        align="center"
+    )
+    boss_button = paint_api.mount_rect(
+        px_x=globals.center_x + 70,
+        px_y=globals.center_y + 40,
+        px_w=250,
+        px_h=60,
+        key="boss",
+        image_path="assets/images/buttons/bar_button.png",
+    )
+    boss_center = boss_button.rect.center
+    boss_button_shadow = paint_api.mount_text(
+        px_x=boss_center[0] + 4,
+        px_y=boss_center[1] + 4,
+        key="boss_text_shadow",
+        text="Boss Fight",
+        font_size=40,
+        color=(0, 0, 0)
+    )
+    boss_button_text = paint_api.mount_text(
+        px_x=boss_center[0],
+        px_y=boss_center[1],
+        key="boss_text",
+        text="Boss Fight",
+        font_size=40,
+        color=(255, 255, 255),
+        align="center"
+    )
+      
+    if is_clicked(default_button):
+        globals.game_mode = "default"
+        print("default clicked")
+        save_config()
+    if is_clicked(boss_button):
+        print("boss clicked")
+        globals.game_mode = "bossfight"
+        save_config()
+
+    if globals.game_mode == "default":
+        print("default")
+        default_button_text.set_color((255, 255, 0)) 
+        boss_button_text.set_color((255, 255, 255))     
+    elif (globals.game_mode == "bossfight"):
+        print()
+        boss_button_text.set_color((255, 255, 0))        
+        default_button_text.set_color((255, 255, 255))      
 
     back_button = paint_api.mount_rect(
         px_y=globals.center_y + 300,
@@ -219,8 +305,16 @@ def settings(is_setup = False):
         font_size=50,
         color=(255, 255, 255)
     )
-    back_button_text.rect.center = back_center
-    back_button_shadow.rect.center = (back_center[0] + 4, back_center[1] + 4)
+
+    for button_text, button_shadow, center in [
+        (default_button_text, default_button_shadow, default_center),
+        (boss_button_text, boss_button_shadow, boss_center),
+        (back_button_text, back_button_shadow, back_center),
+    ]:
+        button_text.rect.center = center
+        button_shadow.rect.center = (center[0] + 4, center[1] + 4)
+
+    
     if is_clicked(back_button):
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
