@@ -269,4 +269,4 @@ def game(**kwargs):
 
         from entitites.bomb import Bomb
         if isinstance(entity, Bomb):
-            print("ya bomba lol ", entity, entity.x, entity.y)
+            print("ya bomba lol ", entity, entity.x, entity.y) 
