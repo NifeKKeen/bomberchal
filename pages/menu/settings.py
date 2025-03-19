@@ -224,7 +224,8 @@ def settings(is_setup = False):
         key="default_text_shadow",
         text="Default",
         font_size=40,
-        color=(0, 0, 0)
+        color=(0, 0, 0),
+        align="center"
     )
     default_button_text = paint_api.mount_text(
         px_x=default_center[0],
@@ -250,7 +251,8 @@ def settings(is_setup = False):
         key="boss_text_shadow",
         text="Boss Fight",
         font_size=40,
-        color=(0, 0, 0)
+        color=(0, 0, 0),
+        align="center"
     )
     boss_button_text = paint_api.mount_text(
         px_x=boss_center[0],
@@ -295,7 +297,8 @@ def settings(is_setup = False):
         key="back_text_shadow",
         text="Back",
         font_size=50,
-        color=(0, 0, 0)
+        color=(0, 0, 0),
+        align="center"
     )
     back_button_text = paint_api.mount_text(
         px_x=back_center[0],
@@ -303,16 +306,9 @@ def settings(is_setup = False):
         key="back_text",
         text="Back",
         font_size=50,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
+        align = "center"
     )
-
-    for button_text, button_shadow, center in [
-        (default_button_text, default_button_shadow, default_center),
-        (boss_button_text, boss_button_shadow, boss_center),
-        (back_button_text, back_button_shadow, back_center),
-    ]:
-        button_text.rect.center = center
-        button_shadow.rect.center = (center[0] + 4, center[1] + 4)
 
     
     if is_clicked(back_button):

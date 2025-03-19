@@ -1,6 +1,6 @@
 import configparser
 import globals
-import random              
+import random
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
@@ -41,6 +41,8 @@ CONFIG_FILE = "pages/menu/config.ini"
 #     player_skins[player] = SKINS[new_index]
 
 show_popup_window = False
+
+
 def pop_up_window():
     global show_popup_window
     # paint_api.mount_rect(
@@ -81,7 +83,7 @@ def pop_up_window():
         px_h=50,
         key="close",
         image_path="assets/images/buttons/bar_button.png",
-        layer=100  # устанавливаем высокий слой для кнопки
+        layer=100,  # устанавливаем высокий слой для кнопки
     )
     close_center = close_button.rect.center
     close_button_text = paint_api.mount_text(
@@ -91,7 +93,7 @@ def pop_up_window():
         text="x",
         font_size=30,
         color=(255, 255, 255),
-        layer=102
+        layer=102,
     )
     close_button_shadow = paint_api.mount_text(
         px_x=close_center[0] + 4,
@@ -100,7 +102,7 @@ def pop_up_window():
         text="x",
         font_size=30,
         color=(0, 0, 0),
-        layer=101
+        layer=101,
     )
     close_button_text.rect.center = close_center
     close_button_shadow.rect.center = (close_center[0] + 4, close_center[1] + 4)
@@ -111,6 +113,7 @@ def pop_up_window():
         close_button.unmount()
         close_button_shadow.unmount()
         close_button_text.unmount()
+
 
 def menu_customization():
     # load_config()
@@ -123,9 +126,9 @@ def menu_customization():
     skin_display_index = 1
 
     # def update_display_photo():
-        # display_p0.image = f"assets/characters/ch{skin_display_index}.png"
-        # paint_api.update_image("skin_preview", image_path=f"assets/characters/ch{skin_display_index}.png")
-    
+    # display_p0.image = f"assets/characters/ch{skin_display_index}.png"
+    # paint_api.update_image("skin_preview", image_path=f"assets/characters/ch{skin_display_index}.png")
+
     paint_api.mount_text(
         px_x=globals.center_x,
         px_y=globals.center_y - 300,
@@ -133,7 +136,7 @@ def menu_customization():
         text="Change skin",
         font_size=40,
         color=(255, 255, 255),
-        align="center"
+        align="center",
     )
     paint_api.mount_text(
         px_x=globals.center_x - 350,
@@ -141,7 +144,7 @@ def menu_customization():
         key="label_p0",
         text="for player1",
         font_size=30,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
     )
     left_arrow_p0 = paint_api.mount_rect(
         px_x=globals.center_x - 150,
@@ -166,7 +169,6 @@ def menu_customization():
         px_h=50,
         key="skin_preview",
         image_path="assets/images/buttons/bar_button.png",
-        # align="center"
     )
     preview_center = preview_button_p0.rect.center
     preview_button_shadow = paint_api.mount_text(
@@ -175,7 +177,8 @@ def menu_customization():
         key="preview_text_shadow",
         text="Preview",
         font_size=30,
-        color=(0, 0, 0)
+        color=(0, 0, 0),
+        align="center",
     )
     preview_button_text = paint_api.mount_text(
         px_x=preview_center[0],
@@ -183,9 +186,10 @@ def menu_customization():
         key="preview_text",
         text="Preview",
         font_size=30,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
+        align="center",
     )
-    if(is_clicked(preview_button_p0)):
+    if is_clicked(preview_button_p0):
         show_popup_window = True
     if show_popup_window:
         pop_up_window()
@@ -199,16 +203,14 @@ def menu_customization():
         # image_path="assets/gifs/ch1/1.png",
         # align="center"
     )
-    
+
     # current_skin_p0 = player_skins["player1"]
     if is_clicked(left_arrow_p0) or is_clicked(right_arrow_p0):
         ind = 1 if is_clicked(left_arrow_p0) else -1
         skin_display_index = (skin_display_index + ind) % len(globals.skins)
         # change_skin(ind, display_p0)
-   
 
-    
-#     # Отображение выбранного скина
+    #     # Отображение выбранного скина
     # skin_preview = paint_api.mount_image(
     #     px_x=globals.center_x,
     #     px_y=globals.center_y,
@@ -222,7 +224,7 @@ def menu_customization():
         px_h=80,
         key="back",
         image_path="assets/images/buttons/bar_button.png",
-        align="center"
+        align="center",
     )
     back_center = back_button.rect.center
     back_button_shadow = paint_api.mount_text(
@@ -231,7 +233,8 @@ def menu_customization():
         key="back_text_shadow",
         text="Back",
         font_size=50,
-        color=(0, 0, 0)
+        color=(0, 0, 0),
+        align="center",
     )
     back_button_text = paint_api.mount_text(
         px_x=back_center[0],
@@ -239,15 +242,9 @@ def menu_customization():
         key="back_text",
         text="Back",
         font_size=50,
-        color=(255, 255, 255)
+        color=(255, 255, 255),
+        align="center",
     )
-    
 
-    for button_text, button_shadow, center in [
-        (back_button_text, back_button_shadow, back_center),
-        (preview_button_text, preview_button_shadow, preview_center)
-    ]:
-        button_text.rect.center = center
-        button_shadow.rect.center = (center[0] + 4, center[1] + 4)
     if is_clicked(back_button):
         navigate("menu")
