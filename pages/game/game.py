@@ -1,5 +1,7 @@
 import globals
 from pygame.locals import *
+
+from entitites.bot import Bot
 from utils import paint_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
 from utils.interaction_api import is_clicked
@@ -10,7 +12,7 @@ from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
-from entitites.player import Player
+from entitites.player import Player, get_players
 from pages.game import field_generator
 from pages.navigation import navigate
 
@@ -36,7 +38,7 @@ def setup_game(**kwargs):
 
     globals.rows = kwargs.get("rows", 23)
     globals.cols = kwargs.get("cols", 25)
-    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows))
+    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows, boss_fight=True))
     globals.field_fire_state = kwargs.get("field_fired",
         [[0] * globals.rows for _ in range(globals.cols)]
     )
@@ -57,6 +59,7 @@ def setup_game(**kwargs):
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
+            spread_type="star",
 
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
@@ -117,37 +120,64 @@ def render_field(**kwargs):
                 #     x=x, y=y,
                 #     speed=1,
                 #     color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+                #     bomb_countdown=get_tick_from_ms(500),
                 #     layer=256,
                 #     entity_group=globals.entities,
                 #     type=bot_type
                 # )
 
-    for i in range(1, 10):
+    for i in range(1, 11):
         for player in range(2):
-            print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
+            # print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
             paint_api.mount_text(
-                px_x=(i - 1) * globals.cell_size,
+                px_x=(i - 0.75) * globals.cell_size,
                 px_y=(globals.rows + player) * globals.cell_size,
                 key=f"bonus-{i}-{player}",
-                text=str(i),
+                text=str(i % 10),
                 font_size=30,
-                color=(255, 255, 255)
+                color=(222, 222, 222),
+                layer = 300
             )
+
+    if True:
+        x, y = globals.cols // 2 - 1, globals.rows // 2 - 1
+        bot_type = 3
+        boss_bot = Bot(
+            px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+            # px_w=globals.cell_size * 3, px_h=globals.cell_size * 3,
+            px_w=globals.cell_size, px_h=globals.cell_size,
+            x=x, y=y,
+            speed=2,
+            color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+            layer=256,
+            entity_group=globals.entities,
+            type=bot_type,
+            bomb_countdown=get_tick_from_ms(500 + 3000),
+            bomb_power=8,
+            bomb_allowed=1,
+            damage_countdown=get_tick_from_ms(500),
+            lives=20
+        )
 
 def reset_game():
     globals.entities.clear()
 
 def spawn_bonus(bonus_type = 0):
+    attempts = 0
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
+
         collision = False
-        #print(len(globals.entities))
         for entity in globals.entities:
             if entity.x == bonus_x and entity.y == bonus_y:
                 collision = True
                 break
         if collision:
+            attempts += 1
+            if attempts > globals.cols * globals.rows:
+                break
             continue
+
         # found position
         bonus = Bonus(
             px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
@@ -155,26 +185,51 @@ def spawn_bonus(bonus_type = 0):
             speed = 0,
             type=bonus_types()[bonus_type],
             x=bonus_x, y=bonus_y,
-            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123)][bonus_type],
+            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_type],
             layer=251,
             entity_group=globals.entities
         )
-        break
+        return
+
+    for x in range(globals.cols):
+        for y in range(globals.rows):
+            collision = False
+            for entity in globals.entities:
+                if entity.x == bonus_x and entity.y == bonus_y:
+                    collision = True
+                    break
+            if not collision:
+                bonus = Bonus(
+                    px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    speed=0,
+                    type=bonus_types()[bonus_type],
+                    x=bonus_x, y=bonus_y,
+                    color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (0, 0, 0)][bonus_type],
+                    layer=251,
+                    entity_group=globals.entities
+                )
+                return
 
 def render_bonuses():
     for entity in list(globals.entities):
         if not isinstance(entity, Player):# and not isinstance(entity, Bot):
             continue
         # Player or bot
+        x = 0
         for bonus in entity.bonuses:
-            if entity.key[-1] == '0':
-                if bonus.y != globals.rows:
-                    bonus.x = len(entity.bonuses) - 1
-                    bonus.y = globals.rows
-            else:
-                if bonus.y != globals.rows + 1:
-                    bonus.x = len(entity.bonuses) - 1
-                    bonus.y = globals.rows + 1
+            bonus.x = x
+            bonus.y = globals.rows + (entity.key[-1] == '1')
+            x += 1
+
+            # if entity.key[-1] == '0':
+            #     if bonus.y != globals.rows:
+            #         bonus.x = x
+            #         bonus.y = globals.rows
+            # else:
+            #     if bonus.y != globals.rows + 1:
+            #         bonus.x = x
+            #         bonus.y = globals.rows + 1
 
             bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
             bonus.set_px(bonus.px_x, bonus.px_y)
@@ -194,20 +249,24 @@ def game(**kwargs):
     # if player1_sprite.collides_with(player2_sprite):
     #     print("Che tam")
     # print(SurfaceSprite.SurfaceId)
-    # if globals.tick % 20 == 0:
-    #     spawn_bonus(rand(0, 3))
+    if globals.tick % 50 == 0:
+        spawn_bonus(rand(0, 4))
 
-    # if len(get_players(globals.entities)) == 0:
-    #     raise Exception("You lost")
+    if len(get_players(globals.entities)) == 0:
+        raise Exception("You lost")
 
-    # render_bonuses()
+    render_bonuses()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, BotIntellect):
             entity.think()
+        if isinstance(entity, Bonus):
+            entity.update()
         if isinstance(entity, Collidable):
             entity.handle_collision()
-        if isinstance(entity, Bonus) and entity.timer > 0:
-            entity.timer -= 1
+
+        from entitites.bomb import Bomb
+        if isinstance(entity, Bomb):
+            print("ya bomba lol ", entity, entity.x, entity.y)

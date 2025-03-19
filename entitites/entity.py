@@ -31,9 +31,6 @@ class Entity(SurfaceSprite):
     def is_alive(self):
         return bool(self.lives)
 
-    def is_alive(self):
-        return bool(self.lives)
-
     def make_damage(self, damage=1):
         if self.cur_damage_countdown > 0:
             return
@@ -43,9 +40,6 @@ class Entity(SurfaceSprite):
             self.kill()
 
     def kill(self):
-        self.lives -= 1
-        if self.is_alive():
-            return
         self.unmount()
         self.mounted = False
         if self.entity_group:

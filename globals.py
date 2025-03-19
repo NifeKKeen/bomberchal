@@ -98,6 +98,8 @@ MAP_DIRECTION = {
 
 exp_key_p1, exp_key_p2 = load_controls()
 
+gamemode = "Default" # | "Boss fight"
+
 controls_players = [
     {
         "to_left_key": K_a,

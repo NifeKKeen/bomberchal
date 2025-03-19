@@ -3,14 +3,13 @@ import random
 
 # Generator like in real game
 def generate(cols, rows, boss_fight):
-    boss_fight = True
     field = [
         [globals.U_OBSTACLE_CELL if (not boss_fight and (i % 2 == 0 and j % 2 == 0) or
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
     bot_count = (20 if not boss_fight else 0)
-    obstacle_count = 0
+    obstacle_count = 50
     objects = []
     current = 0
     for x in range(1, cols - 1):

@@ -11,12 +11,15 @@ class BombSpawnable(Entity):
         self.bomb_timer = kwargs.get("bomb_timer", get_tick_from_ms(3000))
         self.bomb_power = kwargs.get("bomb_power", 1)
         self.bombs_spawned = kwargs.get("bombs_spawned", 0)
+        self.bomb_countdown = kwargs.get("bomb_countdown", 0)
+        self.cur_bomb_countdown = kwargs.get("cur_bomb_countdown", 0)
+        self.spread_type = kwargs.get("spread_type", "bfs")
 
 
     def spawn_bomb(self):
         from entitites.bomb import Bomb, get_bombs
 
-        if self.bomb_allowed <= 0:
+        if self.bomb_allowed <= 0 or self.cur_bomb_countdown > 0:
             return
 
         collision = True
@@ -30,13 +33,14 @@ class BombSpawnable(Entity):
         # print(self.x, self.y, self.px_x, self.px_y)
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
 
+        self.cur_bomb_countdown = self.bomb_countdown
         self.bombs_spawned += 1
         self.bomb_allowed -= 1
 
         bomb = Bomb(
             timer=self.bomb_timer,
             spawner=self,
-            spread_type="bfs",
+            spread_type=self.spread_type,
 
             layer=255,
             color=([rand(64, 128)] * 3),
