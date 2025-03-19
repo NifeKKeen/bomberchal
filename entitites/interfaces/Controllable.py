@@ -1,9 +1,7 @@
 from typing import Protocol
-
-import globals
+from utils.interaction_api import is_pressed, is_pressed_once
 from entitites.bot import get_bots
 from entitites.entity import Entity
-from utils.interaction_api import is_pressed, is_pressed_once
 
 class ControllableProtocol(Protocol):
     speed: int
@@ -40,7 +38,6 @@ class Controllable(Entity, ControllableProtocol):
 
         if self.move_down_key and is_pressed(self.move_down_key):
             total_move_y += self.speed
-
 
         self.move_px(total_move_x, total_move_y)
 

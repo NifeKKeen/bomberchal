@@ -1,6 +1,6 @@
-from entitites.entity import Entity
 import globals
 from utils.helpers import get_field_pos
+from entitites.entity import Entity
 
 
 class Bonus(Entity):

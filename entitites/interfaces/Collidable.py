@@ -1,7 +1,6 @@
 import globals
-from entitites.entity import Entity
-from globals import BFS_DIRECTIONS
 from utils.helpers import rand
+from entitites.entity import Entity
 
 
 class Collidable(Entity):
@@ -26,17 +25,15 @@ class Collidable(Entity):
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
-        if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
-            for entity in list(self.entity_group):
-                if entity == self or not entity.collides_with(self):
-                    continue
-                # now entity collides and it is not ourselves
-                #
-                # print(entity, self)
+        for entity in list(self.entity_group):
+            if entity == self or not entity.collides_with(self):
+                continue
+            # now entity collides and it is not ourselves
 
+            if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
                 if isinstance(self, Bot):
                     if isinstance(entity, Player):
-                        entity.kill()
+                        entity.make_damage(1)
                     elif isinstance(entity, Bomb) and entity.spawner == self:
                         continue
 
@@ -71,20 +68,16 @@ class Collidable(Entity):
                         entity.collect(self)
 
 
-        elif isinstance(self, Fire):
-            for entity in list(self.entity_group):
-                if entity == self or not entity.collides_with(self):
-                    continue
-                # now entity collides and it is not ourselves
-
+            elif isinstance(self, Fire):
                 if isinstance(entity, Obstacle):
                     if entity.type == globals.D_OBSTACLE_CELL:
-                        entity.kill()
-                if isinstance(entity, Bomb):
+                        self.self_destroy()
+                        entity.make_damage(1)
+                elif isinstance(entity, Bomb):
                     entity.explode()
-                if isinstance(entity, Player) or isinstance(entity, Bot):
-                    entity.kill()
-                if isinstance(entity, Bonus):
+                elif isinstance(entity, Player) or isinstance(entity, Bot):
+                    entity.make_damage(1)
+                elif isinstance(entity, Bonus):
                     entity.kill()
 
 

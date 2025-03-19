@@ -1,9 +1,7 @@
+from utils.helpers import rand
 from entitites.entity import Entity
-from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.BotIntellect import BotIntellect
 from entitites.interfaces.Movable import Movable
-from entitites.interfaces.Collidable import Collidable
-from utils.helpers import rand
 
 
 class Bot(BotIntellect, Movable, Entity):
