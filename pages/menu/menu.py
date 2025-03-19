@@ -1,10 +1,8 @@
-import sys
+import globals, sys
 from utils import paint_api
-from pages.navigation import navigate
 from utils.interaction_api import is_clicked
-
-import globals
 from utils.sound_api import play_menu_music, stop_music
+from pages.navigation import navigate
 
 
 def menu(is_setup = False):

@@ -47,17 +47,21 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
 
         if self.type == 1:
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-            if len(Collidable.get_collisions(self)) > 0 or not in_valid_range(self.x, self.y, globals.cols, globals.rows):
-                self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-                self.direction ^= 1  # 0 to 1, 1 to 0, 2 to 3, 3 to 2 (W <-> S, A <-> D)
-                self.spawn_bomb()
-                # if random.randint(1, 100) <= 50:
-                #     # Randomly change direction, intended to work if there is more than one direction to which we can go
-                #     self.direction ^= 2
+            collisions = Collidable.get_collisions(self)
+            self.spawn_bomb()
+            for entity in collisions:
+                if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner == self):
+                    self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+                    self.direction ^= 2  # 0 to 2, 2 to 0, 1 to 3, 3 to 1 (UP <-> DOWN, LEFT <-> RIGHT)
+                    break
+
+            if rand(0, 500) < 5: # to simulate randomness like in actual game
+                self.direction ^= 1
 
         elif 2 <= self.type <= 3:
             # print(self.moving, self.dest_x, self.dest_y, self.x, self.y)
-            # In this algorithm, bot moves into direction of the farthest cell from all bombs, fires and players. So, it just wanders
+            # self.type = 2: In this algorithm, bot moves into direction of the farthest cell from all bombs, fires and players. So, it just wanders
+            # self.type = 3: Bot moves into direction of the closest player, trying to be far from bombs and fires. So, it is aggressive
             if self.moving == 1:
                 # print(self.x, self.y)
                 nx, ny = self.prev[self.x][self.y]
@@ -174,14 +178,18 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     for x in range(globals.cols):
                         for y in range(globals.rows):
                             if not self.blocked[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
-                                if self.dist[x][y] >= dst - 3:
-                                    # dst-3 to avoid potentially disadvantageous (for bots) routes
+                                if self.dist[x][y] >= dst - 5:
+                                    # If we left just dst, then in situation where one player moves too fast,
+                                    # the bot would have to move across the entire playing field, which would be disadvantageous for bot.
+                                    # So, dst-5 is required to avoid potentially disadvantageous routes
                                     farthest.append((x, y))
 
                     if (self.dest_x, self.dest_y) not in farthest and len(farthest) > 0:
+                        # if current goal is already one of the best options, then we don't update
                         nx, ny = farthest[rand(0, len(farthest))]
                         self.dest_x, self.dest_y = nx, ny
                         self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
+
                 else:
                     dst = float('inf')
                     for player in list(get_players(globals.entities)):
@@ -193,9 +201,6 @@ class BotIntellect(Movable, Collidable, BombSpawnable, Entity):
                     if dst < float('inf'):
                         self.dest_x, self.dest_y = nx, ny
                         self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
-
-                    # print("!!!!", dst, self.bomb_power)
-                    # raise Exception("123")
 
                 if dst < self.bomb_power:
                     self.spawn_bomb()

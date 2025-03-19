@@ -9,7 +9,7 @@ def generate(cols, rows, boss_fight):
                                     for j in range(rows)] for i in range(cols)
     ]
     bot_count = (20 if not boss_fight else 0)
-    obstacle_count = 0
+    obstacle_count = 50
     objects = []
     current = 0
     for x in range(1, cols - 1):
