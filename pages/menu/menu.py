@@ -7,156 +7,188 @@ import globals
 from utils.sound_api import play_menu_music, stop_music
 
 
-def menu(is_setup = False):
+mute_button_sprite = None
+play_button_sprite = None
+customization_button_sprite = None
+settings_button_sprite = None
+quit_button_sprite = None
+
+
+def menu(is_setup=False):
+    global mute_button_sprite, play_button_sprite, customization_button_sprite, settings_button_sprite, quit_button_sprite
     if is_setup:
         play_menu_music(volume=.2)
 
-    mute_button_sprite = paint_api.mount_rect(
-        px_x=globals.center_x - 380,
-        px_y=globals.center_y - 200,    
-        px_w=65,
-        px_h=65,
-        key="mute",
-        image_path=globals.muted_img if globals.music_muted else globals.unmuted_img,
-    )
-    play_button_sprite = paint_api.mount_rect(
-        px_y=globals.center_y - 100,
-        px_w=500,
-        px_h=90,
-        key="play",
-        image_path="assets/images/buttons/bar_button.png",
-        align="center"
-    )
-    play_center = play_button_sprite.rect.center
+        mute_button_sprite = paint_api.mount_rect(
+            px_x=globals.center_x - 350,
+            px_y=globals.center_y - 200,
+            px_w=65,
+            px_h=65,
+            align="center",
+            image_path=globals.muted_img if globals.music_muted else globals.unmuted_img,
 
-    play_button_shadow = paint_api.mount_text(
-        px_x = play_center[0] + 4,
-        px_y = play_center[1] + 4,
-        key = "play_text_shadow",
-        text="Play",
-        font_size=50,
-        color=(0, 0, 0),
-        align = "center"
-    )
-    play_button_text = paint_api.mount_text(
-        px_x = play_center[0] ,
-        px_y = play_center[1] ,
-        key = "play_text",
-        text="Play",
-        font_size=50,
-        color=(255, 255, 255),
-        align = "center"
-    )
-    customization_button_sprite = paint_api.mount_rect(
-        px_y=globals.center_y,
-        px_w=500,
-        px_h=90, 
-        key="customization",
-        image_path="assets/images/buttons/bar_button.png",
-        align="center"
-    )
-    customization_center = customization_button_sprite.rect.center
-    customization_button_shadow = paint_api.mount_text(
-        px_x = customization_center[0] + 4,
-        px_y = customization_center[1] + 4,
-        key = "customization_text_shadow",
-        text="Customization",
-        font_size=50,
-        color=(0, 0, 0),
-        align = "center"
-    )
-    customization_button_text = paint_api.mount_text(
-        px_x = customization_center[0],
-        px_y = customization_center[1],
-        key="customization_text",
-        text="Customization",
-        font_size=50,
-        color=(255, 255, 255),
-        align = "center"
-    )
-    settings_button_sprite = paint_api.mount_rect(
-        px_x=globals.center_x - 250,
-        px_y=globals.center_y + 55,
-        px_w=240,
-        px_h=90,
-        key="settings",
-        image_path="assets/images/buttons/bar_button.png",
-        # align="center"
-    )
-    settings_center = settings_button_sprite.rect.center
-    settings_button_shadow = paint_api.mount_text(
-        px_x = settings_center[0] + 4,
-        px_y = settings_center[1] + 4,
-        key = "settings_text_shadow",
-        text="Settings",
-        font_size=50,
-        color=(0, 0, 0),
-        align = "center"
-    )
-    settings_button_text = paint_api.mount_text(
-        px_x = settings_center[0],
-        px_y = settings_center[1],
-        key="settings_text",
-        text="Settings",
-        font_size=50,
-        color=(255, 255, 255),
-        align = "center"
-    )
-    # scoreboard_button_sprite = paint_api.mount_rect(
-    #     px_y=globals.center_y + 200,
-    #     px_w=230,
-    #     px_h=90,
-    #     key="scoreboard",
-    #     image_path="assets/images/buttons/bar_button.png",
-    #     align="center"
-    # )
-    # scoreboard_center = scoreboard_button_sprite.rect.center
-    # scoreboard_button_shadow = paint_api.mount_text(
-    #     px_x = scoreboard_center[0] + 4,
-    #     px_y = scoreboard_center[1] + 4,
-    #     key = "scoreboard_text_shadow",
-    #     text="Scoreboard",
-    #     font_size=50,
-    #     color=(0, 0, 0)
-    # )
-    # scoreboard_button_text = paint_api.mount_text(
-    #     px_x = scoreboard_center[0],
-    #     px_y = scoreboard_center[1],
-    #     key="scoreboard_text",
-    #     text="Scoreboard",
-    #     font_size=50,
-    #     color=(255, 255, 255)
-    # )
+            key="mute",
+        )
 
+        play_button_sprite = paint_api.mount_rect(
+            px_x=globals.center_x,
+            px_y=globals.center_y - 100,
+            px_w=500,
+            px_h=90,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
 
+            key="play",
+        )
+        play_pos = play_button_sprite.px_x, play_button_sprite.px_y
+        play_button_shadow = paint_api.mount_text(
+            px_x=play_pos[0] + 4,
+            px_y=play_pos[1] + 4,
+            align="center",
+            text="Play",
+            font_size=50,
+            color=(0, 0, 0),
 
-    quit_button_sprite = paint_api.mount_rect(
-        px_x=globals.center_x,
-        px_y=globals.center_y + 55,
-        px_w=250,
-        px_h=90, 
-        key="quit", 
-        image_path="assets/images/buttons/bar_button.png",
-    )
-    quit_center = quit_button_sprite.rect.center
-    quit_button_shadow = paint_api.mount_text(
-        px_x = quit_center[0] + 4,
-        px_y = quit_center[1] + 4,
-        key = "quit_text_shadow",
-        text="Quit",
-        font_size=50,
-        color=(0, 0, 0),
-        align = "center"
-    )
-    quit_button_text = paint_api.mount_text(
-        px_x = quit_center[0],
-        px_y = quit_center[1],
-        key="quit_text",
-        text="Quit",
-        font_size=50,
-        color=(255,255,255),
-        align = "center"
-    )
+            key="play_text_shadow",
+        )
+        play_button_text = paint_api.mount_text(
+            px_x=play_pos[0],
+            px_y=play_pos[1],
+            align="center",
+            text="Play",
+            font_size=50,
+            color=(255, 255, 255),
+
+            key="play_text",
+        )
+
+        customization_button_sprite = paint_api.mount_rect(
+            px_x=globals.center_x,
+            px_y=globals.center_y,
+            px_w=500,
+            px_h=90,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+
+            key="customization",
+        )
+        customization_pos = customization_button_sprite.px_x, customization_button_sprite.px_y
+        customization_button_shadow = paint_api.mount_text(
+            px_x=customization_pos[0] + 4,
+            px_y=customization_pos[1] + 4,
+            align="center",
+            text="Customization",
+            font_size=50,
+            color=(0, 0, 0),
+
+            key="customization_text_shadow",
+        )
+        customization_button_text = paint_api.mount_text(
+            px_x=customization_pos[0],
+            px_y=customization_pos[1],
+            align="center",
+            text="Customization",
+            font_size=50,
+            color=(255, 255, 255),
+
+            key="customization_text",
+        )
+
+        settings_button_sprite = paint_api.mount_rect(
+            px_x=globals.center_x - 128,
+            px_y=globals.center_y + 100,
+            px_w=246,
+            px_h=90,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+
+            key="settings",
+        )
+        settings_pos = settings_button_sprite.px_x, settings_button_sprite.px_y
+        settings_button_shadow = paint_api.mount_text(
+            px_x=settings_pos[0] + 4,
+            px_y=settings_pos[1] + 4,
+            align="center",
+            text="Settings",
+            font_size=50,
+            color=(0, 0, 0),
+
+            key="settings_text_shadow",
+        )
+        settings_button_text = paint_api.mount_text(
+            px_x=settings_pos[0],
+            px_y=settings_pos[1],
+            align="center",
+            text="Settings",
+            font_size=50,
+            color=(255, 255, 255),
+
+            key="settings_text",
+        )
+
+        # scoreboard_button_sprite = paint_api.mount_rect(
+        #     px_x=globals.center_x,
+        #     px_y=globals.center_y + 200,
+        #     px_w=230,
+        #     px_h=90,
+        #     align="center"
+        #     image_path="assets/images/buttons/bar_button.png",
+        #
+        #     key="scoreboard",
+        # )
+        # scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
+        # scoreboard_button_shadow = paint_api.mount_text(
+        #     px_x = scoreboard_pos[0] + 4,
+        #     px_y = scoreboard_pos[1] + 4,
+        #     align="center",
+        #     text="Scoreboard",
+        #     font_size=50,
+        #     color=(0, 0, 0)
+        #
+        #     key = "scoreboard_text_shadow",
+        # )
+        # scoreboard_button_text = paint_api.mount_text(
+        #     px_x = scoreboard_pos[0],
+        #     px_y = scoreboard_pos[1],
+        #     align="center",
+        #     text="Scoreboard",
+        #     font_size=50,
+        #     color=(255, 255, 255)
+        #
+        #     key="scoreboard_text",
+        # )
+
+        quit_button_sprite = paint_api.mount_rect(
+            px_x=globals.center_x + 128,
+            px_y=globals.center_y + 100,
+            px_w=246,
+            px_h=90,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+
+            key="quit",
+        )
+        quit_pos = quit_button_sprite.px_x, quit_button_sprite.px_y
+        quit_button_shadow = paint_api.mount_text(
+            px_x=quit_pos[0] + 4,
+            px_y=quit_pos[1] + 4,
+            align="center",
+            text="Quit",
+            font_size=50,
+            color=(0, 0, 0),
+
+            key="quit_text_shadow",
+        )
+        quit_button_text = paint_api.mount_text(
+            px_x=quit_pos[0],
+            px_y=quit_pos[1],
+            align="center",
+            text="Quit",
+            font_size=50,
+            color=(255, 255, 255),
+
+            key="quit_text",
+        )
 
     if is_clicked(play_button_sprite):
         navigate("game")
