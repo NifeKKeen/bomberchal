@@ -49,6 +49,12 @@ def save_config():
         config.write(configfile)
 
 
+def update_display(text_sprite, player_index, waiting):
+    key_val = globals.controls_players[player_index]["explosion_key"]
+    display_text = "Press key..." if waiting else (pygame.key.name(key_val) if key_val != "custom" else "Custom")
+    text_sprite.set_text(display_text)
+
+
 left_arrow_p0 = None
 display_p0 = None
 right_arrow_p0 = None
@@ -71,6 +77,7 @@ def mount_sprites():
     global default_button, default_button_text
     global boss_button, boss_button_text
     global back_button, back_button_text
+    global current_key_text_p0, current_key_text_p1
 
     paint_api.mount_text(
         px_x=globals.center_x,
@@ -171,18 +178,19 @@ def mount_sprites():
     )
 
     default_button = paint_api.mount_rect(
-        px_x=globals.center_x - 130,
-        px_y=globals.center_y + 40,
+        px_x=globals.center_x - 65,
+        px_y=globals.center_y + 70,
         px_w=170,
         px_h=60,
+        align="center",
         image_path="assets/images/buttons/bar_button.png",
 
         key="default",
     )
-    default_center = default_button.rect.center
+    default_pos = default_button.px_x, default_button.px_y
     default_button_shadow = paint_api.mount_text(
-        px_x=default_center[0] + 4,
-        px_y=default_center[1] + 4,
+        px_x=default_pos[0] + 4,
+        px_y=default_pos[1] + 4,
         align="center",
         text="Default",
         font_size=40,
@@ -191,8 +199,8 @@ def mount_sprites():
         key="default_text_shadow",
     )
     default_button_text = paint_api.mount_text(
-        px_x=default_center[0],
-        px_y=default_center[1],
+        px_x=default_pos[0],
+        px_y=default_pos[1],
         align="center",
         text="Default",
         font_size=40,
@@ -202,18 +210,19 @@ def mount_sprites():
     )
 
     boss_button = paint_api.mount_rect(
-        px_x=globals.center_x + 70,
-        px_y=globals.center_y + 40,
+        px_x=globals.center_x + 150,
+        px_y=globals.center_y + 70,
         px_w=250,
         px_h=60,
+        align="center",
         image_path="assets/images/buttons/bar_button.png",
 
         key="boss",
     )
-    boss_center = boss_button.rect.center
+    boss_pos = boss_button.px_x, boss_button.px_y
     boss_button_shadow = paint_api.mount_text(
-        px_x=boss_center[0] + 4,
-        px_y=boss_center[1] + 4,
+        px_x=boss_pos[0] + 4,
+        px_y=boss_pos[1] + 4,
         align="center",
         text="Boss Fight",
         font_size=40,
@@ -222,8 +231,8 @@ def mount_sprites():
         key="boss_text_shadow",
     )
     boss_button_text = paint_api.mount_text(
-        px_x=boss_center[0],
-        px_y=boss_center[1],
+        px_x=boss_pos[0],
+        px_y=boss_pos[1],
         align="center",
         text="Boss Fight",
         font_size=40,
@@ -233,6 +242,7 @@ def mount_sprites():
     )
 
     back_button = paint_api.mount_rect(
+        px_x=globals.center_x,
         px_y=globals.center_y + 300,
         px_w=350,
         px_h=80,
@@ -241,10 +251,10 @@ def mount_sprites():
 
         key="back",
     )
-    back_center = back_button.rect.center
+    back_pos = back_button.px_x, back_button.px_y
     back_button_shadow = paint_api.mount_text(
-        px_x=back_center[0] + 4,
-        px_y=back_center[1] + 4,
+        px_x=back_pos[0] + 4,
+        px_y=back_pos[1] + 4,
         align="center",
         text="Back",
         font_size=50,
@@ -253,8 +263,8 @@ def mount_sprites():
         key="back_text_shadow",
     )
     back_button_text = paint_api.mount_text(
-        px_x=back_center[0],
-        px_y=back_center[1],
+        px_x=back_pos[0],
+        px_y=back_pos[1],
         align="center",
         text="Back",
         font_size=50,
@@ -270,12 +280,7 @@ def settings(is_setup=False):
     global default_button, default_button_text
     global boss_button, boss_button_text
     global back_button, back_button_text
-
-    if is_setup:
-        play_menu_music(volume=.2)
-        current_key_text_p0 = None
-        current_key_text_p1 = None
-        mount_sprites()
+    global current_key_text_p0, current_key_text_p1
 
     load_config()
     offered_keys_p0 = [pygame.K_SPACE, pygame.K_v, pygame.K_x, "custom"]
@@ -284,39 +289,9 @@ def settings(is_setup=False):
     except ValueError:
         current_index0 = len(offered_keys_p0) - 1
 
-    def update_display(text_sprite, player_index, waiting):
-        key_val = globals.controls_players[player_index]["explosion_key"]
-        display_text = "Press key..." if waiting else (pygame.key.name(key_val) if key_val != "custom" else "Custom")
-        text_sprite.set_text(display_text)
-
-    waiting_for_key = globals.controls_players[0]["explosion_key"] == "custom"
+    waiting_for_key1 = globals.controls_players[0]["explosion_key"] == "custom"
 
     current_key_text_p0 = "Custom" if offered_keys_p0[current_index0] == "custom" else pygame.key.name(offered_keys_p0[current_index0])
-
-    if is_clicked(left_arrow_p0) or is_clicked(right_arrow_p0):
-        new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p0) else 1)) % len(offered_keys_p0)
-        new_key0 = offered_keys_p0[new_index0]
-        if new_key0 != "custom" and new_key0 == globals.controls_players[1]["explosion_key"]:
-            display_p0.set_text("Duplicate!")
-        else:
-            if new_key0 == "custom":
-                globals.controls_players[0]["explosion_key"] = "custom"
-                waiting_for_key = True
-            else:
-                globals.controls_players[0]["explosion_key"] = new_key0
-                waiting_for_key = False
-            update_display(display_p0, 0, waiting_for_key)
-            save_config()
-    if waiting_for_key:
-        pressed_key = get_last_pressed_key()
-        if pressed_key is not None:
-            if pressed_key == globals.controls_players[1]["explosion_key"]:
-                display_p0.set_text("Duplicate!")
-            else:
-                globals.controls_players[0]["explosion_key"] = pressed_key
-                waiting_for_key = False
-                update_display(display_p0, 0, waiting_for_key)
-                save_config()
 
     offered_keys_p1 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
     try:
@@ -327,6 +302,35 @@ def settings(is_setup=False):
     waiting_for_key2 = globals.controls_players[1]["explosion_key"] == "custom"
 
     current_key_text_p1 = "Custom" if offered_keys_p1[current_index1] == "custom" else pygame.key.name(offered_keys_p1[current_index1])
+
+    if is_setup:
+        play_menu_music(volume=.2)
+        mount_sprites()
+
+    if is_clicked(left_arrow_p0) or is_clicked(right_arrow_p0):
+        new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p0) else 1)) % len(offered_keys_p0)
+        new_key0 = offered_keys_p0[new_index0]
+        if new_key0 != "custom" and new_key0 == globals.controls_players[1]["explosion_key"]:
+            display_p0.set_text("Duplicate!")
+        else:
+            if new_key0 == "custom":
+                globals.controls_players[0]["explosion_key"] = "custom"
+                waiting_for_key1 = True
+            else:
+                globals.controls_players[0]["explosion_key"] = new_key0
+                waiting_for_key1 = False
+            update_display(display_p0, 0, waiting_for_key1)
+            save_config()
+    if waiting_for_key1:
+        pressed_key = get_last_pressed_key()
+        if pressed_key is not None:
+            if pressed_key == globals.controls_players[1]["explosion_key"]:
+                display_p0.set_text("Duplicate!")
+            else:
+                globals.controls_players[0]["explosion_key"] = pressed_key
+                waiting_for_key1 = False
+                update_display(display_p0, 0, waiting_for_key1)
+                save_config()
 
     if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
         new_index1 = (current_index1 + (-1 if is_clicked(left_arrow_p1) else 1)) % len(offered_keys_p1)

@@ -60,6 +60,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         if self.align == "center":
             self.rect.x -= self.rect.width // 2
+            self.rect.y -= self.rect.height // 2
 
         if self.mounted:
             self.mount()
@@ -115,6 +116,7 @@ class TextSprite(SurfaceSprite):
         
         if self.align == "center":
             self.rect.x -= self.rect.width // 2
+            self.rect.y -= self.rect.height // 2
 
     def set_text(self, text):
         self.text = text
