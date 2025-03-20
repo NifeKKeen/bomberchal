@@ -39,13 +39,15 @@ def pop_up_window_p1():
     global show_popup_window_p1
     demo_gif = paint_api.mount_gif(
         px_x=globals.center_x,
-        px_y=globals.center_y,
+        px_y=globals.center_y - 60,
         px_w=280,
         px_h=280,
-        key="demo_gif",
+        align="center",
         delay=1000,
         frames=[f"assets/gifs/ch{globals.skin_p1_id}/{i}.png" for i in range(1, 5)],
-        align="center",
+
+        key="demo_gif",
+        # layer=10  # ниже, чем кнопка закрытия
     )
 
     close_button = paint_api.mount_rect(
@@ -53,29 +55,34 @@ def pop_up_window_p1():
         px_y=globals.center_y - 150,
         px_w=50,
         px_h=50,
-        key="close",
+        align="center",
         image_path="assets/images/buttons/bar_button.png",
+        layer=100,  # устанавливаем высокий слой для кнопки
+
+        key="close",
     )
-    close_center = close_button.rect.center
+    close_pos = close_button.px_x, close_button.px_y
     close_button_text = paint_api.mount_text(
-        px_x=close_center[0],
-        px_y=close_center[1],
-        key="close_text",
+        px_x=close_pos[0],
+        px_y=close_pos[1],
+        align="center",
         text="x",
         font_size=30,
         color=(255, 255, 255),
         layer=102,
-        align="center",
+
+        key="close_text",
     )
     close_button_shadow = paint_api.mount_text(
-        px_x=close_center[0] + 4,
-        px_y=close_center[1] + 4,
-        key="close_text_shadow",
+        px_x=close_pos[0] + 4,
+        px_y=close_pos[1] + 4,
+        align="center",
         text="x",
         font_size=30,
         color=(0, 0, 0),
         layer=101,
-        align="center",
+
+        key="close_text_shadow",
     )
     if is_clicked(close_button):
         print("close clicked")
@@ -92,7 +99,7 @@ def pop_up_window_p2():
         px_y=globals.center_y,
         px_w=280,
         px_h=280,
-        key="demo_gif_p2",  
+        key="demo_gif_p2",
         delay=1000,
         frames=[f"assets/gifs/ch{globals.skin_p2_id}/{i}.png" for i in range(1, 5)],
         align="center",
@@ -143,11 +150,12 @@ def menu_customization():
     paint_api.mount_text(
         px_x=globals.center_x,
         px_y=globals.center_y - 300,
-        key="Customization_text",
+        align="center",
         text="Change skin",
         font_size=40,
         color=(255, 255, 255),
-        align="center",
+
+        key="Customization_text",
     )
     paint_api.mount_text(
         px_x=globals.center_x - 350,
@@ -178,27 +186,30 @@ def menu_customization():
         px_y=globals.center_y - 230,
         px_w=150,
         px_h=50,
-        key="skin_preview_p1",
+        align="center",
         image_path="assets/images/buttons/bar_button.png",
+
+        key="skin_preview_p1",
     )
-    preview_center_p1 = preview_button_p1.rect.center
+    preview_pos_p1 = preview_button_p1.px_x, preview_button_p1.px_y
     preview_button_shadow_p1 = paint_api.mount_text(
-        px_x=preview_center_p1[0] + 4,
-        px_y=preview_center_p1[1] + 4,
-        key="preview_text_shadow_p1",
+        px_x=preview_pos_p1[0] + 4,
+        px_y=preview_pos_p1[1] + 4,
         text="Preview",
         font_size=30,
         color=(0, 0, 0),
-        align="center",
+
+        key="preview_text_shadow_p1",
     )
     preview_button_text_p1 = paint_api.mount_text(
-        px_x=preview_center_p1[0],
-        px_y=preview_center_p1[1],
-        key="preview_text_p1",
+        px_x=preview_pos_p1[0],
+        px_y=preview_pos_p1[1],
+        align="center",
         text="Preview",
         font_size=30,
         color=(255, 255, 255),
-        align="center",
+
+        key="preview_text_p1",
     )
     if is_clicked(preview_button_p1):
         show_popup_window_p1 = True
@@ -311,31 +322,35 @@ def menu_customization():
     # )
 
     back_button = paint_api.mount_rect(
+        px_x=globals.center_x,
         px_y=globals.center_y + 300,
         px_w=350,
         px_h=80,
-        key="back",
-        image_path="assets/images/buttons/bar_button.png",
         align="center",
+        image_path="assets/images/buttons/bar_button.png",
+
+        key="back",
     )
-    back_center = back_button.rect.center
+    back_pos = back_button.px_x, back_button.px_y
     back_button_shadow = paint_api.mount_text(
-        px_x=back_center[0] + 4,
-        px_y=back_center[1] + 4,
-        key="back_text_shadow",
+        px_x=back_pos[0] + 4,
+        px_y=back_pos[1] + 4,
+        align="center",
         text="Back",
         font_size=50,
         color=(0, 0, 0),
-        align="center",
+
+        key="back_text_shadow",
     )
     back_button_text = paint_api.mount_text(
-        px_x=back_center[0],
-        px_y=back_center[1],
-        key="back_text",
+        px_x=back_pos[0],
+        px_y=back_pos[1],
+        align="center",
         text="Back",
         font_size=50,
         color=(255, 255, 255),
-        align="center",
+
+        key="back_text",
     )
 
     if is_clicked(back_button):
