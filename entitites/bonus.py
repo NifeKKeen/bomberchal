@@ -23,7 +23,7 @@ class Bonus(Entity):
 
     def activate(self):
         from entitites.bot import Bot
-        is_boss = (globals.gamemode == "Boss fight" and isinstance(self, Bot))
+        is_boss = (globals.game_mode == "bossfight" and isinstance(self, Bot))
         is_aggressive_bot = (isinstance(self, Bot) and self.type == 3)
         if self.type == "Speed":
             if self.collector.speed >= 8:

@@ -8,7 +8,7 @@ from utils.interaction_api import is_clicked
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
 from entitites.bonus import Bonus, bonus_types
-from entitites.interfaces.BotIntellect import BotIntellect
+from entitites.bot import Bot
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
@@ -38,7 +38,7 @@ def setup_game(**kwargs):
 
     globals.rows = kwargs.get("rows", 23)
     globals.cols = kwargs.get("cols", 25)
-    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows, boss_fight=True))
+    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows, globals.game_mode))
     globals.field_fire_state = kwargs.get("field_fired",
         [[0] * globals.rows for _ in range(globals.cols)]
     )
@@ -113,18 +113,18 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.BOT_CELL:
                 bot_type = rand(1, 4)
-                # bot = Bot(
-                #     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                #     px_w=globals.cell_size, px_h=globals.cell_size,
-                #     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
-                #     x=x, y=y,
-                #     speed=1,
-                #     color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
-                #     bomb_countdown=get_tick_from_ms(500),
-                #     layer=256,
-                #     entity_group=globals.entities,
-                #     type=bot_type
-                # )
+                bot = Bot(
+                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
+                    x=x, y=y,
+                    speed=1,
+                    color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+                    bomb_countdown=get_tick_from_ms(500),
+                    layer=256,
+                    entity_group=globals.entities,
+                    type=bot_type
+                )
 
     for i in range(1, 11):
         for player in range(2):
@@ -139,7 +139,7 @@ def render_field(**kwargs):
                 layer = 300
             )
 
-    if True:
+    if globals.game_mode == "bossfight":
         x, y = globals.cols // 2 - 1, globals.rows // 2 - 1
         bot_type = 3
         boss_bot = Bot(
@@ -260,13 +260,9 @@ def game(**kwargs):
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Controllable):
             entity.handle_event()
-        if isinstance(entity, BotIntellect):
+        if isinstance(entity, Bot):
             entity.think()
         if isinstance(entity, Bonus):
             entity.update()
         if isinstance(entity, Collidable):
             entity.handle_collision()
-
-        from entitites.bomb import Bomb
-        if isinstance(entity, Bomb):
-            print("ya bomba lol ", entity, entity.x, entity.y) 

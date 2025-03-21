@@ -1,5 +1,7 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
+
+from pages.menu import config
 from pages.menu.config import load_controls
 
 # PYGAME VARIABLE
@@ -65,13 +67,12 @@ to_render_keys = set()
 map_key_sprite = dict()
 
 # GAME STATES
-game_mode = "default"
 cols = 0
 rows = 0
 field = None
 field_fire_state = None  # power of fire in specific cell in ticks
 paused = False
-game_mode = None
+game_mode = "default"
 scores = dict()
 tick = 0
 events_stack = deque()  # TODO
@@ -98,8 +99,6 @@ MAP_DIRECTION = {
 }
 
 exp_key_p1, exp_key_p2 = load_controls()
-
-gamemode = "Default" # | "Boss fight"
 
 controls_players = [
     {

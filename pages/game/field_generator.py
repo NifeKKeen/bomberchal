@@ -1,10 +1,13 @@
+from mako.parsetree import Expression
+
 import globals
 import random
 
 # Generator like in real game
-def generate(cols, rows, boss_fight):
+def generate(cols, rows, game_mode):
+    boss_fight = (True if game_mode == "bossfight" else False)
     field = [
-        [globals.U_OBSTACLE_CELL if (not boss_fight and (i % 2 == 0 and j % 2 == 0) or
+        [globals.U_OBSTACLE_CELL if (not game_mode and (i % 2 == 0 and j % 2 == 0) or
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
