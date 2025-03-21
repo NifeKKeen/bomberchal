@@ -6,7 +6,7 @@ from entitites.interfaces.Movable import Movable
 import globals
 
 
-class Bot(Movable, BombSpawnable, Entity):
+class Bot(Movable, Collidable, BombSpawnable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
