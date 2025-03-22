@@ -64,7 +64,7 @@ def pop_up_window():
 
     close_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 130,
+        px_y=globals.CENTER_Y - 110,
         px_w=50,
         px_h=50,
         layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
