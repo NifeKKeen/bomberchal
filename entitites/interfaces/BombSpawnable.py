@@ -7,7 +7,7 @@ from entitites.entity import Entity
 class BombSpawnable(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bomb_allowed = kwargs.get("bomb_allowed", 4)
+        self.bomb_allowed = kwargs.get("bomb_allowed", 3)
         self.bomb_timer = kwargs.get("bomb_timer", get_tick_from_ms(3000))
         self.bomb_power = kwargs.get("bomb_power", 1)
         self.bombs_spawned = kwargs.get("bombs_spawned", 0)
