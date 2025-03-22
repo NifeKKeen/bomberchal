@@ -1,5 +1,3 @@
-from mako.parsetree import Expression
-
 import globals
 import random
 

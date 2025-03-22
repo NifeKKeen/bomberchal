@@ -1,4 +1,3 @@
-import globals
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from utils.helpers import get_tick_from_ms, rand

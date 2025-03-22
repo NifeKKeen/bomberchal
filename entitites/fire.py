@@ -1,5 +1,5 @@
 import globals
-from utils.helpers import get_tick_from_ms, in_valid_range, rand, get_ms_from_tick
+from utils.helpers import get_tick_from_ms, in_valid_range, rand
 from entitites.entity import Entity
 from entitites.interfaces.Collidable import Collidable
 

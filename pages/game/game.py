@@ -131,7 +131,6 @@ def render_field(**kwargs):
                     x=x, y=y,
                     speed=1,
                     color=(0, 0, 255),
-                    bomb_countdown=get_tick_from_ms(500),
                     layer=256,
                     entity_group=globals.entities
                 )
