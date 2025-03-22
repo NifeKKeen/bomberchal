@@ -222,6 +222,7 @@ def menu_customization():
         key="preview_text_p1",
     )  #endregion
 
+    print(globals.skins[f"ch{globals.skin_p1_id}"])
     display_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 40,
         px_y=globals.CENTER_Y - 230,
