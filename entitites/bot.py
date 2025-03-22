@@ -1,3 +1,4 @@
+import globals
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.BotIntellect import BotIntellect
@@ -14,6 +15,20 @@ class Bot(BotIntellect, Movable, Entity):
         self.tick += 1
         if rand(1, 1000) <= 0: # test
             self.spawn_bomb()
+
+        if self.moved_this_frame:
+            image_key = f"{self.last_direction}_moving"
+            idx = (self.tick // 8) % len(globals.bot_frames["walking"][image_key])
+            self.set_image_path(globals.bot_frames["walking"][image_key][idx])
+        else:
+            image_key = f"{self.last_direction}_static"
+            idx = (self.tick // 8) % len(globals.bot_frames["walking"][image_key])
+            self.set_image_path(globals.bot_frames["walking"][image_key][idx])
+
+        if self.cur_damage_countdown > 0:
+            self.hidden = self.cur_damage_countdown % 8 < 4
+        else:
+            self.hidden = False
 
 def get_bots(entities):
     res = set()

@@ -27,8 +27,8 @@ muted_img = "assets/images/mute/mute.png"
 
 character_frames = {
     f"ch{chi}": {
-        "top_static": [f"assets/images/characters/ch{chi}/top.png"],
-        "top_moving": [f"assets/images/characters/ch{chi}/top{i}.png" for i in range(1, 3)],
+        "top_static": [f"assets/images/characters/ch{chi}/up.png"],
+        "top_moving": [f"assets/images/characters/ch{chi}/up{i}.png" for i in range(1, 3)],
         "right_static": [f"assets/images/characters/ch{chi}/right.png"],
         "right_moving": [f"assets/images/characters/ch{chi}/right{i}.png" for i in range(1, 3)],
         "down_static": [f"assets/images/characters/ch{chi}/down.png"],
@@ -37,6 +37,19 @@ character_frames = {
         "left_moving": [f"assets/images/characters/ch{chi}/left{i}.png" for i in range(1, 3)]
     } for chi in range(1, 5)
 }
+bot_frames = {
+    f"{bot_type}": {
+        "top_static": [f"assets/images/bots/{bot_type}/up.png"],
+        "top_moving": [f"assets/images/bots/{bot_type}/up{i}.png" for i in range(1, 3)],
+        "right_static": [f"assets/images/bots/{bot_type}/right.png"],
+        "right_moving": [f"assets/images/bots/{bot_type}/right{i}.png" for i in range(1, 3)],
+        "down_static": [f"assets/images/bots/{bot_type}/down.png"],
+        "down_moving": [f"assets/images/bots/{bot_type}/down{i}.png" for i in range(1, 3)],
+        "left_static": [f"assets/images/bots/{bot_type}/left.png"],
+        "left_moving": [f"assets/images/bots/{bot_type}/left{i}.png" for i in range(1, 3)]
+    } for bot_type in ["walking"]
+}
+
 explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
 bomb_frames = [f"assets/images/bomb/{i}.png" for i in range(1, 4)]
 box_frames = [f"assets/images/terrain/box{i}.png" for i in range(1, 3)]

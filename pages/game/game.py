@@ -1,5 +1,7 @@
 import globals
 from pygame.locals import *
+
+from entitites.bot import Bot
 from utils import paint_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
 from utils.interaction_api import is_clicked
@@ -121,17 +123,17 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.BOT_CELL:
                 bot_type = rand(1, 4)
-                # bot = Bot(
-                #     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                #     px_w=globals.cell_size, px_h=globals.cell_size,
-                #     #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
-                #     x=x, y=y,
-                #     speed=1,
-                #     color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
-                #     layer=256,
-                #     entity_group=globals.entities,
-                #     type=bot_type
-                # )
+                bot = Bot(
+                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
+                    x=x, y=y,
+                    speed=1,
+                    color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+                    layer=256,
+                    entity_group=globals.entities,
+                    type=bot_type
+                )
 
     for i in range(1, 10):
         for player in range(2):

@@ -16,9 +16,9 @@ class Obstacle(Entity):
         if self.seed is not None:
             self.initial_lives = globals.map_obstacle_seed_to_props[self.seed]["lives"]
             self.lives = self.initial_lives
-            self.texture_type = get_texture_type(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"])
             if self.sub_seed is None:
                 self.sub_seed = rand(0, len(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"]))
+            self.texture_type = get_texture_type(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"], self.sub_seed, 1)
         else:
             if self.sub_seed is None:
                 self.sub_seed = rand(0, len(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"]))

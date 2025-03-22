@@ -45,7 +45,10 @@ class SurfaceSprite(pygame.sprite.Sprite):
     def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
         print("REQUESTED REFRESH")
         if self.image_path is not None:
-            self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
+            try:
+                self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
+            except:
+                pass
         else:
             self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
             self.image.set_colorkey((0, 0, 0))  # color to make transparent
