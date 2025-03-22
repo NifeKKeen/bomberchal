@@ -1,15 +1,16 @@
 import globals
 from pygame.locals import *
 
+from entitites.bot import get_bots
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
 from utils import paint_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
-from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
+from utils.interaction_api import is_clicked, is_pressed_once
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
-from entitites.bonus import Bonus, bonus_types, get_bonuses
+from entitites.bonus import Bonus, bonus_types
 from entitites.bots.original_bot import Bot, OriginalBot
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
@@ -121,7 +122,7 @@ def render_field(**kwargs):
                     x=x, y=y,
                     speed=1,
                     color=(0, 255, 0),
-                    bomb_countdown=get_tick_from_ms(500),
+                    bomb_countdown=get_tick_from_ms(1500),
                     layer=256,
                     bomb_power=2,
                     entity_group=globals.entities,
@@ -147,7 +148,7 @@ def render_field(**kwargs):
                     x=x, y=y,
                     speed=1,
                     color=(255, 0, 0),
-                    bomb_countdown=get_tick_from_ms(500),
+                    bomb_countdown=get_tick_from_ms(3000),
                     layer=256,
                     bomb_power=4,
                     entity_group=globals.entities,
@@ -164,7 +165,7 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
                     layer=256,
                     entity_group=globals.entities,
-                    bomb_countdown=get_tick_from_ms(500 + 3000),
+                    bomb_countdown=get_tick_from_ms(3500),
                     bomb_power=8,
                     bomb_allowed=1,
                     damage_countdown=get_tick_from_ms(500),
@@ -278,6 +279,11 @@ def handle_bonuses():
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
+
+    if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
+        globals.game_mode = "bossfight"
+        is_setup = True
+
     if is_setup:
         setup_game(**kwargs)
         return
@@ -287,7 +293,7 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    if globals.tick % 10 == 0:
+    if globals.tick % 100 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
