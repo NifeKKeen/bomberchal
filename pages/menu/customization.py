@@ -35,12 +35,11 @@ def save_skin_config():
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
-def get_available_skin(candidate, other_skin):
-    total_skins = len(globals.skins)
-    new_candidate = candidate
-    while new_candidate == other_skin:
-        new_candidate = (new_candidate % total_skins) + 1
-    return new_candidate
+def get_available_skin(current_skin, other_skin, delta):
+    candidate = (current_skin + delta - 1) % len(globals.skins) + 1
+    while candidate == other_skin:
+        candidate = (candidate + delta - 1) % len(globals.skins) + 1
+    return candidate
 
 def pop_up_window():
     global show_popup_window_p1, show_popup_window_p2
@@ -299,16 +298,13 @@ def menu_customization():
 
     if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
         ind = -1 if is_clicked(left_arrow_p1) else 1
-        candidate = (globals.skin_p1_id + ind - 1) % len(globals.skins) + 1
-        globals.skin_p1_id = get_available_skin(candidate, globals.skin_p2_id)
+        globals.skin_p1_id = get_available_skin(globals.skin_p1_id, globals.skin_p2_id, ind)
         display_p1.set_image_path(globals.skins[f"ch{globals.skin_p1_id}"])
         save_skin_config()
 
     if is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2):
         ind = -1 if is_clicked(left_arrow_p2) else 1
-        candidate = (globals.skin_p2_id + ind - 1) % len(globals.skins) + 1
-        globals.skin_p2_id = get_available_skin(candidate, globals.skin_p1_id)
-        # print(globals.skin_p2_id)
+        globals.skin_p2_id = get_available_skin(globals.skin_p2_id, globals.skin_p1_id, ind)
         display_p2.set_image_path(globals.skins[f"ch{globals.skin_p2_id}"])
         save_skin_config()
 
