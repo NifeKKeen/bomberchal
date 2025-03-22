@@ -20,8 +20,8 @@ def menu(is_setup=False):
         play_menu_music(volume=.2)
 
         mute_button_sprite = paint_api.mount_rect(
-            px_x=globals.center_x - 350,
-            px_y=globals.center_y - 200,
+            px_x=globals.CENTER_X - 350,
+            px_y=globals.CENTER_Y - 200,
             px_w=65,
             px_h=65,
             align="center",
@@ -31,8 +31,8 @@ def menu(is_setup=False):
         )
 
         play_button_sprite = paint_api.mount_rect(
-            px_x=globals.center_x,
-            px_y=globals.center_y - 100,
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y - 100,
             px_w=500,
             px_h=90,
             align="center",
@@ -42,12 +42,12 @@ def menu(is_setup=False):
         )
         play_pos = play_button_sprite.px_x, play_button_sprite.px_y
         play_button_shadow = paint_api.mount_text(
-            px_x=play_pos[0] + 4,
-            px_y=play_pos[1] + 4,
+            px_x=play_pos[0] + globals.SHADOW_OFFSET,
+            px_y=play_pos[1] + globals.SHADOW_OFFSET,
             align="center",
             text="Play",
             font_size=50,
-            color=(0, 0, 0),
+            color=globals.SHADOW_COLOR,
 
             key="play_text_shadow",
         )
@@ -63,8 +63,8 @@ def menu(is_setup=False):
         )
 
         customization_button_sprite = paint_api.mount_rect(
-            px_x=globals.center_x,
-            px_y=globals.center_y,
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y,
             px_w=500,
             px_h=90,
             align="center",
@@ -74,12 +74,12 @@ def menu(is_setup=False):
         )
         customization_pos = customization_button_sprite.px_x, customization_button_sprite.px_y
         customization_button_shadow = paint_api.mount_text(
-            px_x=customization_pos[0] + 4,
-            px_y=customization_pos[1] + 4,
+            px_x=customization_pos[0] + globals.SHADOW_OFFSET,
+            px_y=customization_pos[1] + globals.SHADOW_OFFSET,
             align="center",
             text="Customization",
             font_size=50,
-            color=(0, 0, 0),
+            color=globals.SHADOW_COLOR,
 
             key="customization_text_shadow",
         )
@@ -95,8 +95,8 @@ def menu(is_setup=False):
         )
 
         settings_button_sprite = paint_api.mount_rect(
-            px_x=globals.center_x - 128,
-            px_y=globals.center_y + 100,
+            px_x=globals.CENTER_X - 128,
+            px_y=globals.CENTER_Y + 100,
             px_w=246,
             px_h=90,
             align="center",
@@ -106,12 +106,12 @@ def menu(is_setup=False):
         )
         settings_pos = settings_button_sprite.px_x, settings_button_sprite.px_y
         settings_button_shadow = paint_api.mount_text(
-            px_x=settings_pos[0] + 4,
-            px_y=settings_pos[1] + 4,
+            px_x=settings_pos[0] + globals.SHADOW_OFFSET,
+            px_y=settings_pos[1] + globals.SHADOW_OFFSET,
             align="center",
             text="Settings",
             font_size=50,
-            color=(0, 0, 0),
+            color=globals.SHADOW_COLOR,
 
             key="settings_text_shadow",
         )
@@ -127,23 +127,23 @@ def menu(is_setup=False):
         )
 
         # scoreboard_button_sprite = paint_api.mount_rect(
-        #     px_x=globals.center_x,
-        #     px_y=globals.center_y + 200,
+        #     px_x=globals.CENTER_X,
+        #     px_y=globals.CENTER_Y + 200,
         #     px_w=230,
         #     px_h=90,
-        #     align="center"
+        #     align="center",
         #     image_path="assets/images/buttons/bar_button.png",
         #
         #     key="scoreboard",
         # )
         # scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
         # scoreboard_button_shadow = paint_api.mount_text(
-        #     px_x = scoreboard_pos[0] + 4,
-        #     px_y = scoreboard_pos[1] + 4,
+        #     px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
+        #     px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
         #     align="center",
         #     text="Scoreboard",
         #     font_size=50,
-        #     color=(0, 0, 0)
+        #     color=globals.SHADOW_COLOR,
         #
         #     key = "scoreboard_text_shadow",
         # )
@@ -153,14 +153,14 @@ def menu(is_setup=False):
         #     align="center",
         #     text="Scoreboard",
         #     font_size=50,
-        #     color=(255, 255, 255)
+        #     color=(255, 255, 255),
         #
         #     key="scoreboard_text",
         # )
 
         quit_button_sprite = paint_api.mount_rect(
-            px_x=globals.center_x + 128,
-            px_y=globals.center_y + 100,
+            px_x=globals.CENTER_X + 128,
+            px_y=globals.CENTER_Y + 100,
             px_w=246,
             px_h=90,
             align="center",
@@ -170,12 +170,12 @@ def menu(is_setup=False):
         )
         quit_pos = quit_button_sprite.px_x, quit_button_sprite.px_y
         quit_button_shadow = paint_api.mount_text(
-            px_x=quit_pos[0] + 4,
-            px_y=quit_pos[1] + 4,
+            px_x=quit_pos[0] + globals.SHADOW_OFFSET,
+            px_y=quit_pos[1] + globals.SHADOW_OFFSET,
             align="center",
             text="Quit",
             font_size=50,
-            color=(0, 0, 0),
+            color=globals.SHADOW_COLOR,
 
             key="quit_text_shadow",
         )

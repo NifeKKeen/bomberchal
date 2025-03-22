@@ -8,8 +8,8 @@ from utils.interaction_api import is_clicked
 
 def menu_scoreboard():
     paint_api.mount_text(
-        px_x=globals.center_x,
-        px_y=globals.center_y - 300,
+        px_x=globals.CENTER_X,
+        px_y=globals.CENTER_Y - 300,
         key="change_bomb_button",
         text="Scoreboard",
         font_size=40,
@@ -19,7 +19,7 @@ def menu_scoreboard():
     #something
 
     back_button = paint_api.mount_rect(
-        px_y=globals.center_y + (globals.center_y // 2),
+        px_y=globals.CENTER_Y + (globals.CENTER_Y // 2),
         px_w=350,
         px_h=80,
         key="back",

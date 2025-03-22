@@ -9,8 +9,10 @@ DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCR
 Frame = None #  pygame.time.Clock()
 FPS = 60
 
-center_x = SCREEN_WIDTH // 2
-center_y = SCREEN_HEIGHT // 2
+CENTER_X = SCREEN_WIDTH // 2
+CENTER_Y = SCREEN_HEIGHT // 2
+SHADOW_OFFSET = 4
+SHADOW_COLOR = (64, 64, 64)
 
 music_muted = True
 sound_muted = False
