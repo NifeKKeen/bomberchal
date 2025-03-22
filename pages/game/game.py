@@ -6,10 +6,10 @@ from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
 from utils import paint_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
-from utils.interaction_api import is_clicked
+from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
-from entitites.bonus import Bonus, bonus_types
+from entitites.bonus import Bonus, bonus_types, get_bonuses
 from entitites.bots.original_bot import Bot, OriginalBot
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
@@ -21,6 +21,7 @@ from pages.navigation import navigate
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
+control_keys = []
 
 def setup_game(**kwargs):
     for i in range(30):
@@ -45,12 +46,15 @@ def setup_game(**kwargs):
         [[0] * globals.rows for _ in range(globals.cols)]
     )
 
+    global control_keys
     control_keys = [
         (K_w, K_UP),
         (K_s, K_DOWN),
         (K_a, K_LEFT),
         (K_d, K_RIGHT),
-        (globals.controls_players[0]["explosion_key"], globals.controls_players[1]["explosion_key"])
+        (globals.controls_players[0]["explosion_key"], globals.controls_players[1]["explosion_key"]),
+        (K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9, K_0),
+        (K_KP1, K_KP2, K_KP3, K_KP4, K_KP5, K_KP6, K_KP7, K_KP8, K_KP9, K_KP0)
     ]
 
     for i in range(2):
@@ -83,8 +87,6 @@ def setup_game(**kwargs):
 
 def render_field(**kwargs):
     field = globals.field
-    for i in field:
-        print(i)
     rows = globals.rows
     cols = globals.cols
     for x in range(cols):
@@ -121,6 +123,7 @@ def render_field(**kwargs):
                     color=(0, 255, 0),
                     bomb_countdown=get_tick_from_ms(500),
                     layer=256,
+                    bomb_power=2,
                     entity_group=globals.entities
                 )
 
@@ -144,6 +147,7 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
                     bomb_countdown=get_tick_from_ms(500),
                     layer=256,
+                    bomb_power=4,
                     entity_group=globals.entities
                 )
 
@@ -169,6 +173,10 @@ def reset_game():
 
 def spawn_bonus(bonus_type = 0):
     attempts = 0
+    counter = 0
+    for player in get_players(globals.entities):
+        counter += len(player.bonuses)
+
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
 
@@ -191,7 +199,7 @@ def spawn_bonus(bonus_type = 0):
             type=bonus_types()[bonus_type],
             x=bonus_x, y=bonus_y,
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_type],
-            layer=251,
+            layer=251 + counter,
             entity_group=globals.entities
         )
         return
@@ -216,7 +224,7 @@ def spawn_bonus(bonus_type = 0):
                 )
                 return
 
-def render_bonuses():
+def handle_bonuses():
     # 1, 2, ..., 0 for both players
     for i in range(1, 11):
         for player in range(2):
@@ -230,20 +238,41 @@ def render_bonuses():
                 layer = 300
             )
 
-    # bonuses
+    # handling keys
+    for i in range(1, 11):
+        for player in range(2):
+            global control_keys
+            if is_pressed_once(control_keys[5 + player][i - 1]):
+                for entity in list(globals.entities):
+                    if not isinstance(entity, Player):
+                        continue
+                    if entity.key[-1] != str(player):
+                        continue
+
+                    # Correct player
+                    x = 0
+                    for bonus in entity.bonuses:
+                        if not bonus.mounted:
+                            continue
+                        x += 1
+                        if x == i:
+                            bonus.activate()
+                            break
+    # rendering bonuses
     for entity in list(globals.entities):
         if not isinstance(entity, Player):
             continue
         # Player
         x = 0
         for bonus in entity.bonuses:
+            if not bonus.mounted:
+                continue
             bonus.x = x
             bonus.y = globals.rows + (entity.key[-1] == '1')
             x += 1
 
             bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
             bonus.set_px(bonus.px_x, bonus.px_y)
-
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
@@ -256,13 +285,13 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    if globals.tick % 100 == 0:
+    if globals.tick % 10 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
         raise Exception("You lost")
 
-    render_bonuses()
+    handle_bonuses()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Controllable):

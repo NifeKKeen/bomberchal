@@ -20,24 +20,22 @@ class Bonus(Entity):
         self.entity_group = kwargs.get("entity_group", "bonus")
         self.spawned_bomb = kwargs.get("spawned_bomb", False)
         self.prev_bombs_spawned = kwargs.get("prev_bombs_spawned", 0)
-        self.activated = False
+        self.activated = kwargs.get("activated", False)
 
     def activate(self):
         is_boss = isinstance(self.collector, BossBot)
         is_aggressive_bot = isinstance(self.collector, AggressiveBot)
         if self.type == "Speed":
-            if self.collector.speed >= 8:
-                return
-            self.collector.speed = min(self.collector.speed * (2 if not is_aggressive_bot else 1.5 if not is_boss else 1.25), 8)
-            self.timer = get_tick_from_ms(3000)
+            if self.collector.speed < 8:
+                self.collector.speed = min(self.collector.speed * (2 if not is_aggressive_bot else 1.5 if not is_boss else 1.25), 8)
+                self.timer = get_tick_from_ms(3000)
         elif self.type == "Power":
             self.collector.bomb_power += (2 if not is_aggressive_bot else 1)
             self.spawned_bomb = False
         elif self.type == "Capacity":
-            if is_boss:
-                return
-            self.collector.bomb_allowed += 1
-            self.timer = get_tick_from_ms(10000)
+            if not is_boss:
+                self.collector.bomb_allowed += 1
+                self.timer = get_tick_from_ms(10000)
         elif self.type == "Life":
             if is_boss:
                 if rand(0, 100) < 20:
@@ -48,6 +46,7 @@ class Bonus(Entity):
             raise Exception("Invalid bonus type")
 
         self.activated = True
+        self.unmount()
 
     def update(self):
         if not self.activated:
@@ -86,7 +85,12 @@ class Bonus(Entity):
         if isinstance(collector, Player) or isinstance(collector, Bot):
             collector.bonuses.append(self)
 
-        self.activate()
-
 def bonus_types():
     return ["Speed", "Power", "Capacity", "Life"]
+
+def get_bonuses(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Bonus):
+            res.add(entity)
+    return res

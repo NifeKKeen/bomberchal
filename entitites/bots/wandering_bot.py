@@ -85,7 +85,7 @@ class WanderingBot(Bot):
             for entity in list(globals.entities):
                 if isinstance(entity, Bomb) or isinstance(entity, Fire) or isinstance(entity, Player):
                     x, y = entity.x, entity.y
-                    if x < 0 or x >= globals.cols or y < 0 or y >= globals.rows:
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
 
                     self.used[x][y] = True
@@ -94,7 +94,7 @@ class WanderingBot(Bot):
 
                 if isinstance(entity, Obstacle):
                     x, y = entity.x, entity.y
-                    if x < 0 or x >= globals.cols or y < 0 or y >= globals.rows:
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
                     self.blocked[x][y] = True
 

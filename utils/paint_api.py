@@ -41,12 +41,11 @@ class SurfaceSprite(pygame.sprite.Sprite):
         if not self.mounted and self.should_mount:
             self.mount()
 
-
-    def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
     def refresh(self):  # NOTE: it is expensive operation if this sprite has an image
         print("REQUESTED REFRESH")
         if self.image_path is not None:
-            self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
+            self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(),
+                                                (self.px_w, self.px_h))
         else:
             self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
             self.image.set_colorkey((0, 0, 0))  # color to make transparent
@@ -92,6 +91,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
     def collides_with(self, sprite2):
         return self.mounted and sprite2.mounted and pygame.sprite.collide_rect(self, sprite2)
+
 
 class TextSprite(SurfaceSprite):
     def __init__(self, **kwargs):
@@ -243,7 +243,8 @@ def draw_sprites():
                 sprite.refresh()
                 sprite.should_refresh = False
 
-        # all_sprites.update()
+
+    # all_sprites.update()
 
     will_return = []
     for sprite in list(globals.all_sprites.sprites()):

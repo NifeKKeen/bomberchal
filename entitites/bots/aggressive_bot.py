@@ -20,7 +20,7 @@ class AggressiveBot(Bot, BombSpawnable):
         if not self.alive():
             return
 
-        # Bot moves into direction of the closest player, trying to be far from bombs and fires. So, it is aggressive
+        # In this algorithm, bot moves into direction of the closest player, trying to be far from bombs and fires. So, it is aggressive
         if self.moving == 1:
             nx, ny = self.prev[self.x][self.y]
             if nx - self.x == 1:
@@ -87,7 +87,7 @@ class AggressiveBot(Bot, BombSpawnable):
             for entity in list(globals.entities):
                 if isinstance(entity, Bomb) or isinstance(entity, Fire):
                     x, y = entity.x, entity.y
-                    if x < 0 or x >= globals.cols or y < 0 or y >= globals.rows:
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
 
                     self.used[x][y] = True
@@ -96,7 +96,7 @@ class AggressiveBot(Bot, BombSpawnable):
 
                 if isinstance(entity, Obstacle):
                     x, y = entity.x, entity.y
-                    if x < 0 or x >= globals.cols or y < 0 or y >= globals.rows:
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
                     self.blocked[x][y] = True
 
