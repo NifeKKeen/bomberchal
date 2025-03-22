@@ -278,22 +278,23 @@ def menu_customization():
 
     # current_skin_p0 = player_skins["player1"]
     #     # Отображение выбранного скина
-    # skin_preview = paint_api.mount_image(
+    # skin_preview = paint_api.mount_image(  #region parameters
     #     px_x=globals.CENTER_X,
     #     px_y=globals.CENTER_Y,
     #     key="skin_preview",
     #     image_path=f"assets/characters/ch{skin_display_index}.png",
     #     align="center"
-    # preview_button_p2 = paint_api.mount_rect(
+    # )  #endregion
+    # preview_button_p2 = paint_api.mount_rect(  #region parameters
     #     px_x=globals.CENTER_X + 150,
     #     px_y=globals.CENTER_Y - 20 ,
     #     px_w=150,
     #     px_h=50,
     #     key="skin_preview_p2",
     #     image_path="assets/images/buttons/bar_button.png",
-    # )
+    # )  #endregion
     # preview_center_p2 = preview_button_p2.rect.center
-    # preview_button_shadow_p2 = paint_api.mount_text(
+    # preview_button_shadow_p2 = paint_api.mount_text(  #region parameters
     #     px_x=preview_center_p2[0] + 4,
     #     px_y=preview_center_p2[1] + 4,
     #     key="preview_text_shadow_p2",
@@ -301,8 +302,8 @@ def menu_customization():
     #     font_size=30,
     #     color=(0, 0, 0),
     #     align="center",
-    # )
-    # preview_button_text_p2 = paint_api.mount_text(
+    # )  #endregion
+    # preview_button_text_p2 = paint_api.mount_text(  #region parameters
     #     px_x=preview_center_p2[0],
     #     px_y=preview_center_p2[1],
     #     key="preview_text_p2",
@@ -310,7 +311,7 @@ def menu_customization():
     #     font_size=30,
     #     color=(255, 255, 255),
     #     align="center",
-    # )
+    # )  #endregion
 
 
     back_button = paint_api.mount_rect(  #region parameters
