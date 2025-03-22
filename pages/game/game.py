@@ -1,14 +1,16 @@
 import globals
 from pygame.locals import *
 
-from entitites.bot import Bot
+from entitites.bots.aggressive_bot import AggressiveBot
+from entitites.bots.boss_bot import BossBot
+from entitites.bots.wandering_bot import WanderingBot
 from utils import paint_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
 from utils.interaction_api import is_clicked
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
 from entitites.bonus import Bonus, bonus_types
-from entitites.bot import Bot
+from entitites.bots.original_bot import Bot, OriginalBot
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
@@ -110,20 +112,52 @@ def render_field(**kwargs):
                     entity_group=globals.entities
                 )
 
-
-            elif field[x][y] == globals.BOT_CELL:
-                bot_type = rand(1, 4)
-                bot = Bot(
+            elif field[x][y] == globals.ORIGINAL_BOT_CELL:
+                bot = OriginalBot(
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
                     px_w=globals.cell_size, px_h=globals.cell_size,
-                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
                     x=x, y=y,
                     speed=1,
-                    color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
+                    color=(0, 255, 0),
                     bomb_countdown=get_tick_from_ms(500),
                     layer=256,
-                    entity_group=globals.entities,
-                    type=bot_type
+                    entity_group=globals.entities
+                )
+
+            elif field[x][y] == globals.WANDERING_BOT_CELL:
+                bot = WanderingBot(
+                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    x=x, y=y,
+                    speed=1,
+                    color=(0, 0, 255),
+                    bomb_countdown=get_tick_from_ms(500),
+                    layer=256,
+                    entity_group=globals.entities
+                )
+
+            elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
+                bot = AggressiveBot(
+                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    x=x, y=y,
+                    speed=1,
+                    color=(255, 0, 0),
+                    bomb_countdown=get_tick_from_ms(500),
+                    layer=256,
+                    entity_group=globals.entities
+                )
+
+            elif field[x][y] == globals.BOSS_BOT_CELL:
+                bot = BossBot(
+                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    px_w=globals.cell_size, px_h=globals.cell_size,
+                    x=x, y=y,
+                    speed=1,
+                    color=(255, 0, 0),
+                    bomb_countdown=get_tick_from_ms(500),
+                    layer=256,
+                    entity_group=globals.entities
                 )
 
     for i in range(1, 11):
@@ -213,23 +247,14 @@ def spawn_bonus(bonus_type = 0):
 
 def render_bonuses():
     for entity in list(globals.entities):
-        if not isinstance(entity, Player):# and not isinstance(entity, Bot):
+        if not isinstance(entity, Player):
             continue
-        # Player or bot
+        # Player
         x = 0
         for bonus in entity.bonuses:
             bonus.x = x
             bonus.y = globals.rows + (entity.key[-1] == '1')
             x += 1
-
-            # if entity.key[-1] == '0':
-            #     if bonus.y != globals.rows:
-            #         bonus.x = x
-            #         bonus.y = globals.rows
-            # else:
-            #     if bonus.y != globals.rows + 1:
-            #         bonus.x = x
-            #         bonus.y = globals.rows + 1
 
             bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
             bonus.set_px(bonus.px_x, bonus.px_y)
@@ -246,9 +271,6 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    # if player1_sprite.collides_with(player2_sprite):
-    #     print("Che tam")
-    # print(SurfaceSprite.SurfaceId)
     if globals.tick % 50 == 0:
         spawn_bonus(rand(0, 4))
 

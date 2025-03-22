@@ -5,7 +5,6 @@ from entitites.entity import Entity
 
 class Collidable(Entity):
     def get_collisions(self):
-        from entitites.bonus import Bonus
         res = []
 
         for entity in self.entity_group:
@@ -18,10 +17,10 @@ class Collidable(Entity):
 
     def handle_collision(self):
         from entitites.bomb import Bomb
-        from entitites.bot import Bot
+        from entitites.bots.original_bot import Bot
         from entitites.fire import Fire
         from entitites.bonus import Bonus
-        from entitites.player import Player, get_players
+        from entitites.player import Player
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 

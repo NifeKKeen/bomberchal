@@ -1,5 +1,5 @@
 import globals
-from utils.helpers import get_field_pos, get_tick_from_ms, rand
+from utils.helpers import get_tick_from_ms, rand
 from entitites.entity import Entity
 
 
@@ -22,7 +22,7 @@ class Bonus(Entity):
         self.activated = False
 
     def activate(self):
-        from entitites.bot import Bot
+        from entitites.bots.original_bot import Bot
         is_boss = (globals.game_mode == "bossfight" and isinstance(self, Bot))
         is_aggressive_bot = (isinstance(self, Bot) and self.type == 3)
         if self.type == "Speed":
@@ -82,7 +82,7 @@ class Bonus(Entity):
         if len(collector.bonuses) >= 10: # at most 10 bonuses
             return
         from entitites.player import Player
-        from entitites.bot import Bot
+        from entitites.bots.original_bot import Bot
         self.collector = collector
         # print("Collected by ", collector)
         # self.kill()

@@ -11,7 +11,10 @@ def generate(cols, rows, game_mode):
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
-    bot_count = (20 if not boss_fight else 0)
+    bot_count = [5, 5, 10, 0] # original, wandering, aggressive, boss
+    if boss_fight:
+        bot_count = [0] * 4 # only boss, and position will be defined later
+
     obstacle_count = 50
     objects = []
     current = 0
@@ -24,14 +27,12 @@ def generate(cols, rows, game_mode):
 
     random.shuffle(objects)
     current = 0
-    max_bomb_power = 7
-
-    # print(boss_fight, "WERIOJEWIOREWIUORJIOWERIJOWEIRIWERJO")
+    max_bomb_power = 8
 
     for x in range(1, cols - 1):
         for y in range(1, rows - 1):
             if boss_fight and abs(x - cols // 2) <= 1 and abs(y - rows // 2) <= 1:
-                field[x][y] = globals.VOID_CELL
+                field[x][y] = globals.BOSS_BOT_CELL
                 continue
 
             if field[x][y] == globals.U_OBSTACLE_CELL:
@@ -42,13 +43,16 @@ def generate(cols, rows, game_mode):
             elif cols - 2 - x + rows - 2 - y <= max_bomb_power + 1: # Same for player 2
                 field[x][y] = globals.VOID_CELL
                 continue
-            elif boss_fight and max(abs(x - cols // 2), abs(y - rows // 2)) >= 2222:
-                field[x][y] = globals.D_OBSTACLE_CELL
-                continue
             elif objects[current] < obstacle_count:
                 field[x][y] = globals.D_OBSTACLE_CELL
-            elif objects[current] < obstacle_count + bot_count:
-                field[x][y] = globals.BOT_CELL
+            elif objects[current] < obstacle_count + bot_count[0]:
+                field[x][y] = globals.ORIGINAL_BOT_CELL
+            elif objects[current] < obstacle_count + sum(bot_count[:2]):
+                field[x][y] = globals.WANDERING_BOT_CELL
+            elif objects[current] < obstacle_count + sum(bot_count[:3]):
+                field[x][y] = globals.AGGRESSIVE_BOT_CELL
+            elif objects[current] < obstacle_count + sum(bot_count[:4]):
+                field[x][y] = globals.BOSS_BOT_CELL
             else:
                 field[x][y] = globals.VOID_CELL
             current += 1

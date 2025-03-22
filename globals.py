@@ -84,7 +84,10 @@ player_cell_size = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # undestroyable obstacle
 D_OBSTACLE_CELL = 2  # destroyable obstacle
-BOT_CELL = 3  # starting cell for bot
+ORIGINAL_BOT_CELL = 3  # starting cell for original bot
+WANDERING_BOT_CELL = 4  # starting cell for wandering bot
+AGGRESSIVE_BOT_CELL = 5  # starting cell for aggressive bot
+BOSS_BOT_CELL = 6  # starting cell for boss bot
 
 BFS_DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 UP_DIRECTION = (0, -1)
