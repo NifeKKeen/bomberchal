@@ -15,28 +15,29 @@ from entitites.obstacle import Obstacle
 from entitites.player import Player
 from pages.game import field_generator
 from pages.navigation import navigate
-from pages.menu.customization import load_config 
+from pages.menu.customization import load_config
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
 
 def setup_game(**kwargs):
-    load_config()  
+    load_config()
     for i in range(30):
         for j in range(30):
-            mount_rect(
-                px_x=i * globals.cell_size, px_y=j * globals.cell_size,
-                px_w = globals.cell_size, px_h = globals.cell_size,
-                x=i, y=j,
-                key = f"v-{i};{j}",
-                color=(64, 64, 64),
-                entity_group=globals.entities,
-                layer=-1,
-                image_path="assets/images/terrain/grass1.png"
-            )
+            mount_rect(  #region parameters
+                image_path="assets/images/terrain/grass1.png",
 
-    play_music(globals.game_music_path, .1, override=True)
+                px_x=i * globals.CELL_SIZE, px_y=j * globals.CELL_SIZE,
+                px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                x=i, y=j,
+
+                key = f"v-{i};{j}",
+                layer=-1,
+                entity_group=globals.entities,
+            )  #endregion
+
+    play_music(globals.GAME_MUSIC_PATH, .1, override=True)
 
     globals.rows = kwargs.get("rows", 23)
     globals.cols = kwargs.get("cols", 25)
@@ -55,13 +56,13 @@ def setup_game(**kwargs):
 
     for i in range(2):
         rnd = rand(192, 256)
-        player = Player(
+        player = Player(  #region parameters
             speed=2,
             lives=3,
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            character_skin_key=f"ch{globals.skin_p1_id}" if i == 0 else f"ch{globals.skin_p2_id}",
+            character_skin_key=f"ch{[globals.skin_p1_id, globals.skin_p2_id][i]}",
 
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
@@ -70,14 +71,15 @@ def setup_game(**kwargs):
             attack_key=control_keys[4][i],
             attack_func=Player.spawn_bomb,
 
-            px_x=(1 if i == 0 else globals.cols - 1) * globals.cell_size, px_y=(1 if i == 0 else globals.rows - 1) * globals.cell_size,
-            px_w=globals.player_cell_size, px_h=globals.player_cell_size,
+            px_x=(1 if i == 0 else globals.cols - 1) * globals.CELL_SIZE,
+            px_y=(1 if i == 0 else globals.rows - 1) * globals.CELL_SIZE,
+            px_w=globals.PLAYER_CELL_SIZE,
+            px_h=globals.PLAYER_CELL_SIZE,
 
             key=f"p-{i}",
-            layer=260,
             color=(0, rnd / 2, rnd),
             entity_group=globals.entities,
-        )
+        )  #endregion
 
     render_field()
 
@@ -90,65 +92,63 @@ def render_field(**kwargs):
     for x in range(cols):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
-                obstacle_sprite = Obstacle(
+                obstacle_sprite = Obstacle(  #region parameters
                     type=field[x][y],
                     seed=0,
 
-                    color=(64, 64, 64),
-                    entity_group=globals.entities,
+                    px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
+                    px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                    x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    x=x,
-                    y=y,
-                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                    px_w = globals.cell_size, px_h = globals.cell_size,
-                )
+                    entity_group=globals.entities,
+                )  #endregion
 
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_seed = rand(1, 3)
 
-                obstacle_sprite = Obstacle(
+                obstacle_sprite = Obstacle(  #region parameters
                     type=field[x][y],
                     seed=obstacle_seed,
 
-                    color=(255, 255, 64),
-                    entity_group=globals.entities,
+                    px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
+                    px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                    x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    x=x,
-                    y=y,
-                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                    px_w = globals.cell_size, px_h = globals.cell_size,
-                )
+                    entity_group=globals.entities,
+                )  #endregion
 
 
             elif field[x][y] == globals.BOT_CELL:
                 bot_type = rand(1, 4)
-                bot = Bot(
-                    px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-                    px_w=globals.cell_size, px_h=globals.cell_size,
-                    #px_w=globals.player_cell_size, px_h=globals.player_cell_size,
-                    x=x, y=y,
+                bot = Bot(  #region parameters
+                    type=bot_type,
                     speed=1,
+
+                    px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
+                    px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
+                    x=x, y=y,
+
+                    key=f"bot-{bot_type}-{x};{y}",
                     color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
-                    layer=256,
                     entity_group=globals.entities,
-                    type=bot_type
-                )
+                )  #endregion
 
     for i in range(1, 10):
         for player in range(2):
-            print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
-            paint_api.mount_text(
+            print((i - 1) * globals.CELL_SIZE, (globals.rows + player) * globals.CELL_SIZE)
+            paint_api.mount_text(  #region parameters
                 text=str(i),
                 font_size=30,
-                color=(255, 255, 255),
+
+                px_x=(i - 1) * globals.CELL_SIZE,
+                px_y=(globals.rows + player) * globals.CELL_SIZE,
 
                 key=f"bonus-{i}-{player}",
-                px_x=(i - 1) * globals.cell_size,
-                px_y=(globals.rows + player) * globals.cell_size,
-            )
+                color=(255, 255, 255),
+            )  #endregion
 
 def reset_game():
     globals.entities.clear()
@@ -168,16 +168,14 @@ def spawn_bonus(bonus_type = 0):
         bonus = Bonus(
             type=bonus_types()[bonus_type],
 
+            px_x=bonus_x * globals.CELL_SIZE, px_y=bonus_y * globals.CELL_SIZE,
+            px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
+            x=bonus_x, y=bonus_y,
+
+            key=f"bonus-{bonus_x};{bonus_y}",
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123)][bonus_type],
-
-            layer=251,
             entity_group=globals.entities,
-
-            x=bonus_x,
-            y=bonus_y,
-            px_x=bonus_x * globals.cell_size, px_y=bonus_y * globals.cell_size,
-            px_w=globals.cell_size, px_h=globals.cell_size,
-        )
+        )  #endregion
         break
 
 def render_bonuses():
@@ -203,9 +201,13 @@ def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
     if is_setup:
         setup_game(**kwargs)
-        return
 
-    go_menu_button_sprite = paint_api.mount_rect(px_x=0, px_y=0, px_w=40, px_h=40, layer=300, key="go_menu")
+    go_menu_button_sprite = paint_api.mount_rect(
+        px_x=0, px_y=0,
+        px_w=40, px_h=40,
+        layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
+        key="go_menu"
+    )
 
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
