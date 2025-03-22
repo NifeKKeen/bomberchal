@@ -27,6 +27,40 @@ brown_background_img = None
 unmuted_img = "assets/images/mute/volume.png"
 muted_img = "assets/images/mute/mute.png"
 
+character_frames = {
+    f"ch{chi}": {
+        "top_static": [f"assets/images/characters/ch{chi}/up.png"],
+        "top_moving": [f"assets/images/characters/ch{chi}/up{i}.png" for i in range(1, 3)],
+        "right_static": [f"assets/images/characters/ch{chi}/right.png"],
+        "right_moving": [f"assets/images/characters/ch{chi}/right{i}.png" for i in range(1, 3)],
+        "down_static": [f"assets/images/characters/ch{chi}/down.png"],
+        "down_moving": [f"assets/images/characters/ch{chi}/down{i}.png" for i in range(1, 3)],
+        "left_static": [f"assets/images/characters/ch{chi}/left.png"],
+        "left_moving": [f"assets/images/characters/ch{chi}/left{i}.png" for i in range(1, 3)]
+    } for chi in range(1, 5)
+}
+bot_frames = {
+    f"{bot_type}": {
+        "top_static": [f"assets/images/bots/{bot_type}/up.png"],
+        "top_moving": [f"assets/images/bots/{bot_type}/up{i}.png" for i in range(1, 3)],
+        "right_static": [f"assets/images/bots/{bot_type}/right.png"],
+        "right_moving": [f"assets/images/bots/{bot_type}/right{i}.png" for i in range(1, 3)],
+        "down_static": [f"assets/images/bots/{bot_type}/down.png"],
+        "down_moving": [f"assets/images/bots/{bot_type}/down{i}.png" for i in range(1, 3)],
+        "left_static": [f"assets/images/bots/{bot_type}/left.png"],
+        "left_moving": [f"assets/images/bots/{bot_type}/left{i}.png" for i in range(1, 3)]
+    } for bot_type in ["wandering"]
+}
+
+explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
+bomb_frames = [f"assets/images/bomb/{i}.png" for i in range(1, 4)]
+box_frames = [f"assets/images/terrain/box{i}.png" for i in range(1, 3)]
+bricks_frames = [f"assets/images/terrain/wall1.png"]
+bricks_crack_frames = [f"assets/images/terrain/wall_crack{i}.png" for i in range(1, 3)]
+border_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
+grass_frames = ["assets/images/terrain/grass1.png"]
+bonus_frames = []
+
 FONT_PARAMETER = (None, 36)
 text_font = "assets/font/Pixeloid_Sans.ttf"
 
@@ -68,6 +102,48 @@ VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # undestroyable obstacle
 D_OBSTACLE_CELL = 2  # destroyable obstacle
 BOT_CELL = 3  # starting cell for bot
+
+# texture_types
+OBSTACLE_CELL_BORDER1 = 10
+OBSTACLE_CELL_BORDER2 = 11
+OBSTACLE_CELL_BOX1 = 12
+OBSTACLE_CELL_BOX2 = 13
+OBSTACLE_CELL_BRICKS = 14
+OBSTACLE_CELL_BRICKS_STATE1 = 15
+OBSTACLE_CELL_BRICKS_STATE2 = 16
+map_type_to_path = {
+    OBSTACLE_CELL_BORDER1: border_frames[0],
+    OBSTACLE_CELL_BORDER2: border_frames[1],
+    OBSTACLE_CELL_BOX1: box_frames[0],
+    OBSTACLE_CELL_BOX2: box_frames[1],
+    OBSTACLE_CELL_BRICKS: bricks_frames[0],
+    OBSTACLE_CELL_BRICKS_STATE1: bricks_crack_frames[0],
+    OBSTACLE_CELL_BRICKS_STATE2: bricks_crack_frames[1],
+}
+
+# obstacle properties
+map_obstacle_seed_to_props = {
+    0: {
+        "stage_texture_types": [
+            [OBSTACLE_CELL_BORDER1],
+            [OBSTACLE_CELL_BORDER2],
+        ],
+        "lives": float('inf'),
+    },
+    1: {
+        "stage_texture_types": [
+            [OBSTACLE_CELL_BOX1],
+            [OBSTACLE_CELL_BOX2],
+        ],
+        "lives": 1,
+    },
+    2: {
+        "stage_texture_types": [
+            [OBSTACLE_CELL_BRICKS, OBSTACLE_CELL_BRICKS_STATE1, OBSTACLE_CELL_BRICKS_STATE2],
+        ],
+        "lives": 3,
+    },
+}
 
 BFS_DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 UP_DIRECTION = (0, -1)

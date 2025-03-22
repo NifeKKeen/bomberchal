@@ -1,11 +1,11 @@
 import globals
-from entitites.bonus import Bonus
-from entitites.entity import Entity
 from utils.helpers import rand
+from entitites.entity import Entity
 
 
 class Collidable(Entity):
     def get_collisions(self):
+        from entitites.bonus import Bonus
         res = []
 
         for entity in self.entity_group:
@@ -20,7 +20,8 @@ class Collidable(Entity):
         from entitites.bomb import Bomb
         from entitites.bot import Bot
         from entitites.fire import Fire
-        from entitites.player import Player
+        from entitites.bonus import Bonus
+        from entitites.player import Player, get_players
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
@@ -30,6 +31,12 @@ class Collidable(Entity):
             # now entity collides and it is not ourselves
 
             if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
+                if isinstance(self, Bot):
+                    if isinstance(entity, Player):
+                        entity.make_damage(1)
+                    elif isinstance(entity, Bomb) and entity.spawner == self:
+                        continue
+
                 if isinstance(entity, Obstacle):
                     if isinstance(self, Movable):
                         self_c_x = self.px_x + self.px_w // 2
@@ -60,14 +67,17 @@ class Collidable(Entity):
                     else:
                         entity.collect(self)
 
+
             elif isinstance(self, Fire):
                 if isinstance(entity, Obstacle):
                     if entity.type == globals.D_OBSTACLE_CELL:
-                        entity.kill()
                         self.self_destroy()
-                if isinstance(entity, Bomb):
+                        entity.make_damage(1)
+                elif isinstance(entity, Bomb):
                     entity.explode()
-                if isinstance(entity, Player) or isinstance(entity, Bot):
+                elif isinstance(entity, Player) or isinstance(entity, Bot):
+                    entity.make_damage(1)
+                elif isinstance(entity, Bonus):
                     entity.kill()
 
 

@@ -1,45 +1,61 @@
+import globals
+from utils.helpers import rand, get_tick_from_ms
+from utils.sound_api import play_explosion_sound
 from entitites.entity import Entity
 from entitites.fire import Fire
 from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
-from utils.helpers import get_ms_from_tick, rand
-import globals
-from utils.sound_api import play_explosion_sound
 
 
 class Bomb(Movable, Controllable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.timer = kwargs.get("timer", 0)  # in milliseconds
+        self.timer = kwargs.get("timer", get_tick_from_ms(0))  # in ticks
         self.power = kwargs.get("power", 1)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
         self.exploded = kwargs.get("exploded", False)
+        self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
+
+        if self.mounted:
+            self.set_image_path(globals.bomb_frames[0])
 
     def add_tick(self):
         self.tick += 1
-        if self.mounted and get_ms_from_tick(self.tick) > self.timer:
+        if not self.mounted:
+            return
+
+        if self.tick > self.timer:
             self.explode()
+
+        if self.tick < self.timer // 3:
+            self.set_image_path(globals.bomb_frames[0])
+        elif self.tick < (self.timer // 3) * 2:
+            self.set_image_path(globals.bomb_frames[1])
+        else:
+            self.set_image_path(globals.bomb_frames[2])
+
 
     def spread_fire(self):
         fire = Fire(
-            type="bfs",
-            mounted=True,
+            spread_type=self.spread_type,
             is_initial=True,
             power=self.power,
-            timer=500,
-            spread_timer=25,
+            timer=get_tick_from_ms(500),
+            spread_timer=get_tick_from_ms(25),
             spawner=self,
-            px_w=self.px_w,
-            px_h=self.px_h,
-            px_x=self.x * globals.cell_size,
-            px_y=self.y * globals.cell_size,
-            x=self.x,
-            y=self.y,
+
             layer=self.layer + 1,
             color=(rand(128,256), 0, 0),
             entity_group=globals.entities,
+
+            x=self.x,
+            y=self.y,
+            px_x=self.x * globals.cell_size,
+            px_y=self.y * globals.cell_size,
+            px_w=self.px_w,
+            px_h=self.px_h,
         )
         if fire.spread_timer == 0:
             fire.spread()

@@ -1,10 +1,10 @@
 import configparser
 import globals
-import random
 import os
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
+
 
 CONFIG_FILE = "pages/menu/config.ini"
 

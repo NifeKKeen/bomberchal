@@ -1,9 +1,7 @@
 from typing import Protocol
-
-import globals
+from utils.interaction_api import is_pressed, is_pressed_once
 from entitites.bot import get_bots
 from entitites.entity import Entity
-from utils.interaction_api import is_pressed, is_pressed_once
 
 class ControllableProtocol(Protocol):
     speed: int
@@ -41,7 +39,6 @@ class Controllable(Entity, ControllableProtocol):
         if self.move_down_key and is_pressed(self.move_down_key):
             total_move_y += self.speed
 
-
         self.move_px(total_move_x, total_move_y)
 
         changes = False
@@ -57,9 +54,9 @@ class Controllable(Entity, ControllableProtocol):
         else:
             self.movement_timer += 1
 
-        print(self.movement_timer)
+        # print(self.movement_timer)
 
-        if self.movement_timer >= 5:
+        if self.movement_timer >= 20: # if something controllable changes for more than 20 ticks, distances recalculating
             self.movement_timer = 0
 
             # if any player moves, recalculate distances (=> destination)

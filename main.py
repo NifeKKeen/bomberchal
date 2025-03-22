@@ -67,6 +67,7 @@ if __name__ == "__main__":
         for sprite in list(globals.all_sprites):  # list to avoid "Set changed size during iteration" error
             if isinstance(sprite, Entity):
                 sprite.add_tick()
+                sprite.cur_damage_countdown = max(sprite.cur_damage_countdown - 1, 0)
             if isinstance(sprite, GIFSprite):
                 sprite.process_gif()
         globals.Frame.tick(globals.FPS)

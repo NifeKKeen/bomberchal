@@ -1,8 +1,5 @@
-import pygame, os
-
-import globals
-from utils.helpers import  get_tick_from_ms
-from utils.helpers import rand
+import pygame, os, globals
+from utils.helpers import get_tick_from_ms, rand
 
 
 def format_surface_id_to_key(surface_id):
@@ -29,7 +26,8 @@ class SurfaceSprite(pygame.sprite.Sprite):
         SurfaceSprite.SurfaceId += 1
 
         self.should_mount = kwargs.get("should_mount", True)
-        self.mounted = kwargs.get("mounted", False)  # is visible in screen
+        self.mounted = False  # physically visible in screen
+        self.hidden = kwargs.get("hidden", False)  # visually visible in screen
 
         self.image_path = kwargs.get("image_path", None)
         self.align = kwargs.get("align", "topleft")
@@ -69,12 +67,14 @@ class SurfaceSprite(pygame.sprite.Sprite):
             self.mount()
 
     def set_image_path(self, image_path):
+        if self.image_path == image_path:
+            return
         self.image_path = image_path
         self.should_refresh = True
 
     def unmount(self):
         self.mounted = False
-        unmount_sprite(self)
+        unmount(self)
 
     def mount(self):
         self.mounted = True
@@ -124,7 +124,7 @@ class TextSprite(SurfaceSprite):
     def set_text(self, text):
         self.text = text
         self.should_refresh = True
-    
+
     def set_color(self, color):
         self.color = color
         self.should_refresh = True
@@ -202,15 +202,16 @@ def mount_sprite(sprite):
     return sprite
 
 
-def unmount_sprite(sprite):
-    globals.all_sprites.remove(sprite)
-    globals.to_render_keys.discard(sprite.key)
+def unmount(obj):
+    if isinstance(obj, str):
+        key = obj
+        sprite = globals.map_key_sprite[key]
+    elif isinstance(obj, SurfaceSprite):
+        sprite = obj
+        key = sprite.key
+    else:
+        raise "Trying to unmount unknown type"
 
-    return sprite
-
-
-def unmount(key):
-    sprite = globals.map_key_sprite[key]
     globals.all_sprites.remove(sprite)
     globals.to_render_keys.discard(key)
 
@@ -236,14 +237,26 @@ def draw_sprites():
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
             globals.all_sprites.remove(sprite)
+            globals.to_render_keys.remove(sprite.key)
         else:
             if sprite.should_refresh:
                 sprite.refresh()
                 sprite.should_refresh = False
 
+                sprite.should_refresh = False
 
-    # all_sprites.update()
+        # all_sprites.update()
+
+    will_return = []
+    for sprite in list(globals.all_sprites.sprites()):
+        if sprite.hidden:
+            will_return.append(sprite)
+            globals.all_sprites.remove(sprite)
 
     globals.all_sprites.draw(globals.DISPLAYSURF)
+
+    for sprite in will_return:
+        globals.all_sprites.add(sprite)
+
     pygame.display.flip()
     refill_screen()
