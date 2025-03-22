@@ -37,7 +37,6 @@ def parse_key(key_str):
         return pygame.key.key_code(key_str.lower())  
 
 
-
 def save_config():
     config = configparser.ConfigParser()
     config["Controls"] = {
@@ -79,7 +78,7 @@ def mount_sprites():
     global back_button, back_button_text
     global current_key_text_p0, current_key_text_p1
 
-    paint_api.mount_text(
+    paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 250,
         align="center",
@@ -88,8 +87,8 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="change_bomb_button",
-    )
-    paint_api.mount_text(
+    )  #endregion
+    paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 170,
         text="for player1",
@@ -97,9 +96,9 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="label_p0",
-    )
+    )  #endregion
 
-    left_arrow_p0 = paint_api.mount_rect(
+    left_arrow_p0 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -107,8 +106,8 @@ def mount_sprites():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p0",
-    )
-    display_p0 = paint_api.mount_text(
+    )  #endregion
+    display_p0 = paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 150,
         align="center",
@@ -117,8 +116,8 @@ def mount_sprites():
         color=(255, 255, 0),
 
         key="display_p0",
-    )
-    right_arrow_p0 = paint_api.mount_rect(
+    )  #endregion
+    right_arrow_p0 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -126,9 +125,9 @@ def mount_sprites():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p0",
-    )
+    )  #endregion
 
-    paint_api.mount_text(
+    paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 50,
         text="for player2",
@@ -136,9 +135,9 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="label_p1",
-    )
+    )  #endregion
 
-    left_arrow_p1 = paint_api.mount_rect(
+    left_arrow_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 65,
         px_w=75,
@@ -146,8 +145,8 @@ def mount_sprites():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p1",
-    )
-    display_p1 = paint_api.mount_text(
+    )  #endregion
+    display_p1 = paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 35,
         align="center",
@@ -156,8 +155,8 @@ def mount_sprites():
         color=(255, 255, 0),
 
         key="display_p1",
-    )
-    right_arrow_p1 = paint_api.mount_rect(
+    )  #endregion
+    right_arrow_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y - 65,
         px_w=75,
@@ -165,9 +164,9 @@ def mount_sprites():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
-    )
+    )  #endregion
 
-    paint_api.mount_text(
+    paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 50,
         text="Game mode",
@@ -175,9 +174,9 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="game_mode",
-    )
+    )  #endregion
 
-    default_button = paint_api.mount_rect(
+    default_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 65,
         px_y=globals.CENTER_Y + 70,
         px_w=170,
@@ -186,9 +185,9 @@ def mount_sprites():
         image_path="assets/images/buttons/bar_button.png",
 
         key="default",
-    )
+    )  #endregion
     default_pos = default_button.px_x, default_button.px_y
-    default_button_shadow = paint_api.mount_text(
+    default_button_shadow = paint_api.mount_text(  #region parameters
         px_x=default_pos[0] + globals.SHADOW_OFFSET,
         px_y=default_pos[1] + globals.SHADOW_OFFSET,
         align="center",
@@ -197,8 +196,8 @@ def mount_sprites():
         color=globals.SHADOW_COLOR,
 
         key="default_text_shadow",
-    )
-    default_button_text = paint_api.mount_text(
+    )  #endregion
+    default_button_text = paint_api.mount_text(  #region parameters
         px_x=default_pos[0],
         px_y=default_pos[1],
         align="center",
@@ -207,9 +206,9 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="default_text",
-    )
+    )  #endregion
 
-    boss_button = paint_api.mount_rect(
+    boss_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y + 70,
         px_w=250,
@@ -218,9 +217,9 @@ def mount_sprites():
         image_path="assets/images/buttons/bar_button.png",
 
         key="boss",
-    )
+    )  #endregion
     boss_pos = boss_button.px_x, boss_button.px_y
-    boss_button_shadow = paint_api.mount_text(
+    boss_button_shadow = paint_api.mount_text(  #region parameters
         px_x=boss_pos[0] + globals.SHADOW_OFFSET,
         px_y=boss_pos[1] + globals.SHADOW_OFFSET,
         align="center",
@@ -229,8 +228,8 @@ def mount_sprites():
         color=globals.SHADOW_COLOR,
 
         key="boss_text_shadow",
-    )
-    boss_button_text = paint_api.mount_text(
+    )  #endregion
+    boss_button_text = paint_api.mount_text(  #region parameters
         px_x=boss_pos[0],
         px_y=boss_pos[1],
         align="center",
@@ -239,9 +238,9 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="boss_text",
-    )
+    )  #endregion
 
-    back_button = paint_api.mount_rect(
+    back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -250,9 +249,9 @@ def mount_sprites():
         image_path="assets/images/buttons/bar_button.png",
 
         key="back",
-    )
+    )  #endregion
     back_pos = back_button.px_x, back_button.px_y
-    back_button_shadow = paint_api.mount_text(
+    back_button_shadow = paint_api.mount_text(  #region parameters
         px_x=back_pos[0] + globals.SHADOW_OFFSET,
         px_y=back_pos[1] + globals.SHADOW_OFFSET,
         align="center",
@@ -261,8 +260,8 @@ def mount_sprites():
         color=globals.SHADOW_COLOR,
 
         key="back_text_shadow",
-    )
-    back_button_text = paint_api.mount_text(
+    )  #endregion
+    back_button_text = paint_api.mount_text(  #region parameters
         px_x=back_pos[0],
         px_y=back_pos[1],
         align="center",
@@ -271,7 +270,7 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="back_text",
-    )
+    )  #endregion
 
 
 def settings(is_setup=False):

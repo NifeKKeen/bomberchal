@@ -19,7 +19,7 @@ def menu(is_setup=False):
     if is_setup:
         play_menu_music(volume=.2)
 
-        mute_button_sprite = paint_api.mount_rect(
+        mute_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X - 350,
             px_y=globals.CENTER_Y - 200,
             px_w=65,
@@ -28,9 +28,9 @@ def menu(is_setup=False):
             image_path=globals.muted_img if globals.music_muted else globals.unmuted_img,
 
             key="mute",
-        )
+        )  #endregion
 
-        play_button_sprite = paint_api.mount_rect(
+        play_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X,
             px_y=globals.CENTER_Y - 100,
             px_w=500,
@@ -39,9 +39,9 @@ def menu(is_setup=False):
             image_path="assets/images/buttons/bar_button.png",
 
             key="play",
-        )
+        )  #endregion
         play_pos = play_button_sprite.px_x, play_button_sprite.px_y
-        play_button_shadow = paint_api.mount_text(
+        play_button_shadow = paint_api.mount_text(  #region parameters
             px_x=play_pos[0] + globals.SHADOW_OFFSET,
             px_y=play_pos[1] + globals.SHADOW_OFFSET,
             align="center",
@@ -50,8 +50,8 @@ def menu(is_setup=False):
             color=globals.SHADOW_COLOR,
 
             key="play_text_shadow",
-        )
-        play_button_text = paint_api.mount_text(
+        )  #endregion
+        play_button_text = paint_api.mount_text(  #region parameters
             px_x=play_pos[0],
             px_y=play_pos[1],
             align="center",
@@ -60,9 +60,9 @@ def menu(is_setup=False):
             color=(255, 255, 255),
 
             key="play_text",
-        )
+        )  #endregion
 
-        customization_button_sprite = paint_api.mount_rect(
+        customization_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X,
             px_y=globals.CENTER_Y,
             px_w=500,
@@ -71,9 +71,9 @@ def menu(is_setup=False):
             image_path="assets/images/buttons/bar_button.png",
 
             key="customization",
-        )
+        )  #endregion
         customization_pos = customization_button_sprite.px_x, customization_button_sprite.px_y
-        customization_button_shadow = paint_api.mount_text(
+        customization_button_shadow = paint_api.mount_text(  #region parameters
             px_x=customization_pos[0] + globals.SHADOW_OFFSET,
             px_y=customization_pos[1] + globals.SHADOW_OFFSET,
             align="center",
@@ -82,8 +82,8 @@ def menu(is_setup=False):
             color=globals.SHADOW_COLOR,
 
             key="customization_text_shadow",
-        )
-        customization_button_text = paint_api.mount_text(
+        )  #endregion
+        customization_button_text = paint_api.mount_text(  #region parameters
             px_x=customization_pos[0],
             px_y=customization_pos[1],
             align="center",
@@ -92,9 +92,9 @@ def menu(is_setup=False):
             color=(255, 255, 255),
 
             key="customization_text",
-        )
+        )  #endregion
 
-        settings_button_sprite = paint_api.mount_rect(
+        settings_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X - 128,
             px_y=globals.CENTER_Y + 100,
             px_w=246,
@@ -103,9 +103,9 @@ def menu(is_setup=False):
             image_path="assets/images/buttons/bar_button.png",
 
             key="settings",
-        )
+        )  #endregion
         settings_pos = settings_button_sprite.px_x, settings_button_sprite.px_y
-        settings_button_shadow = paint_api.mount_text(
+        settings_button_shadow = paint_api.mount_text(  #region parameters
             px_x=settings_pos[0] + globals.SHADOW_OFFSET,
             px_y=settings_pos[1] + globals.SHADOW_OFFSET,
             align="center",
@@ -114,8 +114,8 @@ def menu(is_setup=False):
             color=globals.SHADOW_COLOR,
 
             key="settings_text_shadow",
-        )
-        settings_button_text = paint_api.mount_text(
+        )  #endregion
+        settings_button_text = paint_api.mount_text(  #region parameters
             px_x=settings_pos[0],
             px_y=settings_pos[1],
             align="center",
@@ -124,9 +124,9 @@ def menu(is_setup=False):
             color=(255, 255, 255),
 
             key="settings_text",
-        )
+        )  #endregion
 
-        # scoreboard_button_sprite = paint_api.mount_rect(
+        # scoreboard_button_sprite = paint_api.mount_rect(  #region parameters
         #     px_x=globals.CENTER_X,
         #     px_y=globals.CENTER_Y + 200,
         #     px_w=230,
@@ -137,7 +137,7 @@ def menu(is_setup=False):
         #     key="scoreboard",
         # )
         # scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
-        # scoreboard_button_shadow = paint_api.mount_text(
+        # scoreboard_button_shadow = paint_api.mount_text(  #region parameters
         #     px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
         #     px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
         #     align="center",
@@ -146,8 +146,8 @@ def menu(is_setup=False):
         #     color=globals.SHADOW_COLOR,
         #
         #     key = "scoreboard_text_shadow",
-        # )
-        # scoreboard_button_text = paint_api.mount_text(
+        # )  #endregion
+        # scoreboard_button_text = paint_api.mount_text(  #region parameters
         #     px_x = scoreboard_pos[0],
         #     px_y = scoreboard_pos[1],
         #     align="center",
@@ -156,9 +156,9 @@ def menu(is_setup=False):
         #     color=(255, 255, 255),
         #
         #     key="scoreboard_text",
-        # )
+        # )  #endregion
 
-        quit_button_sprite = paint_api.mount_rect(
+        quit_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X + 128,
             px_y=globals.CENTER_Y + 100,
             px_w=246,
@@ -167,9 +167,9 @@ def menu(is_setup=False):
             image_path="assets/images/buttons/bar_button.png",
 
             key="quit",
-        )
+        )  #endregion
         quit_pos = quit_button_sprite.px_x, quit_button_sprite.px_y
-        quit_button_shadow = paint_api.mount_text(
+        quit_button_shadow = paint_api.mount_text(  #region parameters
             px_x=quit_pos[0] + globals.SHADOW_OFFSET,
             px_y=quit_pos[1] + globals.SHADOW_OFFSET,
             align="center",
@@ -178,8 +178,8 @@ def menu(is_setup=False):
             color=globals.SHADOW_COLOR,
 
             key="quit_text_shadow",
-        )
-        quit_button_text = paint_api.mount_text(
+        )  #endregion
+        quit_button_text = paint_api.mount_text(  #region parameters
             px_x=quit_pos[0],
             px_y=quit_pos[1],
             align="center",
@@ -188,7 +188,7 @@ def menu(is_setup=False):
             color=(255, 255, 255),
 
             key="quit_text",
-        )
+        )  #endregion
 
     if is_clicked(play_button_sprite):
         navigate("game")

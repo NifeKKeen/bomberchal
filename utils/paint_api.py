@@ -1,5 +1,5 @@
-import pygame
-import os
+import pygame, os
+
 import globals
 from utils.helpers import  get_tick_from_ms
 from utils.helpers import rand
@@ -248,3 +248,4 @@ def draw_sprites():
 
     globals.all_sprites.draw(globals.DISPLAYSURF)
     pygame.display.flip()
+    refill_screen()

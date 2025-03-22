@@ -20,6 +20,11 @@ if __name__ == "__main__":
     globals.Frame = pygame.time.Clock()
 
     globals.all_sprites = pygame.sprite.LayeredUpdates()
+    globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
+    globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+    globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
+    globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+
 
     while True:
         if globals.switched_page:
@@ -46,21 +51,14 @@ if __name__ == "__main__":
             reset_game()
 
         if globals.current_page == "menu":
-            globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
-            globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "menu/settings":
-            globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
-            globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             settings(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "menu/customization":
-            globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
-            globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
             menu_customization()
         elif globals.current_page == "menu/scoreboard":
             menu_scoreboard()
         elif globals.current_page == "game":
-            globals.menu_background_img = None
             game(is_setup=globals.switched_page_this_frame)
 
         draw_sprites()
