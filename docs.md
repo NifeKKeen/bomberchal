@@ -30,13 +30,13 @@
 - `to_render_keys` and `map_key_sprite` variables are closely related. They must be synced.
 - All mounted objects must be in `all_sprites` global variable. It is the instance created by `pygame.sprite.LayeredUpdates()`.
 
-# Sprite layers
-- [0, 100) menu
-- [100, 200) game field
-- [200, 300) game interactable objects:
-- - [200, 250) obstacles
-- - [250, 300) entities
-- [300, ..) overlay (pause menu)
+# Relative sprite layers
+- 10: Buttons
+- [50, 100): text, icons etc.
+- 100: popup accumulated layer
+- [10, 30): entities
+- - [10, 20): obstacles
+- - [20, 30): interactable entities
 
 
 # Page related things:

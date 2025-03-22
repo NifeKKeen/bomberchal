@@ -9,6 +9,8 @@ class Bot(BotIntellect, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 5)
+
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
 
     def add_tick(self):

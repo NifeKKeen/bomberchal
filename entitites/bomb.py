@@ -12,6 +12,8 @@ class Bomb(Movable, Controllable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 2)
+
         self.timer = kwargs.get("timer", get_tick_from_ms(0))  # in ticks
         self.power = kwargs.get("power", 1)
         self.spawner = kwargs.get("spawner", None)  # which entity spawned
@@ -38,7 +40,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
 
 
     def spread_fire(self):
-        fire = Fire(
+        fire = Fire(  #region parameters
             spread_type=self.spread_type,
             is_initial=True,
             power=self.power,
@@ -46,17 +48,16 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             spread_timer=get_tick_from_ms(25),
             spawner=self,
 
-            layer=self.layer + 1,
-            color=(rand(128,256), 0, 0),
-            entity_group=globals.entities,
-
             x=self.x,
             y=self.y,
-            px_x=self.x * globals.cell_size,
-            px_y=self.y * globals.cell_size,
+            px_x=self.x * globals.CELL_SIZE,
+            px_y=self.y * globals.CELL_SIZE,
             px_w=self.px_w,
             px_h=self.px_h,
-        )
+
+            color=(rand(128,256), 0, 0),
+            entity_group=globals.entities,
+        )  #endregion
         if fire.spread_timer == 0:
             fire.spread()
 

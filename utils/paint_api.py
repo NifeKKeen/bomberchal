@@ -101,7 +101,7 @@ class TextSprite(SurfaceSprite):
         self.font_size = kwargs.get("key", None)
         self.color = kwargs.get("color", (0, 0, 0))
         self.font_size = kwargs.get("font_size", 14)
-        self.font = kwargs.get("font_family", globals.text_font)
+        self.font = kwargs.get("font_family", globals.TEXT_FONT)
         self.text = kwargs.get("text", "-")
         self.align = kwargs.get("align", "topleft")
         self.text_rect = None

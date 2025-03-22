@@ -22,8 +22,9 @@ def menu(is_setup=False):
             px_y=globals.CENTER_Y - 200,
             px_w=65,
             px_h=65,
+            layer=globals.BUTTON_LAYER,
             align="center",
-            image_path=globals.muted_img if globals.music_muted else globals.unmuted_img,
+            image_path=globals.MUTED_IMG_PATH if globals.music_muted else globals.UNMUTED_IMG_PATH,
 
             key="mute",
         )  #endregion
@@ -33,6 +34,7 @@ def menu(is_setup=False):
             px_y=globals.CENTER_Y - 100,
             px_w=500,
             px_h=90,
+            layer=globals.BUTTON_LAYER,
             align="center",
             image_path="assets/images/buttons/bar_button.png",
 
@@ -42,6 +44,7 @@ def menu(is_setup=False):
         play_button_shadow = paint_api.mount_text(  #region parameters
             px_x=play_pos[0] + globals.SHADOW_OFFSET,
             px_y=play_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER,
             align="center",
             text="Play",
             font_size=50,
@@ -52,6 +55,7 @@ def menu(is_setup=False):
         play_button_text = paint_api.mount_text(  #region parameters
             px_x=play_pos[0],
             px_y=play_pos[1],
+            layer=globals.TEXT_LAYER,
             align="center",
             text="Play",
             font_size=50,
@@ -65,6 +69,7 @@ def menu(is_setup=False):
             px_y=globals.CENTER_Y,
             px_w=500,
             px_h=90,
+            layer=globals.BUTTON_LAYER,
             align="center",
             image_path="assets/images/buttons/bar_button.png",
 
@@ -74,6 +79,7 @@ def menu(is_setup=False):
         customization_button_shadow = paint_api.mount_text(  #region parameters
             px_x=customization_pos[0] + globals.SHADOW_OFFSET,
             px_y=customization_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER,
             align="center",
             text="Customization",
             font_size=50,
@@ -84,6 +90,7 @@ def menu(is_setup=False):
         customization_button_text = paint_api.mount_text(  #region parameters
             px_x=customization_pos[0],
             px_y=customization_pos[1],
+            layer=globals.TEXT_LAYER,
             align="center",
             text="Customization",
             font_size=50,
@@ -97,6 +104,7 @@ def menu(is_setup=False):
             px_y=globals.CENTER_Y + 100,
             px_w=246,
             px_h=90,
+            layer=globals.BUTTON_LAYER,
             align="center",
             image_path="assets/images/buttons/bar_button.png",
 
@@ -106,6 +114,7 @@ def menu(is_setup=False):
         settings_button_shadow = paint_api.mount_text(  #region parameters
             px_x=settings_pos[0] + globals.SHADOW_OFFSET,
             px_y=settings_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER,
             align="center",
             text="Settings",
             font_size=50,
@@ -116,6 +125,7 @@ def menu(is_setup=False):
         settings_button_text = paint_api.mount_text(  #region parameters
             px_x=settings_pos[0],
             px_y=settings_pos[1],
+            layer=globals.TEXT_LAYER,
             align="center",
             text="Settings",
             font_size=50,
@@ -129,6 +139,7 @@ def menu(is_setup=False):
         #     px_y=globals.CENTER_Y + 200,
         #     px_w=230,
         #     px_h=90,
+        #     layer=globals.BUTTON_LAYER,
         #     align="center",
         #     image_path="assets/images/buttons/bar_button.png",
         #
@@ -138,6 +149,7 @@ def menu(is_setup=False):
         # scoreboard_button_shadow = paint_api.mount_text(  #region parameters
         #     px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
         #     px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
+        #     layer=globals.SHADOW_LAYER,
         #     align="center",
         #     text="Scoreboard",
         #     font_size=50,
@@ -148,6 +160,7 @@ def menu(is_setup=False):
         # scoreboard_button_text = paint_api.mount_text(  #region parameters
         #     px_x = scoreboard_pos[0],
         #     px_y = scoreboard_pos[1],
+        #     layer=globals.TEXT_LAYER,
         #     align="center",
         #     text="Scoreboard",
         #     font_size=50,
@@ -161,6 +174,7 @@ def menu(is_setup=False):
             px_y=globals.CENTER_Y + 100,
             px_w=246,
             px_h=90,
+            layer=globals.BUTTON_LAYER,
             align="center",
             image_path="assets/images/buttons/bar_button.png",
 
@@ -170,6 +184,7 @@ def menu(is_setup=False):
         quit_button_shadow = paint_api.mount_text(  #region parameters
             px_x=quit_pos[0] + globals.SHADOW_OFFSET,
             px_y=quit_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER,
             align="center",
             text="Quit",
             font_size=50,
@@ -180,6 +195,7 @@ def menu(is_setup=False):
         quit_button_text = paint_api.mount_text(  #region parameters
             px_x=quit_pos[0],
             px_y=quit_pos[1],
+            layer=globals.TEXT_LAYER,
             align="center",
             text="Quit",
             font_size=50,
@@ -203,8 +219,8 @@ def menu(is_setup=False):
         if globals.music_muted:
             globals.music_muted = False
             play_menu_music(volume=.2)
-            mute_button_sprite.set_image_path(globals.unmuted_img)
+            mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH)
         else:
             globals.music_muted = True
             stop_music()
-            mute_button_sprite.set_image_path(globals.muted_img)
+            mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH)
