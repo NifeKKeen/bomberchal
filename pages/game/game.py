@@ -15,12 +15,14 @@ from entitites.obstacle import Obstacle
 from entitites.player import Player
 from pages.game import field_generator
 from pages.navigation import navigate
+from pages.menu.customization import load_config 
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
 
 def setup_game(**kwargs):
+    load_config()  
     for i in range(30):
         for j in range(30):
             mount_rect(
@@ -59,7 +61,7 @@ def setup_game(**kwargs):
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            character_skin_key=f"ch{rand(1, 5)}",
+            character_skin_key=f"ch{globals.skin_p1_id}" if i == 0 else f"ch{globals.skin_p2_id}",
 
             move_up_key=control_keys[0][i],
             move_down_key=control_keys[1][i],
