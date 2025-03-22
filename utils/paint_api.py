@@ -44,10 +44,14 @@ class SurfaceSprite(pygame.sprite.Sprite):
             self.mount()
 
 
-    def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
+    def refresh(self, **kwargs):
+        import os  # добавлено для проверки существования файла
         print("REQUESTED REFRESH")
-        if self.image_path is not None:
-            self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
+        if self.image_path is not None and os.path.exists(self.image_path):
+            self.image = pygame.transform.scale(
+                pygame.image.load(self.image_path).convert_alpha(),
+                (self.px_w, self.px_h)
+            )
         else:
             self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
             self.image.set_colorkey((0, 0, 0))  # color to make transparent
@@ -124,7 +128,7 @@ class TextSprite(SurfaceSprite):
 class GIFSprite(SurfaceSprite):
     def __init__(self, **kwargs):
         super().__init__(**kwargs, should_refresh=False)
-        self.delay = get_tick_from_ms(kwargs.get("delay", 350))  # задержка между кадрами в мс
+        self.delay = get_tick_from_ms(kwargs.get("delay", 300))  # задержка между кадрами в мс
         self.last_update = float("-inf")
         self.current_frame = 0
         self.frames = kwargs.get("frames", [])  # image paths
