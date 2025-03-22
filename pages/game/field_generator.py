@@ -11,7 +11,7 @@ def generate(cols, rows, game_mode):
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
-    bot_count = [5, 5, 10, 0] # original, wandering, aggressive, boss
+    bot_count = [3, 3, 3, 0] # original, wandering, aggressive, boss
     if boss_fight:
         bot_count = [0] * 4 # only boss, and position will be defined later
 
@@ -31,7 +31,7 @@ def generate(cols, rows, game_mode):
 
     for x in range(1, cols - 1):
         for y in range(1, rows - 1):
-            if boss_fight and abs(x - cols // 2) <= 1 and abs(y - rows // 2) <= 1:
+            if boss_fight and x == cols // 2 and y == rows // 2:
                 field[x][y] = globals.BOSS_BOT_CELL
                 continue
 

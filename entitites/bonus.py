@@ -1,4 +1,6 @@
 import globals
+from entitites.bots.aggressive_bot import AggressiveBot
+from entitites.bots.boss_bot import BossBot
 from utils.helpers import get_tick_from_ms, rand
 from entitites.entity import Entity
 
@@ -11,9 +13,9 @@ class Bonus(Entity):
         self.bonus_id = kwargs.get("bonus_id", 0)
         self.timer = kwargs.get("timer", -1)
         self.type = kwargs.get("type", "Speed")
-        # Speed - multiplies speed of collector by 2 (1.25 for bosses, 1.5 for aggressive bots) for 3 secs, but at most 8
+        # Speed - multiplies speed of collector by 2 (1.25 for bosses, 1.5 for aggressive bots) for 3 seconds, but at most 8
         # Power - increases power of collector's last bomb by 2 (by 1 for aggressive bots)
-        # Capacity - increases capacity (bomb_allowed) of collector by 1 for 10 secs (does not apply for boss)
+        # Capacity - increases capacity (bomb_allowed) of collector by 1 for 10 seconds (does not apply for boss)
         # Life - adds extra life for collector (for boss will be added 10 lives, but with 20% chance)
         self.collector = kwargs.get("collector", None)  # which entity collected bonus
         self.entity_group = kwargs.get("entity_group", "bonus")
@@ -22,9 +24,8 @@ class Bonus(Entity):
         self.activated = False
 
     def activate(self):
-        from entitites.bots.original_bot import Bot
-        is_boss = (globals.game_mode == "bossfight" and isinstance(self, Bot))
-        is_aggressive_bot = (isinstance(self, Bot) and self.type == 3)
+        is_boss = isinstance(self.collector, BossBot)
+        is_aggressive_bot = isinstance(self.collector, AggressiveBot)
         if self.type == "Speed":
             if self.collector.speed >= 8:
                 return
@@ -67,7 +68,6 @@ class Bonus(Entity):
         if not self.collector is None and self.prev_bombs_spawned < self.collector.bombs_spawned:
             self.spawned_bomb = True
             self.prev_bombs_spawned = self.collector.bombs_spawned
-            # print("!!", self.collector.bomb_power, self.collector.bombs_spawned)
 
         if self.spawned_bomb and self.type == "Power":
             if self in self.collector.bonuses:
@@ -76,8 +76,6 @@ class Bonus(Entity):
             self.spawned_bomb = False
             self.activated = False # to prevent constant decrease by 10 if bomb is already spawned
 
-        # print("@@", self.collector.bomb_power, self.collector.bombs_spawned)
-
     def collect(self, collector):
         if len(collector.bonuses) >= 10: # at most 10 bonuses
             return
@@ -85,13 +83,11 @@ class Bonus(Entity):
         from entitites.bots.original_bot import Bot
         self.collector = collector
         # print("Collected by ", collector)
-        # self.kill()
 
         if isinstance(collector, Player) or isinstance(collector, Bot):
             collector.bonuses.append(self)
 
         self.activate()
-
 
 def bonus_types():
     return ["Speed", "Power", "Capacity", "Life"]

@@ -151,47 +151,19 @@ def render_field(**kwargs):
             elif field[x][y] == globals.BOSS_BOT_CELL:
                 bot = BossBot(
                     px_x=x * globals.cell_size, px_y=y * globals.cell_size,
+                    # px_w=globals.cell_size * 3, px_h=globals.cell_size * 3,
                     px_w=globals.cell_size, px_h=globals.cell_size,
                     x=x, y=y,
-                    speed=1,
+                    speed=2,
                     color=(255, 0, 0),
-                    bomb_countdown=get_tick_from_ms(500),
                     layer=256,
-                    entity_group=globals.entities
+                    entity_group=globals.entities,
+                    bomb_countdown=get_tick_from_ms(500 + 3000),
+                    bomb_power=8,
+                    bomb_allowed=1,
+                    damage_countdown=get_tick_from_ms(500),
+                    lives=20
                 )
-
-    for i in range(1, 11):
-        for player in range(2):
-            # print((i - 1) * globals.cell_size, (globals.rows + player) * globals.cell_size)
-            paint_api.mount_text(
-                px_x=(i - 0.75) * globals.cell_size,
-                px_y=(globals.rows + player) * globals.cell_size,
-                key=f"bonus-{i}-{player}",
-                text=str(i % 10),
-                font_size=30,
-                color=(222, 222, 222),
-                layer = 300
-            )
-
-    if globals.game_mode == "bossfight":
-        x, y = globals.cols // 2 - 1, globals.rows // 2 - 1
-        bot_type = 3
-        boss_bot = Bot(
-            px_x=x * globals.cell_size, px_y=y * globals.cell_size,
-            # px_w=globals.cell_size * 3, px_h=globals.cell_size * 3,
-            px_w=globals.cell_size, px_h=globals.cell_size,
-            x=x, y=y,
-            speed=2,
-            color=[(0, 255, 0), (0, 0, 255), (255, 0, 0)][bot_type - 1],
-            layer=256,
-            entity_group=globals.entities,
-            type=bot_type,
-            bomb_countdown=get_tick_from_ms(500 + 3000),
-            bomb_power=8,
-            bomb_allowed=1,
-            damage_countdown=get_tick_from_ms(500),
-            lives=20
-        )
 
 def reset_game():
     globals.entities.clear()
@@ -246,6 +218,20 @@ def spawn_bonus(bonus_type = 0):
                 return
 
 def render_bonuses():
+    # 1, 2, ..., 0 for both players
+    for i in range(1, 11):
+        for player in range(2):
+            paint_api.mount_text(
+                px_x=(i - 0.75) * globals.cell_size,
+                px_y=(globals.rows + player) * globals.cell_size,
+                key=f"bonus-{i}-{player}",
+                text=str(i % 10),
+                font_size=30,
+                color=(222, 222, 222),
+                layer = 300
+            )
+
+    # bonuses
     for entity in list(globals.entities):
         if not isinstance(entity, Player):
             continue
@@ -271,7 +257,7 @@ def game(**kwargs):
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    if globals.tick % 50 == 0:
+    if globals.tick % 100 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:

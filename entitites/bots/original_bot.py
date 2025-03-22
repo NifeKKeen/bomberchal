@@ -18,7 +18,6 @@ class OriginalBot(Bot, BombSpawnable):
 
         self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
         collisions = Collidable.get_collisions(self)
-        self.spawn_bomb()
         for entity in collisions:
             if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner == self):
                 self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
@@ -27,6 +26,9 @@ class OriginalBot(Bot, BombSpawnable):
 
         if rand(0, 500) < 5: # to simulate randomness like in actual game
             self.direction ^= 1
+
+        if rand(0, 500) < 5:
+            self.spawn_bomb()
 
 def get_original_bots(entities):
     res = set()
