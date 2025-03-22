@@ -1,3 +1,4 @@
+import globals
 from utils.helpers import get_pos, get_tick_from_ms
 from utils.paint_api import SurfaceSprite
 
@@ -7,6 +8,8 @@ class Entity(SurfaceSprite):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER)
 
         self.x = kwargs.get("x", None)  # position x in board (from left) [целые коорды]
         self.y = kwargs.get("y", None)  # position y in board (from top) [целые коорды]

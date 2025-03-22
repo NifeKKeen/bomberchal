@@ -11,6 +11,8 @@ class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 5)
+
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(3000))
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
         self.character_skin_key = kwargs.get("character_skin_key", "ch1")

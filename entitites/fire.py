@@ -8,6 +8,8 @@ class Fire(Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 8)
+
         self.power = kwargs.get("power", 1)
         self.timer = kwargs.get("timer", get_tick_from_ms(300))
         self.spread_timer = kwargs.get("spread_timer", get_tick_from_ms(0))
@@ -62,7 +64,7 @@ class Fire(Collidable, Entity):
             if globals.field_fire_state[nx][ny] and (rand(0, 2) or globals.field_fire_state[nx][ny] >= self.power - 1):  # with 50% chance it the fire with higher power will proceed
                 continue
 
-            new_fire = Fire(
+            new_fire = Fire(  #region parameters
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,
@@ -70,17 +72,16 @@ class Fire(Collidable, Entity):
                 spawner=self.spawner,
                 spread_type=self.spread_type,
 
-                layer=self.layer,
-                color=self.color,
-                entity_group=globals.entities,
-
                 x=nx,
                 y=ny,
-                px_x=self.px_x + dx * globals.cell_size,
-                px_y=self.px_y + dy * globals.cell_size,
+                px_x=self.px_x + dx * globals.CELL_SIZE,
+                px_y=self.px_y + dy * globals.CELL_SIZE,
                 px_w=self.px_w,
                 px_h=self.px_h,
-            )
+
+                color=self.color,
+                entity_group=globals.entities,
+            )  #endregion
 
             if new_fire.spread_timer == 0:
                 new_fire.spread()
@@ -94,7 +95,7 @@ class Fire(Collidable, Entity):
             if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
                 continue
 
-            new_fire = Fire(
+            new_fire = Fire(  #region parameters
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,
@@ -102,17 +103,16 @@ class Fire(Collidable, Entity):
                 spawner=self.spawner,
                 spread_type=spread_type,
 
-                layer=self.layer,
-                color=self.color,
-                entity_group=globals.entities,
-
                 x=nx,
                 y=ny,
-                px_x=self.px_x + dx * globals.cell_size,
-                px_y=self.px_y + dy * globals.cell_size,
+                px_x=self.px_x + dx * globals.CELL_SIZE,
+                px_y=self.px_y + dy * globals.CELL_SIZE,
                 px_w=self.px_w,
                 px_h=self.px_h,
-            )
+
+                color=self.color,
+                entity_group=globals.entities,
+            )  #endregion
 
             if new_fire.spread_timer == 0:
                 new_fire.spread()
@@ -126,7 +126,7 @@ class Fire(Collidable, Entity):
         if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
             return
 
-        new_fire = Fire(
+        new_fire = Fire(  #region parameters
             is_initial=False,
             power=self.power - 1,
             timer=self.timer,
@@ -134,17 +134,16 @@ class Fire(Collidable, Entity):
             spawner=self.spawner,
             spread_type=self.spread_type,
 
-            layer=self.layer,
-            color=self.color,
-            entity_group=globals.entities,
-
             x=nx,
             y=ny,
-            px_x=self.px_x + dx * globals.cell_size,
-            px_y=self.px_y + dy * globals.cell_size,
+            px_x=self.px_x + dx * globals.CELL_SIZE,
+            px_y=self.px_y + dy * globals.CELL_SIZE,
             px_w=self.px_w,
             px_h=self.px_h,
-        )
+
+            color=self.color,
+            entity_group=globals.entities,
+        )  #endregion
 
         if new_fire.spread_timer == 0:
             new_fire.spread()

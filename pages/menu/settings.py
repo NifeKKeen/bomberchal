@@ -79,6 +79,7 @@ def mount_sprites():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 250,
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Change bomb button",
         font_size=40,
@@ -89,6 +90,7 @@ def mount_sprites():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 170,
+        layer=globals.TEXT_LAYER,
         text="for player1",
         font_size=30,
         color=(255, 255, 255),
@@ -101,6 +103,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p0",
@@ -108,6 +111,7 @@ def mount_sprites():
     display_p0 = paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 150,
+        layer=globals.TEXT_LAYER,
         align="center",
         text=current_key_text_p0,
         font_size=25,
@@ -120,6 +124,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p0",
@@ -128,6 +133,7 @@ def mount_sprites():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 50,
+        layer=globals.TEXT_LAYER,
         text="for player2",
         font_size=30,
         color=(255, 255, 255),
@@ -140,6 +146,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y - 65,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p1",
@@ -147,6 +154,7 @@ def mount_sprites():
     display_p1 = paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 35,
+        layer=globals.TEXT_LAYER,
         align="center",
         text=current_key_text_p1,
         font_size=25,
@@ -159,6 +167,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y - 65,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
@@ -167,6 +176,7 @@ def mount_sprites():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 50,
+        layer=globals.TEXT_LAYER,
         text="Game mode",
         font_size=30,
         color=(255, 255, 255),
@@ -179,6 +189,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y + 70,
         px_w=170,
         px_h=60,
+        layer=globals.BUTTON_LAYER,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
@@ -188,6 +199,7 @@ def mount_sprites():
     default_button_shadow = paint_api.mount_text(  #region parameters
         px_x=default_pos[0] + globals.SHADOW_OFFSET,
         px_y=default_pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER,
         align="center",
         text="Default",
         font_size=40,
@@ -198,6 +210,7 @@ def mount_sprites():
     default_button_text = paint_api.mount_text(  #region parameters
         px_x=default_pos[0],
         px_y=default_pos[1],
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Default",
         font_size=40,
@@ -211,6 +224,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y + 70,
         px_w=250,
         px_h=60,
+        layer=globals.BUTTON_LAYER,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
@@ -220,6 +234,7 @@ def mount_sprites():
     boss_button_shadow = paint_api.mount_text(  #region parameters
         px_x=boss_pos[0] + globals.SHADOW_OFFSET,
         px_y=boss_pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER,
         align="center",
         text="Boss Fight",
         font_size=40,
@@ -230,6 +245,7 @@ def mount_sprites():
     boss_button_text = paint_api.mount_text(  #region parameters
         px_x=boss_pos[0],
         px_y=boss_pos[1],
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Boss Fight",
         font_size=40,
@@ -243,6 +259,7 @@ def mount_sprites():
         px_y=globals.CENTER_Y + 300,
         px_w=350,
         px_h=80,
+        layer=globals.BUTTON_LAYER,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
@@ -252,6 +269,7 @@ def mount_sprites():
     back_button_shadow = paint_api.mount_text(  #region parameters
         px_x=back_pos[0] + globals.SHADOW_OFFSET,
         px_y=back_pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER,
         align="center",
         text="Back",
         font_size=50,
@@ -262,6 +280,7 @@ def mount_sprites():
     back_button_text = paint_api.mount_text(  #region parameters
         px_x=back_pos[0],
         px_y=back_pos[1],
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Back",
         font_size=50,

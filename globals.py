@@ -17,15 +17,22 @@ SHADOW_COLOR = (64, 64, 64)
 music_muted = True
 sound_muted = False
 current_music = None  # currently playing music name (as relative path to a file)
-sound_path = "assets/sound/"
-menu_music_path = "assets/sound/menu3.mp3"
-game_music_path = "assets/sound/BG.mpeg"
-explosion_sound_path = "assets/sound/explosion1.mp3"
+SOUND_PATH = "assets/sound/"
+MENU_MUSIC_PATH = "assets/sound/menu3.mp3"
+GAME_MUSIC_PATH = "assets/sound/BG.mpeg"
+EXPLOSION_SOUND_PATH = "assets/sound/explosion1.mp3"
 
 menu_background_img = None
 brown_background_img = None
-unmuted_img = "assets/images/mute/volume.png"
-muted_img = "assets/images/mute/mute.png"
+UNMUTED_IMG_PATH = "assets/images/mute/volume.png"
+MUTED_IMG_PATH = "assets/images/mute/mute.png"
+
+BUTTON_LAYER = 10
+TEXT_LAYER = 60
+SHADOW_LAYER = 59
+LAYER_SHIFT = 100  # for popups
+BASE_ENTITY_LAYER = 10
+BASE_OBSTACLE_LAYER = 20
 
 character_frames = {
     f"ch{chi}": {
@@ -62,7 +69,7 @@ grass_frames = ["assets/images/terrain/grass1.png"]
 bonus_frames = []
 
 FONT_PARAMETER = (None, 36)
-text_font = "assets/font/Pixeloid_Sans.ttf"
+TEXT_FONT = "assets/font/Pixeloid_Sans.ttf"
 
 all_sprites = None #  pygame.sprite.LayeredUpdates()
 
@@ -96,8 +103,8 @@ events_stack = deque()  # TODO
 entities = set()
 
 # GAME CONSTRAINTS
-cell_size = 32
-player_cell_size = 28
+CELL_SIZE = 32
+PLAYER_CELL_SIZE = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # undestroyable obstacle
 D_OBSTACLE_CELL = 2  # destroyable obstacle

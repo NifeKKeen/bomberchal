@@ -42,6 +42,7 @@ def pop_up_window_p1():
         px_y=globals.CENTER_Y - 60,
         px_w=280,
         px_h=280,
+        layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
         align="center",
         delay=1000,
         frames=[f"assets/gifs/ch{globals.skin_p1_id}/{i}.png" for i in range(1, 5)],
@@ -55,9 +56,9 @@ def pop_up_window_p1():
         px_y=globals.CENTER_Y - 150,
         px_w=50,
         px_h=50,
+        layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
-        layer=100,  # устанавливаем высокий слой для кнопки
 
         key="close_popup",
     )  #endregion
@@ -65,22 +66,22 @@ def pop_up_window_p1():
     close_button_text = paint_api.mount_text(  #region parameters
         px_x=close_pos[0],
         px_y=close_pos[1],
+        layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
         align="center",
         text="x",
         font_size=30,
         color=(255, 255, 255),
-        layer=102,
 
         key="close_text",
     )  #endregion
     close_button_shadow = paint_api.mount_text(  #region parameters
         px_x=close_pos[0] + globals.SHADOW_OFFSET,
         px_y=close_pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER + globals.LAYER_SHIFT,
         align="center",
         text="x",
         font_size=30,
         color=globals.SHADOW_COLOR,
-        layer=101,
 
         key="close_text_shadow",
     )  #endregion
@@ -92,56 +93,6 @@ def pop_up_window_p1():
         close_button.unmount()
         close_button_shadow.unmount()
         close_button_text.unmount()
-
-def pop_up_window_p2():
-    global show_popup_window_p2
-    demo_gif_p2 = paint_api.mount_gif(  #region parameters
-        px_x=globals.CENTER_X,
-        px_y=globals.CENTER_Y,
-        px_w=280,
-        px_h=280,
-        key="demo_gif_p2",
-        delay=1000,
-        frames=[f"assets/gifs/ch{globals.skin_p2_id}/{i}.png" for i in range(1, 5)],
-        align="center",
-    )  #endregion
-
-    close_button_p2 = paint_api.mount_rect(
-        px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 150,
-        px_w=50,
-        px_h=50,
-        key="close_p2",  # изменён ключ
-        image_path="assets/images/buttons/bar_button.png",
-    )  #endregion
-    close_center = close_button_p2.rect.center
-    close_button_text_p2 = paint_api.mount_text(  #region parameters
-        px_x=close_center[0],
-        px_y=close_center[1],
-        key="close_text_p2",  # изменён ключ
-        text="x",
-        font_size=30,
-        color=(255, 255, 255),
-        layer=102,
-        align="center",
-    )  #endregion
-    close_button_shadow_p2 = paint_api.mount_text(  #region parameters
-        px_x=close_center[0] + globals.SHADOW_OFFSET,
-        px_y=close_center[1] + globals.SHADOW_OFFSET,
-        key="close_text_shadow_p2",  # изменён ключ
-        text="x",
-        font_size=30,
-        color=globals.SHADOW_COLOR,
-        layer=101,
-        align="center",
-    )  #endregion
-    if is_clicked(close_button_p2):
-        print("close clicked")
-        show_popup_window_p2 = False
-        demo_gif_p2.unmount()
-        close_button_p2.unmount()
-        close_button_shadow_p2.unmount()
-        close_button_text_p2.unmount()
 
 def menu_customization():
     global player_skins, show_popup_window
@@ -155,6 +106,7 @@ def menu_customization():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 300,
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Change skin",
         font_size=40,
@@ -165,6 +117,7 @@ def menu_customization():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 170,
+        layer=globals.TEXT_LAYER,
         text="for player1",
         font_size=30,
         color=(255, 255, 255),
@@ -177,6 +130,7 @@ def menu_customization():
         px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p1",
@@ -186,6 +140,7 @@ def menu_customization():
         px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
@@ -195,6 +150,7 @@ def menu_customization():
         px_y=globals.CENTER_Y - 230,
         px_w=150,
         px_h=50,
+        layer=globals.BUTTON_LAYER,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
@@ -204,6 +160,7 @@ def menu_customization():
     preview_button_shadow_p1 = paint_api.mount_text(  #region parameters
         px_x=preview_pos_p1[0] + globals.SHADOW_OFFSET,
         px_y=preview_pos_p1[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER,
         align="center",
         text="Preview",
         font_size=30,
@@ -214,6 +171,7 @@ def menu_customization():
     preview_button_text_p1 = paint_api.mount_text(  #region parameters
         px_x=preview_pos_p1[0],
         px_y=preview_pos_p1[1],
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Preview",
         font_size=30,
@@ -228,6 +186,7 @@ def menu_customization():
         px_y=globals.CENTER_Y - 230,
         px_w=160,
         px_h=160,
+        layer=globals.BUTTON_LAYER,
         # align="center",
 
         # image_path="assets/gifs/ch1/1.png",
@@ -247,45 +206,46 @@ def menu_customization():
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 50,
-        key="label_p2_skin",
+        layer=globals.TEXT_LAYER,
         text="for player2",
         font_size=30,
         color=(255, 255, 255),
+
+        key="label_p2_skin",
     )  #endregion
     left_arrow_p2 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y + 30,
         px_w=75,
         px_h=75,
-        key="left_arrow_p2_skin",
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/left.png",
+
+        key="left_arrow_p2_skin",
     )  #endregion
     display_p2 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 40,
         px_y=globals.CENTER_Y + 10,
         px_w=160,
         px_h=160,
-        key="display_p2",
+        layer=globals.BUTTON_LAYER,
         image_path=globals.skins[f"ch{globals.skin_p2_id}"],
+
+        key="display_p2",
     )  #endregion
     right_arrow_p2 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y + 30,
         px_w=75,
         px_h=75,
-        key="right_arrow_p2_skin",
+        layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/right.png",
+
+        key="right_arrow_p2_skin",
     )  #endregion
 
     # current_skin_p0 = player_skins["player1"]
     #     # Отображение выбранного скина
-    # skin_preview = paint_api.mount_image(  #region parameters
-    #     px_x=globals.CENTER_X,
-    #     px_y=globals.CENTER_Y,
-    #     key="skin_preview",
-    #     image_path=f"assets/characters/ch{skin_display_index}.png",
-    #     align="center"
-    # )  #endregion
     # preview_button_p2 = paint_api.mount_rect(  #region parameters
     #     px_x=globals.CENTER_X + 150,
     #     px_y=globals.CENTER_Y - 20 ,
@@ -320,6 +280,7 @@ def menu_customization():
         px_y=globals.CENTER_Y + 300,
         px_w=350,
         px_h=80,
+        layer=globals.BUTTON_LAYER,
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
@@ -329,6 +290,7 @@ def menu_customization():
     back_button_shadow = paint_api.mount_text(  #region parameters
         px_x=back_pos[0] + globals.SHADOW_OFFSET,
         px_y=back_pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.SHADOW_LAYER,
         align="center",
         text="Back",
         font_size=50,
@@ -339,6 +301,7 @@ def menu_customization():
     back_button_text = paint_api.mount_text(  #region parameters
         px_x=back_pos[0],
         px_y=back_pos[1],
+        layer=globals.TEXT_LAYER,
         align="center",
         text="Back",
         font_size=50,
@@ -347,7 +310,7 @@ def menu_customization():
         key="back_text",
     )  #endregion
 
-    if is_clicked(preview_button_p1):
+    if not show_popup_window_p1 and is_clicked(preview_button_p1):
         show_popup_window_p1 = True
     if show_popup_window_p1:
         pop_up_window_p1()
@@ -360,18 +323,18 @@ def menu_customization():
     #     ind = 1 if is_clicked(left_arrow_p1) else -1
     #     skin_display_index = (skin_display_index + ind) % len(globals.skins)
         # change_skin(ind, display_p0)
-    if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
+    if not show_popup_window_p1 and (is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1)):
         ind = -1 if is_clicked(left_arrow_p1) else 1
         globals.skin_p1_id = (globals.skin_p1_id + ind - 1) % len(globals.skins) + 1
         display_p1.set_image_path(globals.skins[f"ch{globals.skin_p1_id}"])
         save_skin_config()
 
-    if is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2):
+    if not show_popup_window_p1 and (is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2)):
         ind = -1 if is_clicked(left_arrow_p2) else 1
         globals.skin_p2_id = (globals.skin_p2_id + ind - 1) % len(globals.skins) + 1
         # print(globals.skin_p2_id)
         display_p2.set_image_path(globals.skins[f"ch{globals.skin_p2_id}"])
         save_skin_config()
 
-    if is_clicked(back_button):
+    if not show_popup_window_p1 and is_clicked(back_button):
         navigate("menu")

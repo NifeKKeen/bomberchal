@@ -30,16 +30,12 @@ class BombSpawnable(Entity):
         bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
 
         self.bomb_allowed -= 1
-        bomb = Bomb(
+        bomb = Bomb(  #region parameters
             timer=self.bomb_timer,
             spawner=self,
             spread_type="bfs",
-
-            layer=255,
-            color=([rand(64, 128)] * 3),
-            entity_group=globals.entities,
-
             power=self.bomb_power,
+
             move_up_key=K_i,
             move_left_key=K_j,
             move_down_key=K_k,
@@ -50,6 +46,9 @@ class BombSpawnable(Entity):
             y=self.y,
             px_x=bombpx_x,
             px_y=bombpx_y,
-            px_w=globals.cell_size,
-            px_h=globals.cell_size,
-        )
+            px_w=globals.CELL_SIZE,
+            px_h=globals.CELL_SIZE,
+
+            color=([rand(64, 128)] * 3),
+            entity_group=globals.entities,
+        )  #endregion

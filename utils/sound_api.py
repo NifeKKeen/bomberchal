@@ -29,7 +29,7 @@ def play_menu_music(randomly = True, index = None, volume = 1, ignore_mute = Fal
     if not ignore_mute and globals.music_muted:
         return
 
-    play_music(globals.menu_music_path, volume=volume)
+    play_music(globals.MENU_MUSIC_PATH, volume=volume)
 
 def play_explosion_sound(randomly = True, index = None, volume = 1, ignore_mute = False):
     if not ignore_mute and globals.sound_muted:
@@ -37,4 +37,4 @@ def play_explosion_sound(randomly = True, index = None, volume = 1, ignore_mute 
 
     if randomly or index is None:
         index = rand(1, 5)
-    play_sound(path.join(globals.sound_path, f"Explosion{index}.ogg"), volume)
+    play_sound(path.join(globals.SOUND_PATH, f"Explosion{index}.ogg"), volume)
