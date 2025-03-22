@@ -124,7 +124,8 @@ def render_field(**kwargs):
                     bomb_countdown=get_tick_from_ms(500),
                     layer=256,
                     bomb_power=2,
-                    entity_group=globals.entities
+                    entity_group=globals.entities,
+                    key = f"orig-bot-{x};{y}",
                 )
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
@@ -135,7 +136,8 @@ def render_field(**kwargs):
                     speed=1,
                     color=(0, 0, 255),
                     layer=256,
-                    entity_group=globals.entities
+                    entity_group=globals.entities,
+                    key = f"wand-bot-{x};{y}",
                 )
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
@@ -148,7 +150,8 @@ def render_field(**kwargs):
                     bomb_countdown=get_tick_from_ms(500),
                     layer=256,
                     bomb_power=4,
-                    entity_group=globals.entities
+                    entity_group=globals.entities,
+                    key = f"aggro-bot-{x};{y}",
                 )
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
@@ -165,7 +168,8 @@ def render_field(**kwargs):
                     bomb_power=8,
                     bomb_allowed=1,
                     damage_countdown=get_tick_from_ms(500),
-                    lives=20
+                    lives=20,
+                    key = f"boss-bot-{x};{y}",
                 )
 
 def reset_game():
@@ -173,10 +177,6 @@ def reset_game():
 
 def spawn_bonus(bonus_type = 0):
     attempts = 0
-    counter = 0
-    for player in get_players(globals.entities):
-        counter += len(player.bonuses)
-
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
 
@@ -199,8 +199,9 @@ def spawn_bonus(bonus_type = 0):
             type=bonus_types()[bonus_type],
             x=bonus_x, y=bonus_y,
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_type],
-            layer=251 + counter,
-            entity_group=globals.entities
+            layer=251,
+            entity_group=globals.entities,
+            key=f"bonus-{bonus_x};{bonus_y}"
         )
         return
 
@@ -220,7 +221,8 @@ def spawn_bonus(bonus_type = 0):
                     x=bonus_x, y=bonus_y,
                     color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (0, 0, 0)][bonus_type],
                     layer=251,
-                    entity_group=globals.entities
+                    entity_group=globals.entities,
+                    key=f"bonus-{bonus_x};{bonus_y}"
                 )
                 return
 
@@ -231,7 +233,7 @@ def handle_bonuses():
             paint_api.mount_text(
                 px_x=(i - 0.75) * globals.cell_size,
                 px_y=(globals.rows + player) * globals.cell_size,
-                key=f"bonus-{i}-{player}",
+                key=f"bonus_key-{i}-{player}",
                 text=str(i % 10),
                 font_size=30,
                 color=(222, 222, 222),
