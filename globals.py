@@ -178,10 +178,10 @@ controls_players = [
 
 
 skins = {
-    "ch1": "assets/gifs/ch1/1.png",
-    "ch2": "assets/gifs/ch2/1.png",
-    "ch3": "assets/gifs/ch3/1.png",
-    "ch4": "assets/gifs/ch4/1.png"
+    "ch1": "assets/images/characters/ch1/down.png",
+    "ch2": "assets/images/characters/ch2/down.png",
+    "ch3": "assets/images/characters/ch3/down.png",
+    "ch4": "assets/images/characters/ch4/down.png"
 }
 
 skin_p1_id = 1
