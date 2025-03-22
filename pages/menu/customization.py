@@ -35,8 +35,19 @@ def save_skin_config():
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
-def pop_up_window_p1():
-    global show_popup_window_p1
+def get_available_skin(candidate, other_skin):
+    total_skins = len(globals.skins)
+    new_candidate = candidate
+    while new_candidate == other_skin:
+        new_candidate = (new_candidate % total_skins) + 1
+    return new_candidate
+
+def pop_up_window():
+    global show_popup_window_p1, show_popup_window_p2
+    if show_popup_window_p1:
+        idx = globals.skin_p1_id
+    else:
+        idx = globals.skin_p2_id
     demo_gif = paint_api.mount_gif(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 60,
@@ -44,15 +55,15 @@ def pop_up_window_p1():
         px_h=280,
         align="center",
         delay=1000,
-        frames=[f"assets/gifs/ch{globals.skin_p1_id}/{i}.png" for i in range(1, 5)],
-
+        frames=[f"assets/images/characters/ch{idx}/{direction}.png" 
+                for direction in ["up", "right", "down", "left"]],
         key="demo_gif",
-        # layer=10  # ниже, чем кнопка закрытия
+
     )  #endregion
 
     close_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 150,
+        px_y=globals.CENTER_Y - 130,
         px_w=50,
         px_h=50,
         align="center",
@@ -88,60 +99,12 @@ def pop_up_window_p1():
     if is_clicked(close_button):
         print("close clicked")
         show_popup_window_p1 = False
+        show_popup_window_p2 = False
         demo_gif.unmount()
         close_button.unmount()
         close_button_shadow.unmount()
         close_button_text.unmount()
 
-def pop_up_window_p2():
-    global show_popup_window_p2
-    demo_gif_p2 = paint_api.mount_gif(  #region parameters
-        px_x=globals.CENTER_X,
-        px_y=globals.CENTER_Y,
-        px_w=280,
-        px_h=280,
-        key="demo_gif_p2",
-        delay=1000,
-        frames=[f"assets/gifs/ch{globals.skin_p2_id}/{i}.png" for i in range(1, 5)],
-        align="center",
-    )  #endregion
-
-    close_button_p2 = paint_api.mount_rect(
-        px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 150,
-        px_w=50,
-        px_h=50,
-        key="close_p2",  # изменён ключ
-        image_path="assets/images/buttons/bar_button.png",
-    )  #endregion
-    close_center = close_button_p2.rect.center
-    close_button_text_p2 = paint_api.mount_text(  #region parameters
-        px_x=close_center[0],
-        px_y=close_center[1],
-        key="close_text_p2",  # изменён ключ
-        text="x",
-        font_size=30,
-        color=(255, 255, 255),
-        layer=102,
-        align="center",
-    )  #endregion
-    close_button_shadow_p2 = paint_api.mount_text(  #region parameters
-        px_x=close_center[0] + globals.SHADOW_OFFSET,
-        px_y=close_center[1] + globals.SHADOW_OFFSET,
-        key="close_text_shadow_p2",  # изменён ключ
-        text="x",
-        font_size=30,
-        color=globals.SHADOW_COLOR,
-        layer=101,
-        align="center",
-    )  #endregion
-    if is_clicked(close_button_p2):
-        print("close clicked")
-        show_popup_window_p2 = False
-        demo_gif_p2.unmount()
-        close_button_p2.unmount()
-        close_button_shadow_p2.unmount()
-        close_button_text_p2.unmount()
 
 def menu_customization():
     global player_skins, show_popup_window
@@ -222,28 +185,15 @@ def menu_customization():
         key="preview_text_p1",
     )  #endregion
 
-    print(globals.skins[f"ch{globals.skin_p1_id}"])
     display_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 40,
         px_y=globals.CENTER_Y - 230,
         px_w=160,
         px_h=160,
-        # align="center",
-
-        # image_path="assets/gifs/ch1/1.png",
         key="display_p1",
         image_path=globals.skins[f"ch{globals.skin_p1_id}"],
     )  #endregion
-    # image_path = globals.skins.get(f"ch{globals.skin_p1_id}")
-    # if image_path is None:
-    #     print("Ключ не найден в globals.skins!")
-    # else:
-    #     import os
-    #     if os.path.exists(image_path):
-    #         print("Файл найден:", image_path)
-    #     else:
-    #         print("Файл не найден по указанному пути:", image_path)
-
+   
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 50,
@@ -277,42 +227,33 @@ def menu_customization():
         image_path="assets/images/buttons/right.png",
     )  #endregion
 
-    # current_skin_p0 = player_skins["player1"]
-    #     # Отображение выбранного скина
-    # skin_preview = paint_api.mount_image(  #region parameters
-    #     px_x=globals.CENTER_X,
-    #     px_y=globals.CENTER_Y,
-    #     key="skin_preview",
-    #     image_path=f"assets/characters/ch{skin_display_index}.png",
-    #     align="center"
-    # )  #endregion
-    # preview_button_p2 = paint_api.mount_rect(  #region parameters
-    #     px_x=globals.CENTER_X + 150,
-    #     px_y=globals.CENTER_Y - 20 ,
-    #     px_w=150,
-    #     px_h=50,
-    #     key="skin_preview_p2",
-    #     image_path="assets/images/buttons/bar_button.png",
-    # )  #endregion
-    # preview_center_p2 = preview_button_p2.rect.center
-    # preview_button_shadow_p2 = paint_api.mount_text(  #region parameters
-    #     px_x=preview_center_p2[0] + 4,
-    #     px_y=preview_center_p2[1] + 4,
-    #     key="preview_text_shadow_p2",
-    #     text="Preview",
-    #     font_size=30,
-    #     color=(0, 0, 0),
-    #     align="center",
-    # )  #endregion
-    # preview_button_text_p2 = paint_api.mount_text(  #region parameters
-    #     px_x=preview_center_p2[0],
-    #     px_y=preview_center_p2[1],
-    #     key="preview_text_p2",
-    #     text="Preview",
-    #     font_size=30,
-    #     color=(255, 255, 255),
-    #     align="center",
-    # )  #endregion
+    preview_button_p2 = paint_api.mount_rect(  #region parameters
+        px_x=globals.CENTER_X + 150,
+        px_y=globals.CENTER_Y - 20 ,
+        px_w=150,
+        px_h=50,
+        key="skin_preview_p2",
+        image_path="assets/images/buttons/bar_button.png",
+    )  #endregion
+    preview_center_p2 = preview_button_p2.rect.center
+    preview_button_shadow_p2 = paint_api.mount_text(  #region parameters
+        px_x=preview_center_p2[0] + 4,
+        px_y=preview_center_p2[1] + 4,
+        key="preview_text_shadow_p2",
+        text="Preview",
+        font_size=30,
+        color=(0, 0, 0),
+        align="center",
+    )  #endregion
+    preview_button_text_p2 = paint_api.mount_text(  #region parameters
+        px_x=preview_center_p2[0],
+        px_y=preview_center_p2[1],
+        key="preview_text_p2",
+        text="Preview",
+        font_size=30,
+        color=(255, 255, 255),
+        align="center",
+    )  #endregion
 
 
     back_button = paint_api.mount_rect(  #region parameters
@@ -347,28 +288,26 @@ def menu_customization():
         key="back_text",
     )  #endregion
 
-    if is_clicked(preview_button_p1):
-        show_popup_window_p1 = True
-    if show_popup_window_p1:
-        pop_up_window_p1()
-    # if is_clicked(preview_button_p2):
-    #     show_popup_window_p2 = True
-    # if show_popup_window_p2:
-    #     pop_up_window_p1()
+    if show_popup_window_p1 == 0 and show_popup_window_p2 == 0:
+        if is_clicked(preview_button_p1):
+            show_popup_window_p1 = True
+        if is_clicked(preview_button_p2):
+            show_popup_window_p2 = True
+    if show_popup_window_p1 or show_popup_window_p2:
+        pop_up_window()
+    
 
-    # if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
-    #     ind = 1 if is_clicked(left_arrow_p1) else -1
-    #     skin_display_index = (skin_display_index + ind) % len(globals.skins)
-        # change_skin(ind, display_p0)
     if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
         ind = -1 if is_clicked(left_arrow_p1) else 1
-        globals.skin_p1_id = (globals.skin_p1_id + ind - 1) % len(globals.skins) + 1
+        candidate = (globals.skin_p1_id + ind - 1) % len(globals.skins) + 1
+        globals.skin_p1_id = get_available_skin(candidate, globals.skin_p2_id)
         display_p1.set_image_path(globals.skins[f"ch{globals.skin_p1_id}"])
         save_skin_config()
 
     if is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2):
         ind = -1 if is_clicked(left_arrow_p2) else 1
-        globals.skin_p2_id = (globals.skin_p2_id + ind - 1) % len(globals.skins) + 1
+        candidate = (globals.skin_p2_id + ind - 1) % len(globals.skins) + 1
+        globals.skin_p2_id = get_available_skin(candidate, globals.skin_p1_id)
         # print(globals.skin_p2_id)
         display_p2.set_image_path(globals.skins[f"ch{globals.skin_p2_id}"])
         save_skin_config()
