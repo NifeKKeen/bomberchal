@@ -220,7 +220,7 @@ def unmount(key):
 def refill_screen():
     if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization") and globals.brown_background_img:
         globals.DISPLAYSURF.blit(globals.brown_background_img, (0, 0))
-    elif globals.menu_background_img:
+    elif globals.current_page in ("menu") and globals.menu_background_img:
         globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))
     else:
         globals.DISPLAYSURF.fill((0, 0, 20))
@@ -233,8 +233,6 @@ def reset_frame():
 
 
 def draw_sprites():
-    refill_screen()
-
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
             globals.all_sprites.remove(sprite)
