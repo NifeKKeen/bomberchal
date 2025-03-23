@@ -7,7 +7,7 @@ class Obstacle(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_OBSTACLE_LAYER)
+        self._layer = globals.BASE_OBSTACLE_LAYER
 
         self.type = kwargs.get("type", globals.D_OBSTACLE_CELL)
         self.texture_type = kwargs.get("texture_type", globals.OBSTACLE_CELL_BORDER1)

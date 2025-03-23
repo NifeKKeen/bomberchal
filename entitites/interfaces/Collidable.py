@@ -90,6 +90,7 @@ class Collidable(Entity):
                     self.self_destroy()
                     entity.make_damage(1)
                 elif isinstance(entity, Bomb):
+                    self.self_destroy()
                     entity.explode()
                 elif isinstance(entity, Player) or isinstance(entity, Bot):
                     entity.make_damage(1)

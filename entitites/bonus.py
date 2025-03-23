@@ -10,7 +10,7 @@ class Bonus(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER)
+        self._layer = globals.BASE_ENTITY_LAYER
 
         self.bonus_id = kwargs.get("bonus_id", 0)
         self.timer = kwargs.get("timer", -1)

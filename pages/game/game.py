@@ -63,13 +63,13 @@ def setup_game(**kwargs):
 
     for i in range(2):
         rnd = rand(192, 256)
-        player = Player(  #region parameters
+        player = [Player(  #region parameters
             speed=2,
             lives=3,
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            spread_type="star",
+            spread_type="bfs",
             character_skin_key=f"ch{[globals.skin_p1_id, globals.skin_p2_id][i]}",
 
             move_up_key=control_keys[0][i],
@@ -79,15 +79,15 @@ def setup_game(**kwargs):
             attack_key=control_keys[4][i],
             attack_func=Player.spawn_bomb,
 
-            px_x=(1 if i == 0 else globals.cols - 1) * globals.CELL_SIZE,
+            px_x=(j + (1 if i == 0 else globals.cols - 1)) * globals.CELL_SIZE,
             px_y=(1 if i == 0 else globals.rows - 1) * globals.CELL_SIZE,
             px_w=globals.PLAYER_CELL_SIZE,
             px_h=globals.PLAYER_CELL_SIZE,
 
-            key=f"p-{i}",
+            key=f"p-{i}{j}",
             color=(0, rnd / 2, rnd),
             entity_group=globals.entities,
-        )  #endregion
+        ) for j in range(1, 10)]  #endregion
 
     render_field()
 

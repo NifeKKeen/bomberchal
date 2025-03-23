@@ -10,7 +10,7 @@ class Bot(Movable, Collidable, BombSpawnable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 5)
+        self._layer = globals.BASE_ENTITY_LAYER + 5
 
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
         self.moving = kwargs.get("moving",

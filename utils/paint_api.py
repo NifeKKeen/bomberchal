@@ -44,7 +44,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
 
     def refresh(self):  # NOTE: it is expensive operation if this sprite has an image
-        print("REQUESTED REFRESH")
+        # print("REQUESTED REFRESH")
         self.image = pygame.Surface([self.px_w, self.px_h], pygame.SRCALPHA)  # SRCALPHA will ensure that blit png image will be transparent
 
         if self.image_path is not None and os.path.exists(self.image_path):
@@ -249,7 +249,7 @@ def draw_sprites():
     for sprite in globals.all_sprites.sprites():
         if sprite.key not in globals.to_render_keys:
             globals.all_sprites.remove(sprite)
-            globals.to_render_keys.remove(sprite.key)
+            globals.to_render_keys.discard(sprite.key)
         else:
             if sprite.should_refresh:
                 sprite.refresh()
@@ -269,6 +269,7 @@ def draw_sprites():
 
     for sprite in will_return:
         globals.all_sprites.add(sprite)
+        globals.all_sprites.change_layer(sprite, sprite._layer)
 
     pygame.display.flip()
     refill_screen()
