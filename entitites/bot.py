@@ -38,10 +38,6 @@ class Bot(Movable, Collidable, BombSpawnable, Entity):
 
     def add_tick(self):
         self.tick += 1
-
-    def think(self):
-        pass
-
         if self.moved_this_frame:
             image_key = f"{self.last_direction}_moving"
             idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
@@ -55,6 +51,10 @@ class Bot(Movable, Collidable, BombSpawnable, Entity):
             self.hidden = self.cur_damage_countdown % 8 < 4
         else:
             self.hidden = False
+
+    def think(self):
+        pass
+
 
 def get_bots(entities):
     res = set()

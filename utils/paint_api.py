@@ -169,7 +169,7 @@ def _get_sprite(constructor, **kwargs):
 
     if key not in globals.to_render_keys:
         sprite = constructor(**kwargs)
-        print("Rendered", sprite.key)
+        # print("Rendered", sprite.key)
     else:
         sprite = globals.map_key_sprite[key]
 
@@ -205,7 +205,7 @@ def mount_sprite(sprite):
         # already in to render queue
         return sprite
 
-    print("Rendered", sprite.key)
+    # print("Rendered", sprite.key)
 
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite
