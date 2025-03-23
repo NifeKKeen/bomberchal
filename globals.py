@@ -1,7 +1,6 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
-
-from pages.menu.config import load_controls
+from pages.menu.config import load_config
 
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
@@ -16,7 +15,7 @@ SHADOW_OFFSET = 4
 SHADOW_COLOR = (64, 64, 64)
 
 music_muted = True
-sound_muted = False
+sound_muted = True
 current_music = None  # currently playing music name (as relative path to a file)
 SOUND_PATH = "assets/sound/"
 MENU_MUSIC_PATH = "assets/sound/menu3.mp3"
@@ -25,8 +24,8 @@ EXPLOSION_SOUND_PATH = "assets/sound/explosion1.mp3"
 
 menu_background_img = None
 brown_background_img = None
-MUTED_IMG_PATH1 = "assets/images/mute/mute.png"
 UNMUTED_IMG_PATH1 = "assets/images/mute/volume.png"
+MUTED_IMG_PATH1 = "assets/images/mute/mute.png"
 MUTED_IMG_PATH2 = "assets/images/mute/mute2.png"
 UNMUTED_IMG_PATH2 = "assets/images/mute/volume2.png"
 BUTTON_LAYER = 10
@@ -92,12 +91,13 @@ to_render_keys = set()
 map_key_sprite = dict()
 
 # GAME STATES
+game_mode = "default"
 cols = 0
 rows = 0
 field = None
 field_fire_state = None  # power of fire in specific cell in ticks
 paused = False
-game_mode = "default"
+game_mode = None
 scores = dict()
 tick = 0
 events_stack = deque()  # TODO
@@ -109,11 +109,7 @@ PLAYER_CELL_SIZE = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # undestroyable obstacle
 D_OBSTACLE_CELL = 2  # destroyable obstacle
-ORIGINAL_BOT_CELL = 3  # starting cell for original bot
-WANDERING_BOT_CELL = 4  # starting cell for wandering bot
-AGGRESSIVE_BOT_CELL = 5  # starting cell for aggressive bot
-BOSS_BOT_CELL = 6  # starting cell for boss bot
-
+BOT_CELL = 3  # starting cell for bot
 # texture_types
 OBSTACLE_CELL_BORDER1 = 10
 OBSTACLE_CELL_BORDER2 = 11
@@ -168,8 +164,9 @@ MAP_DIRECTION = {
     "left": LEFT_DIRECTION,
 }
 
-exp_key_p1, exp_key_p2 = load_controls()
-
+exp_key_p1 = K_SPACE
+exp_key_p2 = K_RETURN
+load_config()
 controls_players = [
     {
         "to_left_key": K_a,
