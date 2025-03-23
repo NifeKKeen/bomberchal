@@ -21,6 +21,7 @@ class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
         self.set_image_path(globals.character_frames[self.character_skin_key]["top_static"][0])
 
     def add_tick(self):
+        print(self.x, self.y)
         self.tick += 1
         if self.moved_this_frame:
             image_key = f"{self.last_direction}_moving"

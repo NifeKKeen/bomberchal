@@ -24,6 +24,7 @@ DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
 ]
 control_keys = []
+timer = -1
 
 def setup_game(**kwargs):
     load_config()
@@ -290,10 +291,75 @@ def handle_bonuses():
 
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
+    global timer
 
     if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
-        globals.game_mode = "bossfight"
-        is_setup = True
+        paint_api.mount_text(  # region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y,
+            key=f"won",
+            text="You won!",
+            font_size=130,
+            align="center",
+            color=(222, 222, 222),
+            layer=301
+        )  # endregion
+
+        # Shadow to make more readable
+        paint_api.mount_text(  # region parameters
+            px_x=globals.CENTER_X + 5,
+            px_y=globals.CENTER_Y + 5,
+            key=f"won-shadow",
+            text="You won!",
+            font_size=130,
+            align="center",
+            color=(0, 0, 0),
+            layer=300
+        )  # endregion
+
+        if timer == -1:
+            timer = get_tick_from_ms(3000)
+        elif timer > 0:
+            timer -= 1
+        else:
+            timer = -1
+            if globals.game_mode != "bossfight":
+                globals.game_mode = "bossfight"
+                is_setup = True
+            else:
+                navigate("menu")
+
+    elif len(get_players(globals.entities)) == 0 and len(get_bots(globals.entities)) > 0:
+        paint_api.mount_text(  # region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y,
+            key=f"lost",
+            text="You lost!",
+            font_size=130,
+            align="center",
+            color=(222, 222, 222),
+            layer=300
+        )  # endregion
+
+        # Shadow to make more readable
+        paint_api.mount_text(  # region parameters
+            px_x=globals.CENTER_X + 5,
+            px_y=globals.CENTER_Y + 5,
+            key=f"lost-shadow",
+            text="You lost!",
+            font_size=130,
+            align="center",
+            color=(0, 0, 0),
+            layer=300
+        )  # endregion
+
+        if timer == -1:
+            timer = get_tick_from_ms(3000)
+        elif timer > 0:
+            timer -= 1
+        else:
+            timer = -1
+            navigate("menu")
 
     if is_setup:
         setup_game(**kwargs)
@@ -310,9 +376,6 @@ def game(**kwargs):
 
     if globals.tick % 100 == 0:
         spawn_bonus(rand(0, 4))
-
-    if len(get_players(globals.entities)) == 0:
-        raise Exception("You lost")
 
     handle_bonuses()
 

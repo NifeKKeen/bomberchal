@@ -20,6 +20,11 @@ class WanderingBot(Bot):
             return
         # In this algorithm, bot moves into direction of the farthest cell from all bombs, fires and players. So, it just wanders
         if self.moving == 1:
+            if in_valid_range(self.x, self.y, globals.cols, globals.rows):
+                nx, ny = self.prev[self.x][self.y]
+            else:
+                nx, ny = -1, -1
+
             nx, ny = self.prev[self.x][self.y]
             if nx - self.x == 1:
                 self.direction = 1
@@ -29,7 +34,7 @@ class WanderingBot(Bot):
                 self.direction = 2
             elif ny - self.y == -1:
                 self.direction = 0
-            else:
+            else: # if nx and ny are not changing or if there is some error
                 self.moving = 0
 
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
