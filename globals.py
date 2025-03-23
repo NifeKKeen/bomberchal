@@ -1,7 +1,6 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
 
-from pages.menu import config
 from pages.menu.config import load_controls
 
 # PYGAME VARIABLE

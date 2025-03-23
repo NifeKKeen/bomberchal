@@ -4,7 +4,6 @@ from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
-import globals
 
 
 class Bot(Movable, Collidable, BombSpawnable, Entity):

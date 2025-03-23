@@ -1,8 +1,6 @@
 import globals
 from pygame.locals import *
 
-from entitites.bot import Bot
-
 from entitites.bot import get_bots
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
@@ -129,7 +127,7 @@ def render_field(**kwargs):
                 )  #endregion
 
             elif field[x][y] == globals.ORIGINAL_BOT_CELL:
-                bot = OriginalBot(
+                bot = OriginalBot(  #region parameters
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
@@ -140,10 +138,10 @@ def render_field(**kwargs):
                     bomb_power=2,
                     entity_group=globals.entities,
                     key = f"orig-bot-{x};{y}",
-                )
+                )  #endregion
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
-                bot = WanderingBot(
+                bot = WanderingBot(  #region parameters
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
@@ -152,10 +150,10 @@ def render_field(**kwargs):
                     layer=256,
                     entity_group=globals.entities,
                     key = f"wand-bot-{x};{y}",
-                )
+                )  #endregion
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
-                bot = AggressiveBot(
+                bot = AggressiveBot(  #region parameters
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
@@ -166,10 +164,10 @@ def render_field(**kwargs):
                     bomb_power=4,
                     entity_group=globals.entities,
                     key = f"aggro-bot-{x};{y}",
-                )
+                )  #endregion
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
-                bot = BossBot(
+                bot = BossBot(  #region parameters
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     # px_w=globals.CELL_SIZE * 3, px_h=globals.CELL_SIZE * 3,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -184,7 +182,7 @@ def render_field(**kwargs):
                     damage_countdown=get_tick_from_ms(500),
                     lives=20,
                     key = f"boss-bot-{x};{y}",
-                )
+                )  #endregion
 
 def reset_game():
     globals.entities.clear()
@@ -206,7 +204,7 @@ def spawn_bonus(bonus_type = 0):
             continue
 
         # found position
-        bonus = Bonus(
+        bonus = Bonus(  #region parameters
             type=bonus_types()[bonus_type],
 
             px_x=bonus_x * globals.CELL_SIZE, px_y=bonus_y * globals.CELL_SIZE,
@@ -216,7 +214,7 @@ def spawn_bonus(bonus_type = 0):
             layer=251,
             entity_group=globals.entities,
             key=f"bonus-{bonus_x};{bonus_y}"
-        )
+        )  #endregion
         return
 
     for x in range(globals.cols):
@@ -227,7 +225,7 @@ def spawn_bonus(bonus_type = 0):
                     collision = True
                     break
             if not collision:
-                bonus = Bonus(
+                bonus = Bonus(  #region parameters
                     px_x=bonus_x * globals.CELL_SIZE, px_y=bonus_y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     speed=0,
@@ -237,14 +235,14 @@ def spawn_bonus(bonus_type = 0):
                     layer=251,
                     entity_group=globals.entities,
                     key=f"bonus-{bonus_x};{bonus_y}"
-                )
+                )  #endregion
                 return
 
 def handle_bonuses():
     # 1, 2, ..., 0 for both players
     for i in range(1, 11):
         for player in range(2):
-            paint_api.mount_text(
+            paint_api.mount_text(  #region parameters
                 px_x=(i - 0.75) * globals.CELL_SIZE,
                 px_y=(globals.rows + player) * globals.CELL_SIZE,
                 key=f"bonus_key-{i}-{player}",
@@ -252,7 +250,7 @@ def handle_bonuses():
                 font_size=30,
                 color=(222, 222, 222),
                 layer = 300
-            )
+            )  #endregion
 
     # handling keys
     for i in range(1, 11):
