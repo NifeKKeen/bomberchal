@@ -1,11 +1,9 @@
-import globals
 from utils.helpers import rand
 from entitites.entity import Entity
 
 
 class Collidable(Entity):
     def get_collisions(self):
-        from entitites.bonus import Bonus
         res = []
 
         for entity in self.entity_group:
@@ -17,69 +15,84 @@ class Collidable(Entity):
         return res
 
     def handle_collision(self):
+        from entitites.interfaces.BombSpawnable import BombSpawnable
         from entitites.bomb import Bomb
         from entitites.bot import Bot
         from entitites.fire import Fire
         from entitites.bonus import Bonus
-        from entitites.player import Player, get_players
+        from entitites.player import Player
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
         for entity in list(self.entity_group):
             if entity == self or not entity.collides_with(self):
+                if isinstance(self, Bomb) and isinstance(entity, BombSpawnable) and self.spawner == entity:
+                    self.is_spawner_inside = False
                 continue
             # now entity collides and it is not ourselves
 
-            if isinstance(self, Player) or isinstance(self, Bot) or isinstance(self, Bomb):
-                if isinstance(self, Bot):
-                    if isinstance(entity, Player):
-                        entity.make_damage(1)
-                    elif isinstance(entity, Bomb) and entity.spawner == self:
-                        continue
+            if isinstance(self, Bot):
+                if isinstance(entity, Player):
+                    entity.make_damage(1)
+                elif isinstance(entity, Bomb) and entity.spawner == self:
+                    continue
 
+            if isinstance(self, Movable):
                 if isinstance(entity, Obstacle):
-                    if isinstance(self, Movable):
-                        self_c_x = self.px_x + self.px_w // 2
-                        self_c_y = self.px_y + self.px_h // 2
-                        ent_c_x = entity.px_x + entity.px_w // 2
-                        ent_c_y = entity.px_y + entity.px_h // 2
+                    self_c_x = self.px_x + self.px_w // 2
+                    self_c_y = self.px_y + self.px_h // 2
+                    ent_c_x = entity.px_x + entity.px_w // 2
+                    ent_c_y = entity.px_y + entity.px_h // 2
 
-                        c_dx = self_c_x - ent_c_x
-                        c_dy = self_c_y - ent_c_y
+                    c_dx = self_c_x - ent_c_x
+                    c_dy = self_c_y - ent_c_y
 
-                        if abs(c_dx) == abs(c_dy):
-                            if rand(0, 2) == 0:
-                                self.adjust_from_x(entity)
-                            else:
-                                self.adjust_from_y(entity)
-
-                        elif abs(c_dx) < abs(c_dy):
-                            self.adjust_from_y(entity)
-                        else:
+                    if abs(c_dx) == abs(c_dy):
+                        if rand(0, 2) == 0:
                             self.adjust_from_x(entity)
+                        else:
+                            self.adjust_from_y(entity)
 
+                    elif abs(c_dx) < abs(c_dy):
+                        self.adjust_from_y(entity)
                     else:
-                        self.adjust_from(entity)
+                        self.adjust_from_x(entity)
+                elif isinstance(entity, Bomb):
+                    if entity.spawner == self and entity.is_spawner_inside:
+                        continue  # ignore collision because the bomb was spawned immediately in spawner's position
 
-                elif isinstance(entity, Bonus):
-                    if isinstance(self, Bomb):
-                        entity.kill()
+                    self_c_x = self.px_x + self.px_w // 2
+                    self_c_y = self.px_y + self.px_h // 2
+                    ent_c_x = entity.px_x + entity.px_w // 2
+                    ent_c_y = entity.px_y + entity.px_h // 2
+
+                    c_dx = self_c_x - ent_c_x
+                    c_dy = self_c_y - ent_c_y
+
+                    if abs(c_dx) == abs(c_dy):
+                        if rand(0, 2) == 0:
+                            self.adjust_from_x(entity)
+                        else:
+                            self.adjust_from_y(entity)
+
+                    elif abs(c_dx) < abs(c_dy):
+                        self.adjust_from_y(entity)
                     else:
-                        entity.collect(self)
+                        self.adjust_from_x(entity)
 
 
-            elif isinstance(self, Fire):
+            if isinstance(self, Player) or isinstance(self, Bot):
+                if isinstance(entity, Bonus):
+                    entity.collect(self)
+
+            if isinstance(self, Fire):
                 if isinstance(entity, Obstacle):
-                    if entity.type == globals.D_OBSTACLE_CELL:
-                        self.self_destroy()
-                        entity.make_damage(1)
+                    self.self_destroy()
+                    entity.make_damage(1)
                 elif isinstance(entity, Bomb):
                     entity.explode()
                 elif isinstance(entity, Player) or isinstance(entity, Bot):
                     entity.make_damage(1)
-                elif isinstance(entity, Bonus):
-                    entity.kill()
-
 
     def adjust_from(self, entity):
         self.adjust_from_x(entity)

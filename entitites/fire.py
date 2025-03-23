@@ -39,8 +39,12 @@ class Fire(Collidable, Entity):
         if self.tick < self.timer // 3:
             self.set_image_path(globals.explosion_frames[0])
         elif self.tick < (self.timer // 3) * 2:
+            self.px_w = self.image_size[0] - 2
+            self.px_h = self.image_size[1] - 2
             self.set_image_path(globals.explosion_frames[1])
         else:
+            self.px_w = self.image_size[0] - 6
+            self.px_h = self.image_size[1] - 6
             self.set_image_path(globals.explosion_frames[2])
 
 
@@ -54,8 +58,7 @@ class Fire(Collidable, Entity):
             nx = self.x + dx
             ny = self.y + dy
             if (self.power - 1 <= 0 or
-                not in_valid_range(nx, ny, globals.cols, globals.rows) or
-                globals.field[nx][ny] == globals.U_OBSTACLE_CELL
+                not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0]))
             ):
                 continue
 
@@ -90,9 +93,7 @@ class Fire(Collidable, Entity):
         for spread_type, (dx, dy) in globals.MAP_DIRECTION.items():
             nx = self.x + dx
             ny = self.y + dy
-            if not in_valid_range(nx, ny, globals.rows, globals.cols):
-                continue
-            if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
+            if not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0])):
                 continue
 
             new_fire = Fire(  #region parameters
@@ -121,9 +122,7 @@ class Fire(Collidable, Entity):
         dx, dy = globals.MAP_DIRECTION[self.spread_type]
         nx = self.x + dx
         ny = self.y + dy
-        if not in_valid_range(nx, ny, globals.rows, globals.cols):
-            return
-        if globals.field[nx][ny] == globals.U_OBSTACLE_CELL:
+        if not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0])):
             return
 
         new_fire = Fire(  #region parameters

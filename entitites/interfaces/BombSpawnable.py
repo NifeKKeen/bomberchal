@@ -33,7 +33,7 @@ class BombSpawnable(Entity):
         bomb = Bomb(  #region parameters
             timer=self.bomb_timer,
             spawner=self,
-            spread_type="bfs",
+            spread_type="star",
             power=self.bomb_power,
 
             move_up_key=K_i,

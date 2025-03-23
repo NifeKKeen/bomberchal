@@ -16,6 +16,8 @@ class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(3000))
         self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
         self.character_skin_key = kwargs.get("character_skin_key", "ch1")
+
+        self.image_size = self.px_w + 16, self.px_h
         self.set_image_path(globals.character_frames[self.character_skin_key]["top_static"][0])
 
     def add_tick(self):

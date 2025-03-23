@@ -17,6 +17,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.px_y = kwargs.get("px_y", 0)  # position y in pixels (from top) [пиксельные коорды]
         self.px_w = kwargs.get("px_w", 1)  # width in pixels
         self.px_h = kwargs.get("px_h", 1)  # height in pixels
+        self.image_size = kwargs.get("image_size", (self.px_w, self.px_h))  # sizes of image, does not affect to physical interactions of an object
 
         self.color = kwargs.get("color", (rand(128, 256), 0, rand(128, 256)))
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
@@ -44,13 +45,20 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
     def refresh(self):  # NOTE: it is expensive operation if this sprite has an image
         print("REQUESTED REFRESH")
+        self.image = pygame.Surface([self.px_w, self.px_h], pygame.SRCALPHA)  # SRCALPHA will ensure that blit png image will be transparent
+
         if self.image_path is not None and os.path.exists(self.image_path):
-            self.image = pygame.transform.scale(
-                pygame.image.load(self.image_path).convert_alpha(),
-                (self.px_w, self.px_h)
+            image_dw = (self.px_w - self.image_size[0]) // 2
+            image_dh = (self.px_h - self.image_size[1]) // 2
+
+            self.image.blit(
+                pygame.transform.scale(
+                    pygame.image.load(self.image_path),
+                    self.image_size,
+                ),
+                (image_dw, image_dh)
             )
         else:
-            self.image = pygame.Surface([self.px_w, self.px_h])  # IMPORTANT!
             self.image.set_colorkey((0, 0, 0))  # color to make transparent
             self.image.fill(self.color)  # Color of surface
             pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
@@ -66,10 +74,13 @@ class SurfaceSprite(pygame.sprite.Sprite):
         if self.mounted:
             self.mount()
 
-    def set_image_path(self, image_path):
-        if self.image_path == image_path:
+    def set_image_path(self, image_path, size = None):
+        if size is None:
+            size = self.image_size
+        if self.image_path == image_path and self.image_size == size:
             return
         self.image_path = image_path
+        self.image_size = size
         self.should_refresh = True
 
     def unmount(self):
