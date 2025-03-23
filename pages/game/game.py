@@ -162,7 +162,7 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
                     bomb_countdown=get_tick_from_ms(3000),
                     layer=256,
-                    bomb_power=4,
+                    bomb_power=3,
                     entity_group=globals.entities,
                     key = f"aggro-bot-{x};{y}",
                 )  #endregion
@@ -289,39 +289,53 @@ def handle_bonuses():
             bonus.px_x, bonus.px_y = get_field_pos(bonus.x, bonus.y)
             bonus.set_px(bonus.px_x, bonus.px_y)
 
+def global_message(text):
+    paint_api.mount_text(  # region parameters
+        px_x=globals.CENTER_X,
+        px_y=globals.CENTER_Y,
+        key=f"won",
+        text="You won!",
+        font_size=130,
+        align="center",
+        color=(222, 222, 111),
+        layer=301
+    )  # endregion
+
+    # Shadow to make more readable
+    paint_api.mount_text(  # region parameters
+        px_x=globals.CENTER_X + 5,
+        px_y=globals.CENTER_Y + 5,
+        key=f"won-shadow",
+        text="You won!",
+        font_size=130,
+        align="center",
+        color=(0, 0, 0),
+        layer=300
+    )  # endregion
+
+    global timer
+    if timer == -1:
+        timer = get_tick_from_ms(3000)
+    elif timer > 0:
+        timer -= 1
+
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
     global timer
 
     if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
-        paint_api.mount_text(  # region parameters
-            px_x=globals.CENTER_X,
-            px_y=globals.CENTER_Y,
-            key=f"won",
-            text="You won!",
-            font_size=130,
-            align="center",
-            color=(222, 222, 222),
-            layer=301
-        )  # endregion
-
-        # Shadow to make more readable
-        paint_api.mount_text(  # region parameters
-            px_x=globals.CENTER_X + 5,
-            px_y=globals.CENTER_Y + 5,
-            key=f"won-shadow",
-            text="You won!",
-            font_size=130,
-            align="center",
-            color=(0, 0, 0),
-            layer=300
-        )  # endregion
-
-        if timer == -1:
-            timer = get_tick_from_ms(3000)
-        elif timer > 0:
-            timer -= 1
+        player1 = list(get_players(globals.entities))[0]
+        if len(get_players(globals.entities)) == 2:
+            player2 = list(get_players(globals.entities))[1]
+            if player1.mounted and player2.mounted:
+                global_message("You won")
+            if player1.mounted and not player2.mounted:
+                global_message(f"Player 1 won!")
+            if not player1.mounted and player2.mounted:
+                global_message(f"Player 2 won!")
         else:
+            global_message(f"Player 1 won!")
+        if timer == 0:
             timer = -1
             if globals.game_mode != "bossfight":
                 globals.game_mode = "bossfight"
@@ -330,34 +344,8 @@ def game(**kwargs):
                 navigate("menu")
 
     elif len(get_players(globals.entities)) == 0 and len(get_bots(globals.entities)) > 0:
-        paint_api.mount_text(  # region parameters
-            px_x=globals.CENTER_X,
-            px_y=globals.CENTER_Y,
-            key=f"lost",
-            text="You lost!",
-            font_size=130,
-            align="center",
-            color=(222, 222, 222),
-            layer=300
-        )  # endregion
-
-        # Shadow to make more readable
-        paint_api.mount_text(  # region parameters
-            px_x=globals.CENTER_X + 5,
-            px_y=globals.CENTER_Y + 5,
-            key=f"lost-shadow",
-            text="You lost!",
-            font_size=130,
-            align="center",
-            color=(0, 0, 0),
-            layer=300
-        )  # endregion
-
-        if timer == -1:
-            timer = get_tick_from_ms(3000)
-        elif timer > 0:
-            timer -= 1
-        else:
+        global_message("You lost")
+        if timer == 0:
             timer = -1
             navigate("menu")
 

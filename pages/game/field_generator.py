@@ -9,7 +9,7 @@ def generate(cols, rows, game_mode):
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
-    bot_count = [1, 0, 0, 0] # original, wandering, aggressive, boss
+    bot_count = [1, 0, 5, 0] # original, wandering, aggressive, boss
     if boss_fight:
         bot_count = [0] * 4 # only boss, and position will be defined later
 
