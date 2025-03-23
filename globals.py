@@ -26,7 +26,8 @@ menu_background_img = None
 brown_background_img = None
 UNMUTED_IMG_PATH = "assets/images/mute/volume.png"
 MUTED_IMG_PATH = "assets/images/mute/mute.png"
-
+MUTED_IMG_PATH2 = "assets/images/mute/mute2.png"
+UNMUTED_IMG_PATH2 = "assets/images/mute/volume2.png"
 BUTTON_LAYER = 10
 TEXT_LAYER = 60
 SHADOW_LAYER = 59
