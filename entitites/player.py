@@ -1,4 +1,5 @@
 import globals
+from entitites.interfaces.BonusCollectable import BonusCollectable
 from utils.helpers import get_tick_from_ms
 from entitites.entity import Entity
 from entitites.interfaces.BombSpawnable import BombSpawnable
@@ -7,14 +8,13 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
 
 
-class Player(Collidable, Controllable, BombSpawnable, Movable, Entity):
+class Player(BonusCollectable, Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
 
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(3000))
-        self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
         self.character_skin_key = kwargs.get("character_skin_key", "ch1")
 
         self.image_size = self.px_w + 16, self.px_h

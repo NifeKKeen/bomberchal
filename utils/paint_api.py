@@ -23,6 +23,8 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
 
         self.surface_id = SurfaceSprite.SurfaceId
+        self.ignore_collision = kwargs.get("ignore_collision", False)
+        self.dynamic = kwargs.get("dynamic", False)  # is only for one frame
         self.key = kwargs.get("key", format_surface_id_to_key(self.surface_id))
         SurfaceSprite.SurfaceId += 1
 
@@ -260,12 +262,20 @@ def draw_sprites():
         # all_sprites.update()
 
     will_return = []
+    will_remove = []
     for sprite in list(globals.all_sprites.sprites()):
-        if sprite.hidden:
+        if sprite.dynamic:
+            will_remove.append(sprite)
+        elif sprite.hidden:
             will_return.append(sprite)
             globals.all_sprites.remove(sprite)
 
+
     globals.all_sprites.draw(globals.DISPLAYSURF)
+
+    for sprite in will_remove:
+        globals.all_sprites.remove(sprite)
+        globals.to_render_keys.discard(sprite.key)
 
     for sprite in will_return:
         globals.all_sprites.add(sprite)

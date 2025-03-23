@@ -1,18 +1,17 @@
 import globals
-from entitites.interfaces.BombSpawnable import BombSpawnable
+from entitites.interfaces.BonusCollectable import BonusCollectable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
 
 
-class Bot(Movable, Collidable, BombSpawnable, Entity):
+class Bot(BonusCollectable, Movable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
 
-        self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
         self.moving = kwargs.get("moving",
                                  0)  # 0 if not moving (but calculating), 1 if moving by default, 2 if moves only to don't be stuck (to be entirely in the cell)
         self.x = kwargs.get("x", 0)

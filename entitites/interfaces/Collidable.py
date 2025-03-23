@@ -24,7 +24,12 @@ class Collidable(Entity):
         from entitites.obstacle import Obstacle
         from entitites.interfaces.Movable import Movable
 
+        if self.ignore_collision:
+            return
+
         for entity in list(self.entity_group):
+            if entity.ignore_collision:
+                continue
             if entity == self or not entity.collides_with(self):
                 if isinstance(self, Bomb) and isinstance(entity, BombSpawnable) and self.spawner == entity:
                     self.is_spawner_inside = False
@@ -80,10 +85,9 @@ class Collidable(Entity):
                     else:
                         self.adjust_from_x(entity)
 
-
             if isinstance(self, Player) or isinstance(self, Bot):
                 if isinstance(entity, Bonus):
-                    entity.collect(self)
+                    self.collect(entity)
 
             if isinstance(self, Fire):
                 if isinstance(entity, Obstacle):

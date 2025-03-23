@@ -26,13 +26,13 @@ class Obstacle(Entity):
                 self.sub_seed = rand(0, len(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"]))
 
         if self.mounted:
-            self.set_image_path(globals.map_type_to_path[self.texture_type])
+            self.set_image_path(globals.map_obstacle_type_to_path[self.texture_type])
 
     def add_tick(self):
         self.tick += 1
         if self.seed is not None:
             self.set_image_path(
-                globals.map_type_to_path[
+                globals.map_obstacle_type_to_path[
                     get_texture_type(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"], self.sub_seed, self.lives / self.initial_lives)
                 ]
             )
