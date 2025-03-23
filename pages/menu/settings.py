@@ -64,6 +64,7 @@ boss_button = None
 boss_button_text = None
 back_button = None
 back_button_text = None
+bomb_mute_button_sprite = None
 
 current_key_text_p0 = None
 current_key_text_p1 = None
@@ -75,7 +76,7 @@ def mount_sprites():
     global boss_button, boss_button_text
     global back_button, back_button_text
     global current_key_text_p0, current_key_text_p1
-
+    global bomb_mute_button_sprite
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 250,
@@ -253,7 +254,28 @@ def mount_sprites():
 
         key="boss_text",
     )  #endregion
+    
+    paint_api.mount_text(
+        px_x=globals.CENTER_X - 350,
+        px_y=globals.CENTER_Y + 150,
+        layer=globals.TEXT_LAYER,
+        text="Mute bomb sound",
+        font_size=30,
+        color=(255, 255, 255),
 
+        key="bomb_mute_text",
+    )
+    bomb_mute_button_sprite = paint_api.mount_rect(  #region parameters
+            px_x=globals.CENTER_X + 20,
+            px_y=globals.CENTER_Y + 165, 
+            px_w=65,
+            px_h=65,
+            layer=globals.BUTTON_LAYER,
+            align="center",
+            image_path=globals.MUTED_IMG_PATH2 if globals.sound_muted else globals.UNMUTED_IMG_PATH2,
+
+            key="bomb_mute",
+    )  #endregion
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
@@ -394,7 +416,13 @@ def settings(is_setup=False):
         boss_button_text.set_color((255, 255, 0))
         default_button_text.set_color((255, 255, 255))
 
-    
+    if is_clicked(bomb_mute_button_sprite):
+        if globals.sound_muted:
+            globals.sound_muted = False
+            bomb_mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH2)
+        else:
+            globals.sound_muted = True
+            bomb_mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH2)
     if is_clicked(back_button):
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
