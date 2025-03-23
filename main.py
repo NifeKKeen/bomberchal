@@ -2,6 +2,7 @@ import pygame, sys
 from pygame.locals import *
 
 from entitites.entity import Entity
+from entitites.interfaces.BombSpawnable import BombSpawnable
 from pages.menu.menu import menu
 from pages.menu.settings import settings
 from pages.menu.customization import menu_customization
@@ -68,6 +69,9 @@ if __name__ == "__main__":
             if isinstance(sprite, Entity):
                 sprite.add_tick()
                 sprite.cur_damage_countdown = max(sprite.cur_damage_countdown - 1, 0)
+            if isinstance(sprite, BombSpawnable):
+                sprite.add_tick()
+                sprite.cur_bomb_countdown = max(sprite.cur_bomb_countdown - 1, 0)
             if isinstance(sprite, GIFSprite):
                 sprite.process_gif()
         globals.Frame.tick(globals.FPS)

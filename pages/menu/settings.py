@@ -254,7 +254,7 @@ def mount_sprites():
 
         key="boss_text",
     )  #endregion
-    
+
     paint_api.mount_text(
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 150,
@@ -267,7 +267,7 @@ def mount_sprites():
     )
     bomb_mute_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X + 20,
-            px_y=globals.CENTER_Y + 165, 
+            px_y=globals.CENTER_Y + 165,
             px_w=65,
             px_h=65,
             layer=globals.BUTTON_LAYER,
@@ -397,7 +397,7 @@ def settings(is_setup=False):
 
 
 
-      
+
     if is_clicked(default_button):
         globals.game_mode = "default"
         print("default clicked")

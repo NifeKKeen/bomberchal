@@ -106,6 +106,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
     def collides_with(self, sprite2):
         return self.mounted and sprite2.mounted and pygame.sprite.collide_rect(self, sprite2)
 
+
 class TextSprite(SurfaceSprite):
     def __init__(self, **kwargs):
         super().__init__(**kwargs, should_refresh=False)

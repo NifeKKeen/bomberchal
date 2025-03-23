@@ -17,7 +17,7 @@ class Collidable(Entity):
     def handle_collision(self):
         from entitites.interfaces.BombSpawnable import BombSpawnable
         from entitites.bomb import Bomb
-        from entitites.bot import Bot
+        from entitites.bots.original_bot import Bot
         from entitites.fire import Fire
         from entitites.bonus import Bonus
         from entitites.player import Player
@@ -119,4 +119,3 @@ class Collidable(Entity):
         else:
             # print("ADJUSTED TO BELOW")
             self.set_px(self.px_x, ent_px_end_y)  # set below entity
-

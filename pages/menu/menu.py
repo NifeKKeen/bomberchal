@@ -24,7 +24,7 @@ def menu(is_setup=False):
             px_h=65,
             layer=globals.BUTTON_LAYER,
             align="center",
-            image_path=globals.MUTED_IMG_PATH if globals.music_muted else globals.UNMUTED_IMG_PATH,
+            image_path=globals.MUTED_IMG_PATH1 if globals.music_muted else globals.UNMUTED_IMG_PATH1,
 
             key="mute",
         )  #endregion
@@ -219,8 +219,8 @@ def menu(is_setup=False):
         if globals.music_muted:
             globals.music_muted = False
             play_menu_music(volume=.2)
-            mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH)
+            mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH1)
         else:
             globals.music_muted = True
             stop_music()
-            mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH)
+            mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH1)

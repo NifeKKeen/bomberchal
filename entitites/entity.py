@@ -30,6 +30,7 @@ class Entity(SurfaceSprite):
         Entity.EntityId += 1
 
         self.tick = 0  # lifespan
+        self.lives = kwargs.get("lives", 1)
 
     def is_alive(self):
         return bool(self.lives)
