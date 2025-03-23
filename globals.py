@@ -65,6 +65,7 @@ to_render_keys = set()
 map_key_sprite = dict()
 
 # GAME STATES
+game_mode = "default"
 cols = 0
 rows = 0
 field = None

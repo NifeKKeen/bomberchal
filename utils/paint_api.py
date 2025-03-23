@@ -43,6 +43,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
 
     def refresh(self, **kwargs):  # NOTE: it is expensive operation if this sprite has an image
+    def refresh(self):  # NOTE: it is expensive operation if this sprite has an image
         print("REQUESTED REFRESH")
         if self.image_path is not None:
             self.image = pygame.transform.scale(pygame.image.load(self.image_path).convert_alpha(), (self.px_w, self.px_h))
@@ -56,10 +57,12 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.rect.x = self.px_x
         self.rect.y = self.px_y
 
+        if self.align == "center":
+            self.rect.x -= self.rect.width // 2
+            self.rect.y -= self.rect.height // 2
+
         if self.mounted:
             self.mount()
-
-        self.rect.__setattr__(self.align, (self.px_x, self.px_y))
 
     def set_image_path(self, image_path):
         if self.image_path == image_path:
@@ -109,10 +112,19 @@ class TextSprite(SurfaceSprite):
     def refresh(self):
         self.image = self.font_obj.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-        self.rect.__setattr__(self.align, (self.px_x, self.px_y))
+        self.rect.x = self.px_x
+        self.rect.y = self.px_y
+
+        if self.align == "center":
+            self.rect.x -= self.rect.width // 2
+            self.rect.y -= self.rect.height // 2
 
     def set_text(self, text):
         self.text = text
+        self.should_refresh = True
+
+    def set_color(self, color):
+        self.color = color
         self.should_refresh = True
 
 class GIFSprite(SurfaceSprite):
@@ -153,8 +165,6 @@ def _get_sprite(constructor, **kwargs):
 def mount_rect(**kwargs):
     # key should be specified in order to decrease the number of renders
     # otherwise a new surface will be created and rendered each frame
-    if kwargs.get("align", "topleft") == "center":
-        kwargs["px_x"] = globals.center_x
     sprite = _get_sprite(SurfaceSprite, **kwargs)
 
     return sprite.mount()
