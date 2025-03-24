@@ -59,7 +59,7 @@ def setup_game(**kwargs):
 
     for i in range(2):
         player = Player(  #region parameters
-            speed=calc_speed_per_time(8, 100),
+            speed=calc_speed_per_time(16, 100),
             lives=3,
             bomb_power=7,
             bomb_allowed=5,
@@ -125,6 +125,7 @@ def render_field(**kwargs):
                     speed=calc_speed_per_time(8, 100),
                     bomb_power=2,
                     bomb_countdown=get_tick_from_ms(1500),
+                    spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -153,6 +154,7 @@ def render_field(**kwargs):
                     speed=calc_speed_per_time(10, 100),
                     bomb_power=4,
                     bomb_countdown=get_tick_from_ms(3000),
+                    spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -171,6 +173,7 @@ def render_field(**kwargs):
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
                     damage_countdown=get_tick_from_ms(500),
+                    spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     # px_w=globals.CELL_SIZE * 3, px_h=globals.CELL_SIZE * 3,

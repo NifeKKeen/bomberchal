@@ -7,9 +7,9 @@ import utils.helpers
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
-Frame = None #  pygame.time.Clock()
-FPS = 40
-all_sprites = None #  pygame.sprite.LayeredUpdates()
+Frame = None  # pygame.time.Clock()
+FPS = 60
+all_sprites = None  # pygame.sprite.LayeredUpdates()
 
 # FOR PAINT RENDER API
 to_render_keys = set()
@@ -108,6 +108,7 @@ tick = 0
 events_stack = deque()  # TODO
 entities = set()
 initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
+initial_obstacle_count = 0
 
 # GAME CONSTRAINTS
 CELL_SIZE = 32

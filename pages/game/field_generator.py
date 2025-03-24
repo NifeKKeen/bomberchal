@@ -13,7 +13,7 @@ def generate(cols, rows, game_mode):
     if boss_fight:
         bot_count = [0] * 4 # only boss, and position will be defined later
 
-    obstacle_count = 50
+    obstacle_count = globals.initial_obstacle_count
     objects = []
     current = 0
     max_bomb_power = 8
