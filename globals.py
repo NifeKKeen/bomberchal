@@ -1,6 +1,6 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
-from config import load_config
+from config import load_controls
 import utils.helpers
 
 # PYGAME VARIABLES
@@ -192,10 +192,7 @@ MAP_DIRECTION = {
 }
 
 # CUSTOM SETTINGS VARIABLES
-exp_key_p1 = K_SPACE
-exp_key_p2 = K_RETURN
-load_config()
-
+exp_key_p1, exp_key_p2 = load_controls()
 controls_players = [
     {
         "to_left_key": K_a,
