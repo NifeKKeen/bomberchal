@@ -39,12 +39,12 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
         self.tick += 1
         if self.moved_this_frame:
             image_key = f"{self.last_direction}_moving"
-            idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-            self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+            idx = (self.tick // 8) % len(globals.bot_frames["boss"][image_key])
+            self.set_image_path(globals.bot_frames["boss"][image_key][idx])
         else:
             image_key = f"{self.last_direction}_static"
-            idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-            self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+            idx = (self.tick // 8) % len(globals.bot_frames["boss"][image_key])
+            self.set_image_path(globals.bot_frames["boss"][image_key][idx])
 
         if self.cur_damage_countdown > 0:
             self.hidden = self.cur_damage_countdown % 8 < 4

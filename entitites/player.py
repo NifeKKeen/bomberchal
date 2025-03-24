@@ -39,12 +39,12 @@ class Player(BonusCollectable, Collidable, Controllable, BombSpawnable, Movable,
         # FOR TESTING
         # if self.moved_this_frame:
         #     image_key = f"{self.last_direction}_moving"
-        #     idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-        #     self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+        #     idx = (self.tick // 8) % len(globals.bot_frames["boss"][image_key])
+        #     self.set_image_path(globals.bot_frames["boss"][image_key][idx])
         # else:
         #     image_key = f"{self.last_direction}_static"
-        #     idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-        #     self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+        #     idx = (self.tick // 8) % len(globals.bot_frames["boss"][image_key])
+        #     self.set_image_path(globals.bot_frames["boss"][image_key][idx])
 
     # def kill(self):  # noclip
     #     return

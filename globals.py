@@ -52,7 +52,7 @@ bot_frames = {
         "down_moving": [f"assets/images/bots/{bot_type}/down{i}.png" for i in range(1, 3)],
         "left_static": [f"assets/images/bots/{bot_type}/left.png"],
         "left_moving": [f"assets/images/bots/{bot_type}/left{i}.png" for i in range(1, 3)]
-    } for bot_type in ["wandering"]
+    } for bot_type in ["wandering", "boss"]
 }
 
 explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
