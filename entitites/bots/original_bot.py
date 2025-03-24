@@ -22,7 +22,7 @@ class OriginalBot(Bot, BombSpawnable):
         self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
         collisions = Collidable.get_collisions(self)
         for entity in collisions:
-            if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner == self):
+            if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key):
                 self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                 self.direction ^= 2  # 0 to 2, 2 to 0, 1 to 3, 3 to 1 (UP <-> DOWN, LEFT <-> RIGHT)
                 break

@@ -107,11 +107,16 @@ game_mode = None
 scores = dict()
 tick = 0  # whole app's tick
 game_tick = 0  # current game's tick
+
+SNAPSHOT_CAPTURE_PER_TICK = 1
 state_snapshots = deque()
-state_snapshots_limit = 60
+STATE_SNAPSHOTS_LIMIT = 8 * FPS  # events from last 8 seconds
+cur_state_killed_sprites = set()
+cur_state_spawned_sprites = set()
+
 entities = set()
 initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
-initial_obstacle_count = 0
+initial_obstacle_count = 200
 
 # GAME CONSTRAINTS
 CELL_SIZE = 32

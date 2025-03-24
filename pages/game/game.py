@@ -87,6 +87,12 @@ def setup_game(**kwargs):
 
     render_field()
 
+    while len(globals.state_snapshots):
+        globals.state_snapshots.pop().clear()
+    globals.cur_state_spawned_sprites.clear()
+    globals.cur_state_killed_sprites.clear()
+
+
 def render_field(**kwargs):
     field = globals.field
     rows = globals.rows
@@ -263,7 +269,8 @@ def handle_bonus_items_render():
     # rendering bonuses in inventory
     for player in list(get_players(globals.entities)):
         x = 0
-        for bonus in player.bonuses:
+        for bonus in player.get_bonus_instances():
+
             if bonus.activated:
                 continue
 
@@ -308,11 +315,11 @@ def game(**kwargs):
 
     if is_pressed(K_t):
         globals.time_reversing = True
-        if globals.tick % 15 == 0:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_PER_TICK == 0:
             snapshot_api.restore_last_snapshot()
     else:
         globals.time_reversing = False
-        if globals.tick % 15 == 0:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_PER_TICK == 0:
             snapshot_api.capture()
 
     if globals.time_reversing:

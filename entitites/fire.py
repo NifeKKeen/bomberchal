@@ -13,7 +13,7 @@ class Fire(Collidable, Entity):
         self.power = kwargs.get("power", 1)
         self.timer = kwargs.get("timer", get_tick_from_ms(300))
         self.spread_timer = kwargs.get("spread_timer", get_tick_from_ms(0))
-        self.spawner = kwargs.get("spawner", None)  # which entity spawned
+        self.spawner_key = kwargs.get("spawner_key", None)  # which entity spawned
         self.is_initial = kwargs.get("is_initial", False)
         self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
         self.did_spread = False
@@ -72,7 +72,7 @@ class Fire(Collidable, Entity):
                 power=self.power - 1,
                 timer=self.timer,
                 spread_timer=self.spread_timer,
-                spawner=self.spawner,
+                spawner_key=self.spawner_key,
                 spread_type=self.spread_type,
 
                 x=nx,
@@ -101,7 +101,7 @@ class Fire(Collidable, Entity):
                 power=self.power - 1,
                 timer=self.timer,
                 spread_timer=self.spread_timer,
-                spawner=self.spawner,
+                spawner_key=self.spawner_key,
                 spread_type=spread_type,
 
                 x=nx,
@@ -130,7 +130,7 @@ class Fire(Collidable, Entity):
             power=self.power - 1,
             timer=self.timer,
             spread_timer=self.spread_timer,
-            spawner=self.spawner,
+            spawner_key=self.spawner_key,
             spread_type=self.spread_type,
 
             x=nx,

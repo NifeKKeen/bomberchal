@@ -16,7 +16,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
 
         self.timer = kwargs.get("timer", get_tick_from_ms(0))  # in ticks
         self.power = kwargs.get("power", 1)
-        self.spawner = kwargs.get("spawner", None)  # which entity spawned
+        self.spawner_key = kwargs.get("spawner_key", None)  # which entity spawned
         self.is_spawner_inside = True  # to ignore the collision when the bomb is spawned
         self.exploded = kwargs.get("exploded", False)
         self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
@@ -54,7 +54,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             power=self.power,
             timer=get_tick_from_ms(500),
             spread_timer=get_tick_from_ms(25),
-            spawner=self,
+            spawner_key=self.key,
 
             x=self.x,
             y=self.y,
@@ -76,8 +76,9 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         self.exploded = True
         play_explosion_sound(volume=.2)
 
-        if self.spawner:
-            self.spawner.bomb_allowed += 1
+        if self.spawner_key:
+            spawner = globals.map_key_sprite[self.spawner_key]
+            spawner.bomb_allowed += 1
 
         self.spread_fire()
 
