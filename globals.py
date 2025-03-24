@@ -24,8 +24,8 @@ EXPLOSION_SOUND_PATH = "assets/sound/explosion1.mp3"
 
 menu_background_img = None
 brown_background_img = None
-UNMUTED_IMG_PATH1 = "assets/images/mute/volume.png"
 MUTED_IMG_PATH1 = "assets/images/mute/mute.png"
+UNMUTED_IMG_PATH1 = "assets/images/mute/volume.png"
 MUTED_IMG_PATH2 = "assets/images/mute/mute2.png"
 UNMUTED_IMG_PATH2 = "assets/images/mute/volume2.png"
 BUTTON_LAYER = 10
@@ -109,7 +109,11 @@ PLAYER_CELL_SIZE = 28
 VOID_CELL = 0
 U_OBSTACLE_CELL = 1  # undestroyable obstacle
 D_OBSTACLE_CELL = 2  # destroyable obstacle
-BOT_CELL = 3  # starting cell for bot
+ORIGINAL_BOT_CELL = 3  # starting cell for original bot
+WANDERING_BOT_CELL = 4  # starting cell for wandering bot
+AGGRESSIVE_BOT_CELL = 5  # starting cell for aggressive bot
+BOSS_BOT_CELL = 6  # starting cell for boss bot
+
 # texture_types
 OBSTACLE_CELL_BORDER1 = 10
 OBSTACLE_CELL_BORDER2 = 11
