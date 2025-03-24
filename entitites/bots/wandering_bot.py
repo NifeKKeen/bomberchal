@@ -7,6 +7,8 @@ import globals
 class WanderingBot(Bot):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.map_allowed_bonus_types[globals.BONUS_CAPACITY] = False
+        self.map_allowed_bonus_types[globals.BONUS_POWER] = False
 
     def think(self):
         from entitites.player import Player
@@ -143,9 +145,6 @@ class WanderingBot(Bot):
                 nx, ny = farthest[rand(0, len(farthest))]
                 self.dest_x, self.dest_y = nx, ny
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
-
-            if dst < self.bomb_power:
-                self.spawn_bomb()
 
             # path from destination to bot
             queue = [(self.dest_x, self.dest_y)]

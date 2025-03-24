@@ -8,7 +8,7 @@ from pages.menu.settings import settings
 from pages.menu.customization import menu_customization
 from pages.menu.scoreboard import menu_scoreboard 
 from utils import paint_api
-from pages.game.game import reset_game, game
+from pages.game.game import game
 import globals
 from utils.interaction_api import get_pressed_keys
 from utils.paint_api import draw_sprites, GIFSprite
@@ -45,11 +45,9 @@ if __name__ == "__main__":
             globals.frame_keys_map = pygame.key.get_pressed()
             globals.frame_keys = get_pressed_keys()
 
+        globals.tick += 1
 
         # Page navigation
-
-        if globals.switched_page_this_frame and not globals.current_page.startswith("game"):
-            reset_game()
 
         if globals.current_page == "menu":
             menu(is_setup=globals.switched_page_this_frame)
@@ -64,7 +62,6 @@ if __name__ == "__main__":
 
         draw_sprites()
 
-        globals.tick += 1
         for sprite in list(globals.all_sprites):  # list to avoid "Set changed size during iteration" error
             if isinstance(sprite, Entity):
                 sprite.add_tick()

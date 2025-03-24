@@ -33,7 +33,7 @@ class Bonus(Entity):
         self.set_image_path(globals.map_bonus_type_to_path[self.type])
 
     def activate(self):
-        if self.activated:
+        if self.activated or not self.collector.alive():
             return
         self.activated = True
         self.activated_tick = self.tick

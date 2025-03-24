@@ -86,11 +86,9 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.should_refresh = True
 
     def unmount(self):
-        self.mounted = False
         unmount(self)
 
     def mount(self):
-        self.mounted = True
         return mount_sprite(self)
 
     def move_px(self, x=0, y=0):
@@ -212,6 +210,7 @@ def mount_sprite(sprite):
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite
     globals.to_render_keys.add(sprite.key)
+    sprite.mounted = True
 
     return sprite
 
@@ -228,6 +227,7 @@ def unmount(obj):
 
     globals.all_sprites.remove(sprite)
     globals.to_render_keys.discard(key)
+    sprite.mounted = False
 
     return sprite
 
@@ -244,6 +244,8 @@ def refill_screen():
 def reset_frame():
     globals.to_render_keys.clear()
     globals.map_key_sprite.clear()
+    for sprite in globals.all_sprites.sprites():
+        sprite.kill()
     globals.all_sprites.empty()
 
 

@@ -109,7 +109,7 @@ scores = dict()
 tick = 0
 events_stack = deque()  # TODO
 entities = set()
-initial_bots_count = [1, 0, 0, 0]  # original, wandering, aggressive, boss
+initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
 
 # GAME CONSTRAINTS
 CELL_SIZE = 32

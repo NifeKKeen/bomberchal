@@ -1,3 +1,4 @@
+from entitites.interfaces.BonusCollectable import BonusCollectable
 from utils.helpers import rand
 from entitites.entity import Entity
 
@@ -85,8 +86,8 @@ class Collidable(Entity):
                     else:
                         self.adjust_from_x(entity)
 
-            if isinstance(self, Player) or isinstance(self, Bot):
-                if isinstance(entity, Bonus):
+            if isinstance(self, BonusCollectable):
+                if isinstance(entity, Bonus) and self.map_allowed_bonus_types[entity.type]:
                     self.collect(entity)
 
             if isinstance(self, Fire):

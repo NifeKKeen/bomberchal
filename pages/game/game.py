@@ -6,7 +6,7 @@ from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
 from utils import paint_api
-from utils.helpers import rand, get_field_pos, get_tick_from_ms
+from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
 from utils.interaction_api import is_clicked, is_pressed_once
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
@@ -25,9 +25,12 @@ DEFAULT_FIELD = [
 ]
 
 def setup_game(**kwargs):
+    globals.rows = kwargs.get("rows", 23)
+    globals.cols = kwargs.get("cols", 25)
     load_config()
-    for i in range(30):
-        for j in range(30):
+    reset_game()
+    for i in range(globals.cols):
+        for j in range(globals.rows):
             mount_rect(  #region parameters
                 image_path="assets/images/terrain/grass1.png",
 
@@ -45,14 +48,6 @@ def setup_game(**kwargs):
     else:
         play_music(globals.GAME_MUSIC_PATH2, .5, override=True)
 
-
-    globals.rows = kwargs.get("rows", 23)
-    globals.cols = kwargs.get("cols", 25)
-    globals.field = kwargs.get("field", field_generator.generate(globals.cols, globals.rows, globals.game_mode))
-    globals.field_fire_state = kwargs.get("field_fired",
-        [[0] * globals.rows for _ in range(globals.cols)]
-    )
-
     control_keys = [
         (K_w, K_UP),
         (K_s, K_DOWN),
@@ -63,14 +58,13 @@ def setup_game(**kwargs):
     ]
 
     for i in range(2):
-        rnd = rand(192, 256)
         player = Player(  #region parameters
-            speed=2,
+            speed=calc_speed_per_time(8, 100),
             lives=3,
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            spread_type="bfs",
+            spread_type="star",
             character_skin_key=f"ch{[globals.skin_p1_id, globals.skin_p2_id][i]}",
 
             move_up_key=control_keys[0][i],
@@ -87,7 +81,6 @@ def setup_game(**kwargs):
             px_h=globals.PLAYER_CELL_SIZE,
 
             key=f"p-{i}",
-            color=(0, rnd / 2, rnd),
             entity_group=globals.entities,
         )  #endregion
 
@@ -129,7 +122,7 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.ORIGINAL_BOT_CELL:
                 bot = OriginalBot(  #region parameters
-                    speed=1,
+                    speed=calc_speed_per_time(8, 100),
                     bomb_power=2,
                     bomb_countdown=get_tick_from_ms(1500),
 
@@ -144,7 +137,7 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
                 bot = WanderingBot(  #region parameters
-                    speed=1,
+                    speed=calc_speed_per_time(12, 100),
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -157,7 +150,7 @@ def render_field(**kwargs):
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
                 bot = AggressiveBot(  #region parameters
-                    speed=1,
+                    speed=calc_speed_per_time(10, 100),
                     bomb_power=4,
                     bomb_countdown=get_tick_from_ms(3000),
 
@@ -173,7 +166,7 @@ def render_field(**kwargs):
             elif field[x][y] == globals.BOSS_BOT_CELL:
                 bot = BossBot(  #region parameters
                     lives=20,
-                    speed=2,
+                    speed=calc_speed_per_time(16, 100),
                     bomb_power=8,
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
@@ -190,7 +183,9 @@ def render_field(**kwargs):
                 )  #endregion
 
 def reset_game():
-    globals.entities.clear()
+    paint_api.reset_frame()
+    globals.field = field_generator.generate(globals.cols, globals.rows, globals.game_mode)
+    globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
 
 def spawn_bonus(bonus_type = 0):
     attempts = 0
@@ -284,12 +279,13 @@ def handle_bonus_items_render():
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
 
-    # if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
-    #     globals.game_mode = "bossfight"
-    #     is_setup = True
+    if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
+        globals.game_mode = "bossfight"
+        is_setup = True
 
     if is_setup:
         setup_game(**kwargs)
+        return
 
     go_menu_button_sprite = paint_api.mount_rect(  #region parameters
         px_x=0, px_y=0,

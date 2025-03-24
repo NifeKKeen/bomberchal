@@ -1,5 +1,4 @@
-import math
-import random, globals
+import math, random, globals
 
 
 def get_ms_from_tick(tick):
@@ -11,6 +10,9 @@ def get_tick_from_ms(ms):
 def rand(l, r):
     # random number between [l, r)
     return random.randint(l, r - 1)
+
+def calc_speed_per_time(pixels, ms):
+    return (pixels + get_tick_from_ms(ms) - 1) // get_tick_from_ms(ms)  # ceiling
 
 def get_field_pos(x, y):
     px_x = x * globals.CELL_SIZE

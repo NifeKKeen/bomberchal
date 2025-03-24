@@ -1,6 +1,6 @@
 import globals
-from entitites.interfaces.BonusCollectable import BonusCollectable
 from utils.helpers import get_tick_from_ms
+from entitites.interfaces.BonusCollectable import BonusCollectable
 from entitites.entity import Entity
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
