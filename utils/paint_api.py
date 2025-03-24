@@ -23,6 +23,8 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
 
         self.surface_id = SurfaceSprite.SurfaceId
+        self.ignore_collision = kwargs.get("ignore_collision", False)
+        self.dynamic = kwargs.get("dynamic", False)  # is only for one frame
         self.key = kwargs.get("key", format_surface_id_to_key(self.surface_id))
         SurfaceSprite.SurfaceId += 1
 
@@ -84,11 +86,9 @@ class SurfaceSprite(pygame.sprite.Sprite):
         self.should_refresh = True
 
     def unmount(self):
-        self.mounted = False
         unmount(self)
 
     def mount(self):
-        self.mounted = True
         return mount_sprite(self)
 
     def move_px(self, x=0, y=0):
@@ -210,6 +210,7 @@ def mount_sprite(sprite):
     globals.all_sprites.add(sprite)
     globals.map_key_sprite[sprite.key] = sprite
     globals.to_render_keys.add(sprite.key)
+    sprite.mounted = True
 
     return sprite
 
@@ -226,6 +227,7 @@ def unmount(obj):
 
     globals.all_sprites.remove(sprite)
     globals.to_render_keys.discard(key)
+    sprite.mounted = False
 
     return sprite
 
@@ -242,6 +244,8 @@ def refill_screen():
 def reset_frame():
     globals.to_render_keys.clear()
     globals.map_key_sprite.clear()
+    for sprite in globals.all_sprites.sprites():
+        sprite.kill()
     globals.all_sprites.empty()
 
 
@@ -260,12 +264,20 @@ def draw_sprites():
         # all_sprites.update()
 
     will_return = []
+    will_remove = []
     for sprite in list(globals.all_sprites.sprites()):
-        if sprite.hidden:
+        if sprite.dynamic:
+            will_remove.append(sprite)
+        elif sprite.hidden:
             will_return.append(sprite)
             globals.all_sprites.remove(sprite)
 
+
     globals.all_sprites.draw(globals.DISPLAYSURF)
+
+    for sprite in will_remove:
+        globals.all_sprites.remove(sprite)
+        globals.to_render_keys.discard(sprite.key)
 
     for sprite in will_return:
         globals.all_sprites.add(sprite)

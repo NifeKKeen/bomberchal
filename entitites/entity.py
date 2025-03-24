@@ -45,9 +45,9 @@ class Entity(SurfaceSprite):
 
     def kill(self):
         self.unmount()
-        self.mounted = False
         if self.entity_group:
             self.entity_group.discard(self)
+        super().kill()
 
     def add_tick(self):
         self.tick += 1

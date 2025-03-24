@@ -1,25 +1,25 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
 from config import load_config
+import utils.helpers
 
-# PYGAME VARIABLE
+# PYGAME VARIABLES
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None #  pygame.time.Clock()
-FPS = 60
+FPS = 40
+all_sprites = None #  pygame.sprite.LayeredUpdates()
 
-CENTER_X = SCREEN_WIDTH // 2
-CENTER_Y = SCREEN_HEIGHT // 2
-SHADOW_OFFSET = 4
-SHADOW_COLOR = (64, 64, 64)
+# FOR PAINT RENDER API
+to_render_keys = set()
+map_key_sprite = dict()
 
-music_muted = False
-sound_muted = False
-current_music = None  # currently playing music name (as relative path to a file)
+# ASSETS
 SOUND_PATH = "assets/sound/"
 MENU_MUSIC_PATH = "assets/sound/menu3.mp3"
-GAME_MUSIC_PATH = "assets/sound/BG.mpeg"
+GAME_MUSIC_PATH1 = "assets/sound/BG.mpeg"
+GAME_MUSIC_PATH2 = "assets/sound/BFG Division 2020.mp3"
 EXPLOSION_SOUND_PATH = "assets/sound/explosion1.mp3"
 
 menu_background_img = None
@@ -28,12 +28,6 @@ MUTED_IMG_PATH1 = "assets/images/mute/mute.png"
 UNMUTED_IMG_PATH1 = "assets/images/mute/volume.png"
 MUTED_IMG_PATH2 = "assets/images/mute/mute2.png"
 UNMUTED_IMG_PATH2 = "assets/images/mute/volume2.png"
-BUTTON_LAYER = 10
-TEXT_LAYER = 60
-SHADOW_LAYER = 59
-LAYER_SHIFT = 100  # for popups
-BASE_ENTITY_LAYER = 10
-BASE_OBSTACLE_LAYER = 20
 
 character_frames = {
     f"ch{chi}": {
@@ -57,7 +51,7 @@ bot_frames = {
         "down_moving": [f"assets/images/bots/{bot_type}/down{i}.png" for i in range(1, 3)],
         "left_static": [f"assets/images/bots/{bot_type}/left.png"],
         "left_moving": [f"assets/images/bots/{bot_type}/left{i}.png" for i in range(1, 3)]
-    } for bot_type in ["wandering"]
+    } for bot_type in ["original", "wandering", "aggressive", "boss"]
 }
 
 explosion_frames = [f"assets/images/explosion/{i}.png" for i in range(3, 0, -1)]
@@ -67,18 +61,34 @@ bricks_frames = [f"assets/images/terrain/wall1.png"]
 bricks_crack_frames = [f"assets/images/terrain/wall_crack{i}.png" for i in range(1, 3)]
 border_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
 grass_frames = ["assets/images/terrain/grass1.png"]
-bonus_frames = []
+bonus_frames = ["assets/images/bonus/bomb_bonus.png", "assets/images/bonus/explosion.png", "assets/images/bonus/health.png"]
 
+# LAYOUT CONSTRAINTS
+CENTER_X = SCREEN_WIDTH // 2
+CENTER_Y = SCREEN_HEIGHT // 2
+SHADOW_OFFSET = 4
+SHADOW_COLOR = (64, 64, 64)
+
+BUTTON_LAYER = 10
+TEXT_LAYER = 60
+SHADOW_LAYER = 59
+LAYER_SHIFT = 100  # for popups
+BASE_ENTITY_LAYER = 10
+BASE_OBSTACLE_LAYER = 20
+
+# MIXER VARIABLES
+music_muted = True
+sound_muted = False
+current_music = None  # currently playing music name (as relative path to a file)
+
+# FONT
 FONT_PARAMETER = (None, 36)
 TEXT_FONT = "assets/font/Pixeloid_Sans.ttf"
-
-all_sprites = None #  pygame.sprite.LayeredUpdates()
 
 # NAVIGATION
 current_page = "menu"
 switched_page = False  # can change in current frame
 switched_page_this_frame = True # will be updated when frame ends
-
 
 # EVENTS
 frame_event_code_pairs = set()  # {(event_type, event_code)}
@@ -86,12 +96,7 @@ frame_event_types = set()  # {event_type}
 frame_keys_map = None  # pygame.get_pressed()
 frame_keys = []  # list of currently pressed keys
 
-# FOR PAINT RENDER API
-to_render_keys = set()
-map_key_sprite = dict()
-
 # GAME STATES
-game_mode = "default"
 cols = 0
 rows = 0
 field = None
@@ -102,6 +107,7 @@ scores = dict()
 tick = 0
 events_stack = deque()  # TODO
 entities = set()
+initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
 
 # GAME CONSTRAINTS
 CELL_SIZE = 32
@@ -113,8 +119,12 @@ ORIGINAL_BOT_CELL = 3  # starting cell for original bot
 WANDERING_BOT_CELL = 4  # starting cell for wandering bot
 AGGRESSIVE_BOT_CELL = 5  # starting cell for aggressive bot
 BOSS_BOT_CELL = 6  # starting cell for boss bot
+BONUS_SPEED = "Speed"
+BONUS_POWER = "Power"
+BONUS_CAPACITY = "Capacity"
+BONUS_LIFE = "Life"
 
-# texture_types
+# TEXTURE TYPES
 OBSTACLE_CELL_BORDER1 = 10
 OBSTACLE_CELL_BORDER2 = 11
 OBSTACLE_CELL_BOX1 = 12
@@ -122,7 +132,7 @@ OBSTACLE_CELL_BOX2 = 13
 OBSTACLE_CELL_BRICKS = 14
 OBSTACLE_CELL_BRICKS_STATE1 = 15
 OBSTACLE_CELL_BRICKS_STATE2 = 16
-map_type_to_path = {
+map_obstacle_type_to_path = {
     OBSTACLE_CELL_BORDER1: border_frames[0],
     OBSTACLE_CELL_BORDER2: border_frames[1],
     OBSTACLE_CELL_BOX1: box_frames[0],
@@ -131,8 +141,14 @@ map_type_to_path = {
     OBSTACLE_CELL_BRICKS_STATE1: bricks_crack_frames[0],
     OBSTACLE_CELL_BRICKS_STATE2: bricks_crack_frames[1],
 }
+map_bonus_type_to_path = {
+    BONUS_SPEED: None ,
+    BONUS_POWER: bonus_frames[1],
+    BONUS_CAPACITY: bonus_frames[0],
+    BONUS_LIFE: bonus_frames[2],
+}
 
-# obstacle properties
+# OBJECT PROPERTIES
 map_obstacle_seed_to_props = {
     0: {
         "stage_texture_types": [
@@ -155,7 +171,14 @@ map_obstacle_seed_to_props = {
         "lives": 3,
     },
 }
+map_bonus_type_to_timer = {
+    BONUS_LIFE: float('inf'),
+    BONUS_POWER: utils.helpers.get_tick_from_ms(10000),
+    BONUS_CAPACITY: utils.helpers.get_tick_from_ms(30000),
+    BONUS_SPEED: utils.helpers.get_tick_from_ms(50000),
+}
 
+# MOVE DIRECTIONS
 BFS_DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 UP_DIRECTION = (0, -1)
 RIGHT_DIRECTION = (1, 0)
@@ -168,9 +191,11 @@ MAP_DIRECTION = {
     "left": LEFT_DIRECTION,
 }
 
+# CUSTOM SETTINGS VARIABLES
 exp_key_p1 = K_SPACE
 exp_key_p2 = K_RETURN
 load_config()
+
 controls_players = [
     {
         "to_left_key": K_a,

@@ -1,18 +1,19 @@
 import globals
-from entitites.interfaces.BombSpawnable import BombSpawnable
+from entitites.interfaces.BonusCollectable import BonusCollectable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
 
 
-class Bot(Movable, Collidable, BombSpawnable, Entity):
+class Bot(BonusCollectable, Movable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
 
-        self.bonuses = kwargs.get("bonuses", [])  # BonusItem instances
+        self.texture_type = "wandering"
+
         self.moving = kwargs.get("moving",
                                  0)  # 0 if not moving (but calculating), 1 if moving by default, 2 if moves only to don't be stuck (to be entirely in the cell)
         self.x = kwargs.get("x", 0)
@@ -38,14 +39,15 @@ class Bot(Movable, Collidable, BombSpawnable, Entity):
 
     def add_tick(self):
         self.tick += 1
+
         if self.moved_this_frame:
             image_key = f"{self.last_direction}_moving"
-            idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-            self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+            idx = (self.tick // 8) % len(globals.bot_frames[self.texture_type][image_key])
+            self.set_image_path(globals.bot_frames[self.texture_type][image_key][idx])
         else:
             image_key = f"{self.last_direction}_static"
-            idx = (self.tick // 8) % len(globals.bot_frames["wandering"][image_key])
-            self.set_image_path(globals.bot_frames["wandering"][image_key][idx])
+            idx = (self.tick // 8) % len(globals.bot_frames[self.texture_type][image_key])
+            self.set_image_path(globals.bot_frames[self.texture_type][image_key][idx])
 
         if self.cur_damage_countdown > 0:
             self.hidden = self.cur_damage_countdown % 8 < 4
