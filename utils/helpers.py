@@ -6,7 +6,7 @@ def get_ms_from_tick(tick):
     return (tick * 1000) / globals.FPS
 
 def get_tick_from_ms(ms):
-    return (ms * globals.FPS) // 1000
+    return (ms * globals.FPS + 999) // 1000  # ceiling
 
 def rand(l, r):
     # random number between [l, r)
