@@ -9,6 +9,9 @@ class AggressiveBot(Bot, BombSpawnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.texture_type = "aggressive"
+        self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
+
     def think(self):
         from entitites.player import Player, get_players
         from entitites.bomb import Bomb

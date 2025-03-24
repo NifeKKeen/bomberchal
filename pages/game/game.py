@@ -173,8 +173,8 @@ def render_field(**kwargs):
                     damage_countdown=get_tick_from_ms(500),
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
-                    px_w=globals.CELL_SIZE * 3, px_h=globals.CELL_SIZE * 3,
-                    # px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
+                    # px_w=globals.CELL_SIZE * 3, px_h=globals.CELL_SIZE * 3,
+                    px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
                     color=(255, 0, 0),
 

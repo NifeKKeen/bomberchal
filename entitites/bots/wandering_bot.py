@@ -7,8 +7,11 @@ import globals
 class WanderingBot(Bot):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self.map_allowed_bonus_types[globals.BONUS_CAPACITY] = False
         self.map_allowed_bonus_types[globals.BONUS_POWER] = False
+        self.texture_type = "wandering"
+        self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
 
     def think(self):
         from entitites.player import Player

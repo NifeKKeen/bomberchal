@@ -9,6 +9,9 @@ class OriginalBot(Bot, BombSpawnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.texture_type = "original"
+        self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
+
     def think(self):
         from entitites.bomb import Bomb
         from entitites.bonus import Bonus
