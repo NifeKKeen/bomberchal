@@ -4,7 +4,7 @@ import os
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
-from pages.menu.config import load_config
+from config import load_config
 
 
 CONFIG_FILE = "pages/menu/config.ini"

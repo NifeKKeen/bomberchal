@@ -3,7 +3,7 @@ from utils import paint_api
 from utils.interaction_api import is_clicked
 from utils.sound_api import play_menu_music, stop_music
 from pages.navigation import navigate
-
+from config import save_config
 
 mute_button_sprite = None
 play_button_sprite = None
@@ -215,12 +215,14 @@ def menu(is_setup=False):
     elif is_clicked(quit_button_sprite):
         sys.exit()
 
-    elif is_clicked(mute_button_sprite):
+    if is_clicked(mute_button_sprite):
         if globals.music_muted:
             globals.music_muted = False
             play_menu_music(volume=.2)
             mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH1)
+
         else:
             globals.music_muted = True
             stop_music()
             mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH1)
+        save_config()

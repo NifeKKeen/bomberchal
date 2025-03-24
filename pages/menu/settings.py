@@ -3,29 +3,7 @@ from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key
 from utils.sound_api import play_menu_music
 from pages.navigation import navigate
-from pages.menu.config import load_config 
-
-CONFIG_FILE = "pages/menu/config.ini"
-
-def parse_key(key_str):
-    if key_str.lower() == "custom":
-        return "custom"
-    try:
-        return int(key_str)  
-    except ValueError:
-        return pygame.key.key_code(key_str.lower())  
-
-
-def save_config():
-    config = configparser.ConfigParser()
-    config["Controls"] = {
-        "explosion_key_p1": str(globals.controls_players[0]["explosion_key"]),
-        "explosion_key_p2": str(globals.controls_players[1]["explosion_key"])
-    }
-    config["Game"] = {"mode": str(globals.game_mode)}
-    with open(CONFIG_FILE, "w") as configfile:
-        config.write(configfile)
-
+from config import load_config, save_config
 
 def update_display(text_sprite, player_index, waiting):
     key_val = globals.controls_players[player_index]["explosion_key"]
@@ -393,15 +371,15 @@ def settings(is_setup=False):
         boss_button_text.set_color((255, 255, 0))
         default_button_text.set_color((255, 255, 255))
 
-    print("Bomb sound is" + (" muted" if globals.sound_muted else " unmuted"))
     if is_clicked(bomb_mute_button_sprite):
-        print("Bomb sound is" + (" muted" if globals.sound_muted else " unmuted"))
         if globals.sound_muted:
             globals.sound_muted = False
             bomb_mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH2)
         else:
             globals.sound_muted = True
             bomb_mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH2)
+        save_config()
+            
     if is_clicked(back_button):
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE

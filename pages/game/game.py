@@ -18,7 +18,7 @@ from entitites.obstacle import Obstacle
 from entitites.player import Player, get_players
 from pages.game import field_generator
 from pages.navigation import navigate
-from pages.menu.config import load_config
+from config import load_config
 
 DEFAULT_FIELD = [
     [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)

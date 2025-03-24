@@ -1,6 +1,6 @@
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
-from pages.menu.config import load_config
+from config import load_config
 
 # PYGAME VARIABLE
 SCREEN_WIDTH = 800
@@ -14,8 +14,8 @@ CENTER_Y = SCREEN_HEIGHT // 2
 SHADOW_OFFSET = 4
 SHADOW_COLOR = (64, 64, 64)
 
-music_muted = True
-sound_muted = True
+music_muted = False
+sound_muted = False
 current_music = None  # currently playing music name (as relative path to a file)
 SOUND_PATH = "assets/sound/"
 MENU_MUSIC_PATH = "assets/sound/menu3.mp3"
