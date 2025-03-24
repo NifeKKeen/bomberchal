@@ -5,9 +5,10 @@ from entitites.bot import get_bots
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
-from utils import paint_api
+from entitites.interfaces.BombSpawnable import BombSpawnable
+from utils import paint_api, snapshot_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
-from utils.interaction_api import is_clicked, is_pressed_once
+from utils.interaction_api import is_clicked, is_pressed_once, is_pressed
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
 from entitites.bonus import Bonus, bonus_types
@@ -187,6 +188,8 @@ def render_field(**kwargs):
 
 def reset_game():
     paint_api.reset_frame()
+    globals.game_tick = 0
+    globals.state_snapshots.clear()
     globals.field = field_generator.generate(globals.cols, globals.rows, globals.game_mode)
     globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
 
@@ -298,18 +301,35 @@ def game(**kwargs):
         key="go_menu"
     )  #endregion
 
+    handle_bonus_items_render()
+
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    if globals.tick % 400 == 0:
+    if is_pressed(K_t):
+        globals.time_reversing = True
+        if globals.tick % 15 == 0:
+            snapshot_api.restore_last_snapshot()
+    else:
+        globals.time_reversing = False
+        if globals.tick % 15 == 0:
+            snapshot_api.capture()
+
+    if globals.time_reversing:
+        return
+
+    if globals.game_tick % 400 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
         raise Exception("You lost")
 
-    handle_bonus_items_render()
-
+    globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
+        entity.add_tick()
+        entity.cur_damage_countdown = max(entity.cur_damage_countdown - 1, 0)
+        if isinstance(entity, BombSpawnable):
+            entity.cur_bomb_countdown = max(entity.cur_bomb_countdown - 1, 0)
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):

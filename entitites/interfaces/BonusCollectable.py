@@ -5,6 +5,7 @@ from entitites.entity import Entity
 class BonusCollectable(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self.bonuses = kwargs.get("bonuses", [])  # Bonus instances
         self.map_allowed_bonus_types = {
             globals.BONUS_SPEED: True,
@@ -12,6 +13,7 @@ class BonusCollectable(Entity):
             globals.BONUS_CAPACITY: True,
             globals.BONUS_LIFE: True,
         }
+
     def collect(self, bonus):
         from entitites.bot import Bot
 

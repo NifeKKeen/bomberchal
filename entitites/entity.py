@@ -1,9 +1,10 @@
 import globals
+from entitites.interfaces.Snapshotable import Snapshotable
 from utils.helpers import get_pos, get_tick_from_ms
 from utils.paint_api import SurfaceSprite
 
 
-class Entity(SurfaceSprite):
+class Entity(Snapshotable, SurfaceSprite):
     EntityId = 0
 
     def __init__(self, **kwargs):

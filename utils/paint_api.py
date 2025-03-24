@@ -21,6 +21,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.color = kwargs.get("color", (rand(128, 256), 0, rand(128, 256)))
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
+        self._layer = self.layer
 
         self.surface_id = SurfaceSprite.SurfaceId
         self.ignore_collision = kwargs.get("ignore_collision", False)
