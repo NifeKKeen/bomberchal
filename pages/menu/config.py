@@ -22,6 +22,8 @@ def load_config():
         globals.game_mode = "default"
         globals.explosion_key_p1 = pygame.K_SPACE
         globals.explosion_key_p2 = pygame.K_RETURN
+        globals.music_muted = False
+        globals.sound_muted = False
         return
     
     config = configparser.ConfigParser()
@@ -43,3 +45,26 @@ def load_config():
         globals.game_mode = config.get("Game", "mode", fallback="default")
     else:
         globals.game_mode = "default"
+
+    if "Sound" in config:
+        globals.music_muted = config.getboolean("Sound", "music", fallback=False)
+        globals.sound_muted = config.getboolean("Sound", "sound", fallback=False)
+    else:
+        globals.music_muted = False
+        globals.sound_muted = False
+
+def save_config():
+    config = configparser.ConfigParser()
+    config["Controls"] = {
+        "explosion_key_p1": str(globals.controls_players[0]["explosion_key"]),
+        "explosion_key_p2": str(globals.controls_players[1]["explosion_key"])
+    }
+    config["Game"] = {
+        "mode": str(globals.game_mode),
+    }
+    config["Sound"] = {
+        "music": str(globals.music_muted).lower(),  # приводим к "true" или "false"
+        "sound": str(globals.sound_muted).lower()
+    }
+    with open(CONFIG_FILE, "w") as configfile:
+        config.write(configfile)
