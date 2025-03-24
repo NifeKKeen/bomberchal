@@ -21,7 +21,9 @@ class Player(BonusCollectable, Collidable, Controllable, BombSpawnable, Movable,
         self.set_image_path(globals.character_frames[self.character_skin_key]["top_static"][0])
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
+
         if self.moved_this_frame:
             image_key = f"{self.last_direction}_moving"
             idx = (self.tick // 8) % len(globals.character_frames[self.character_skin_key][image_key])

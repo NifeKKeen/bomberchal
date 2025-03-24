@@ -1,7 +1,7 @@
 import globals
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
-from utils.helpers import get_tick_from_ms, rand
+from utils.helpers import rand
 from entitites.entity import Entity
 
 
@@ -73,7 +73,9 @@ class Bonus(Entity):
             raise Exception("Invalid bonus type")
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
+
         if not self.activated or self.collector_key is None:
             return
 
@@ -91,7 +93,7 @@ class Bonus(Entity):
         elif self.type == globals.BONUS_POWER:
             collector.bomb_power -= self.payload
 
-        collector.bonuses.remove(self)
+        collector.bonus_keys.remove(self.key)
         self.kill()
 
 def bonus_types():

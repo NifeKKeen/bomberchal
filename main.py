@@ -1,8 +1,6 @@
 import pygame, sys
 from pygame.locals import *
 
-from entitites.entity import Entity
-from entitites.interfaces.BombSpawnable import BombSpawnable
 from pages.menu.menu import menu
 from pages.menu.settings import settings
 from pages.menu.customization import menu_customization

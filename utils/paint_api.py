@@ -1,4 +1,5 @@
 import pygame, os, globals
+
 from utils.helpers import get_tick_from_ms, rand
 
 
@@ -243,10 +244,16 @@ def refill_screen():
 
 
 def reset_frame():
+    from entitites.entity import Entity
+
     globals.to_render_keys.clear()
     globals.map_key_sprite.clear()
+    globals.state_snapshots.clear()
     for sprite in globals.all_sprites.sprites():
-        sprite.kill()
+        if isinstance(sprite, Entity):
+            sprite.kill(True)
+        else:
+            sprite.kill()
     globals.all_sprites.empty()
 
 
@@ -277,7 +284,7 @@ def draw_sprites():
 
     refill_screen()
     globals.all_sprites.draw(globals.DISPLAYSURF)
-    if globals.time_reversing:
+    if globals.time_reversing_count_down:
         grey_overlay = pygame.Surface((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT), pygame.SRCALPHA)
         grey_overlay.fill((128, 128, 128, 128))
         globals.DISPLAYSURF.blit(grey_overlay, (0, 0))

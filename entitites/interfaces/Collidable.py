@@ -1,3 +1,4 @@
+import globals
 from entitites.interfaces.BonusCollectable import BonusCollectable
 from utils.helpers import rand
 from entitites.entity import Entity
@@ -7,7 +8,7 @@ class Collidable(Entity):
     def get_collisions(self):
         res = []
 
-        for entity in self.entity_group:
+        for entity in globals.entities:
             if entity == self:
                 continue
             if entity.collides_with(self):
@@ -28,9 +29,10 @@ class Collidable(Entity):
         if self.ignore_collision:
             return
 
-        for entity in list(self.entity_group):
+        for entity in list(globals.entities):
             if entity.ignore_collision:
                 continue
+
             if entity == self or not entity.collides_with(self):
                 if isinstance(self, Bomb) and isinstance(entity, BombSpawnable) and self.spawner_key == entity.key:
                     self.is_spawner_inside = False

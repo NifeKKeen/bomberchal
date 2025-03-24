@@ -25,7 +25,9 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             self.set_image_path(globals.bomb_frames[0])
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
+
         if not self.mounted:
             return
 
@@ -48,7 +50,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         npx_h = int(self.px_h * .8)
         dw = (self.px_w - npx_w) // 2
         dh = (self.px_h - npx_h) // 2
-        fire = Fire(  #region parameters
+        fire = Fire(  # region parameters
             spread_type=self.spread_type,
             is_initial=True,
             power=self.power,
@@ -63,9 +65,8 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             px_w=npx_w,
             px_h=npx_h,
 
-            color=(rand(128,256), 0, 0),
-            entity_group=globals.entities,
-        )  #endregion
+            color=(rand(128, 256), 0, 0),
+        ) #endregion
 
         if fire.spread_timer == 0:
             fire.spread()
@@ -73,6 +74,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
     def explode(self):
         if self.exploded:
             return
+
         self.exploded = True
         play_explosion_sound(volume=.2)
 

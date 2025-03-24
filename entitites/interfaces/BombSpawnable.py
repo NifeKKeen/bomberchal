@@ -56,5 +56,4 @@ class BombSpawnable(Entity):
             px_h=globals.CELL_SIZE,
 
             color=([rand(64, 128)] * 3),
-            entity_group=globals.entities,
         )  #endregion

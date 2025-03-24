@@ -38,6 +38,7 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
         ]
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
 
         if self.moved_this_frame:

@@ -1,10 +1,13 @@
-from copy import deepcopy
+from copy import deepcopy, copy
 
 import globals
 
 
 class StateSnapshot:  # class with side effects!
     def __init__(self, sprites):
+        if not globals.SNAPSHOT_ALLOWED:
+            return
+
         from entitites.interfaces.Snapshotable import Snapshotable
 
         self.globals_snapshot = deepcopy(
@@ -13,6 +16,7 @@ class StateSnapshot:  # class with side effects!
                 for key in ["field_fire_state", "field", "game_tick", "scores"]
             }
         )
+        self.globals_snapshot["entities"] = copy(globals.entities)
 
         self.map_key_to_sprite_snapshot = {}
         self.map_key_to_sprite_original = {}
@@ -24,14 +28,11 @@ class StateSnapshot:  # class with side effects!
 
         for sprite in sprites:
             if isinstance(sprite, Snapshotable):
-                sprite_snapshot = sprite.get_snapshot()
+                if sprite.snapshotted:
+                    sprite_snapshot = sprite.last_snapshot
+                else:
+                    sprite_snapshot = sprite.get_snapshot()
+
                 self.map_key_to_sprite_snapshot[sprite.key] = sprite_snapshot
                 self.map_key_to_sprite_original[sprite.key] = sprite
-
-    def clear(self):
-        for sprite in self.killed_sprites:
-            sprite.kill_from_memory()
-        self.map_key_to_sprite_original.clear()
-        self.map_key_to_sprite_snapshot.clear()
-        self.killed_sprites.clear()
-        self.spawned_sprites.clear()
+                sprite.snapshotted = False

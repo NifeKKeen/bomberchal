@@ -13,7 +13,6 @@ class Entity(SurfaceSprite, Snapshotable):
 
         self._layer = globals.BASE_ENTITY_LAYER
         self._removed = False  # removed from memory
-        self.snapshot_before_kill = None  # copy of the entity before it is killed
         snapshot_api.spawn_happened(self)
 
         self.x = kwargs.get("x", None)  # position x in board (from left) [целые коорды]
@@ -27,10 +26,7 @@ class Entity(SurfaceSprite, Snapshotable):
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(0))
         self.cur_damage_countdown = kwargs.get("cur_damage_countdown", get_tick_from_ms(0))
 
-        self.entity_group = kwargs.get("entity_group", None)  # entity group which this entity belongs to
-        if self.entity_group is not None:
-            self.entity_group.add(self)
-
+        globals.entities.add(self)
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
 
@@ -48,20 +44,18 @@ class Entity(SurfaceSprite, Snapshotable):
             self.kill()
 
     def kill(self, remove_from_memory = False):
-        self.snapshot_before_kill = self.get_snapshot()
-
         self.unmount()
-        if self.entity_group:
-            self.entity_group.discard(self)
+        globals.entities.discard(self)
 
         if remove_from_memory:
-            self.kill_from_memory()
+            self._kill_from_memory()
         else:
             snapshot_api.kill_happened(self)
 
-    def kill_from_memory(self):
+    def _kill_from_memory(self):
         self._removed = True
         super().kill()
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1

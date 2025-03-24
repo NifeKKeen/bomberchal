@@ -27,6 +27,8 @@ class Fire(Collidable, Entity):
 
     def add_tick(self):
         self.tick += 1
+        self.try_snapshot()
+
         if not self.mounted:
             return
 
@@ -83,7 +85,6 @@ class Fire(Collidable, Entity):
                 px_h=self.px_h,
 
                 color=self.color,
-                entity_group=globals.entities,
             )  #endregion
 
             if new_fire.spread_timer == 0:
@@ -112,7 +113,6 @@ class Fire(Collidable, Entity):
                 px_h=self.px_h,
 
                 color=self.color,
-                entity_group=globals.entities,
             )  #endregion
 
             if new_fire.spread_timer == 0:
@@ -141,7 +141,6 @@ class Fire(Collidable, Entity):
             px_h=self.px_h,
 
             color=self.color,
-            entity_group=globals.entities,
         )  #endregion
 
         if new_fire.spread_timer == 0:

@@ -1,14 +1,13 @@
 import globals
 from pygame.locals import *
 
-from entitites.bot import get_bots
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from utils import paint_api, snapshot_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
-from utils.interaction_api import is_clicked, is_pressed_once, is_pressed
+from utils.interaction_api import is_clicked, is_pressed
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
 from entitites.bonus import Bonus, bonus_types
@@ -41,7 +40,6 @@ def setup_game(**kwargs):
 
                 key = f"v-{i};{j}",
                 layer=-1,
-                entity_group=globals.entities,
             )  #endregion
 
     if globals.game_mode == "default":
@@ -65,7 +63,7 @@ def setup_game(**kwargs):
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            spread_type="star",
+            spread_type="bfs",
             character_skin_key=f"ch{[globals.skin_p1_id, globals.skin_p2_id][i]}",
 
             move_up_key=control_keys[0][i],
@@ -82,7 +80,6 @@ def setup_game(**kwargs):
             px_h=globals.PLAYER_CELL_SIZE,
 
             key=f"p-{i}",
-            entity_group=globals.entities,
         )  #endregion
 
     render_field()
@@ -109,7 +106,6 @@ def render_field(**kwargs):
                     x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
@@ -124,7 +120,6 @@ def render_field(**kwargs):
                     x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.ORIGINAL_BOT_CELL:
@@ -140,7 +135,6 @@ def render_field(**kwargs):
                     color=(0, 255, 0),
 
                     key = f"orig-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
@@ -153,7 +147,6 @@ def render_field(**kwargs):
                     color=(0, 0, 255),
 
                     key = f"wand-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
@@ -169,7 +162,6 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
 
                     key = f"aggro-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
@@ -189,7 +181,6 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
 
                     key = f"boss-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
 def reset_game():
@@ -225,7 +216,6 @@ def spawn_bonus(bonus_type = 0):
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_type],
 
             key=f"bonus-{bonus_x};{bonus_y}",
-            entity_group=globals.entities,
         )  #endregion
         return
 
@@ -247,7 +237,6 @@ def spawn_bonus(bonus_type = 0):
                     color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (0, 0, 0)][bonus_type],
 
                     key=f"bonus-{bonus_x};{bonus_y}",
-                    entity_group=globals.entities,
                 )  #endregion
                 return
 
@@ -292,9 +281,9 @@ def handle_bonus_items_render():
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
 
-    if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
-        globals.game_mode = "bossfight"
-        is_setup = True
+    # if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
+    #     globals.game_mode = "bossfight"
+    #     is_setup = True
 
     if is_setup:
         setup_game(**kwargs)
@@ -314,15 +303,17 @@ def game(**kwargs):
         navigate("menu")
 
     if is_pressed(K_t):
-        globals.time_reversing = True
-        if globals.tick % globals.SNAPSHOT_CAPTURE_PER_TICK == 0:
+        globals.time_reversing_count_down = 2
+
+    if globals.time_reversing_count_down:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_DELAY == 0:
             snapshot_api.restore_last_snapshot()
     else:
-        globals.time_reversing = False
-        if globals.tick % globals.SNAPSHOT_CAPTURE_PER_TICK == 0:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_DELAY == 0:
             snapshot_api.capture()
 
-    if globals.time_reversing:
+    globals.time_reversing_count_down = max(0, globals.time_reversing_count_down - 1)
+    if globals.time_reversing_count_down:
         return
 
     if globals.game_tick % 400 == 0:
@@ -334,12 +325,16 @@ def game(**kwargs):
     globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()
+
         entity.cur_damage_countdown = max(entity.cur_damage_countdown - 1, 0)
+
         if isinstance(entity, BombSpawnable):
             entity.cur_bomb_countdown = max(entity.cur_bomb_countdown - 1, 0)
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
             entity.think()
+
+    for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Collidable):
             entity.handle_collision()

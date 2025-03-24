@@ -1,3 +1,4 @@
+import math
 from collections import deque
 from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
 from config import load_config
@@ -8,8 +9,9 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None  # pygame.time.Clock()
-FPS = 60
+FPS = 40
 all_sprites = None  # pygame.sprite.LayeredUpdates()
+tick = 0  # whole app's tick
 
 # FOR PAINT RENDER API
 to_render_keys = set()
@@ -102,20 +104,20 @@ rows = 0
 field = None
 field_fire_state = None  # power of fire in specific cell in ticks
 paused = False
-time_reversing = False  # if game in time reversing state
+time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
 scores = dict()
-tick = 0  # whole app's tick
 game_tick = 0  # current game's tick
 
-SNAPSHOT_CAPTURE_PER_TICK = 1
+SNAPSHOT_ALLOWED = True
+SNAPSHOT_CAPTURE_DELAY = 15  # delay in ticks
 state_snapshots = deque()
-STATE_SNAPSHOTS_LIMIT = 8 * FPS  # events from last 8 seconds
+STATE_SNAPSHOTS_LIMIT = 8 * math.ceil(FPS / SNAPSHOT_CAPTURE_DELAY)  # events from last 8 seconds
 cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
 entities = set()
-initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
+initial_bots_count = [5, 5, 5, 0]  # original, wandering, aggressive, boss
 initial_obstacle_count = 200
 
 # GAME CONSTRAINTS
@@ -184,7 +186,7 @@ map_bonus_type_to_timer = {
     BONUS_LIFE: float('inf'),
     BONUS_POWER: utils.helpers.get_tick_from_ms(10000),
     BONUS_CAPACITY: utils.helpers.get_tick_from_ms(30000),
-    BONUS_SPEED: utils.helpers.get_tick_from_ms(50000),
+    BONUS_SPEED: utils.helpers.get_tick_from_ms(5000),
 }
 
 # MOVE DIRECTIONS
