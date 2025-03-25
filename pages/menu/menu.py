@@ -16,6 +16,7 @@ def menu(is_setup=False):
     global mute_button_sprite, play_button_sprite, customization_button_sprite, settings_button_sprite, quit_button_sprite
     if is_setup:
         play_menu_music(volume=.2)
+        paint_api.reset_frame()
 
         mute_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X - 350,

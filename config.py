@@ -15,6 +15,16 @@ def parse_key(key_str, default_key):
         except Exception:
             return default_key  
 
+def load_controls():
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+    key1_str = config.get("Controls", "explosion_key_p1", fallback="space")
+    key2_str = config.get("Controls", "explosion_key_p2", fallback="return")
+ 
+    key1 = parse_key(key1_str, pygame.K_SPACE)
+    key2 = parse_key(key2_str, pygame.K_RETURN)
+ 
+    return key1, key2
 def load_config():
     if not os.path.exists(CONFIG_FILE):
         globals.skin_p1_id = 1
@@ -28,12 +38,13 @@ def load_config():
     
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
-    
-    key1_str = config.get("Controls", "explosion_key_p1", fallback="space")
-    key2_str = config.get("Controls", "explosion_key_p2", fallback="return")
-    globals.explosion_key_p1 = parse_key(key1_str, pygame.K_SPACE)
-    globals.explosion_key_p2 = parse_key(key2_str, pygame.K_RETURN)
-    
+    if "Controls" in config:
+        globals.explosion_key_p1 = parse_key(config.get("Controls", "explosion_key_p1", fallback="space"), pygame.K_SPACE)
+        globals.explosion_key_p2 = parse_key(config.get("Controls", "explosion_key_p2", fallback="return"), pygame.K_RETURN)
+    else:
+        globals.explosion_key_p1 = pygame.K_SPACE
+        globals.explosion_key_p2 = pygame.K_RETURN
+
     if "Skin" in config:
         globals.skin_p1_id = config.getint("Skin", "skin_p1_id", fallback=1)
         globals.skin_p2_id = config.getint("Skin", "skin_p2_id", fallback=2)

@@ -1,3 +1,4 @@
+import globals
 from entitites.interfaces.BonusCollectable import BonusCollectable
 from utils.helpers import rand
 from entitites.entity import Entity
@@ -7,7 +8,7 @@ class Collidable(Entity):
     def get_collisions(self):
         res = []
 
-        for entity in self.entity_group:
+        for entity in globals.entities:
             if entity == self:
                 continue
             if entity.collides_with(self):
@@ -28,11 +29,12 @@ class Collidable(Entity):
         if self.ignore_collision:
             return
 
-        for entity in list(self.entity_group):
+        for entity in list(globals.entities):
             if entity.ignore_collision:
                 continue
+
             if entity == self or not entity.collides_with(self):
-                if isinstance(self, Bomb) and isinstance(entity, BombSpawnable) and self.spawner == entity:
+                if isinstance(self, Bomb) and isinstance(entity, BombSpawnable) and self.spawner_key == entity.key:
                     self.is_spawner_inside = False
                 continue
             # now entity collides and it is not ourselves
@@ -40,7 +42,7 @@ class Collidable(Entity):
             if isinstance(self, Bot):
                 if isinstance(entity, Player):
                     entity.make_damage(1)
-                elif isinstance(entity, Bomb) and entity.spawner == self:
+                elif isinstance(entity, Bomb) and entity.spawner_key == self.key:
                     continue
 
             if isinstance(self, Movable):
@@ -64,7 +66,7 @@ class Collidable(Entity):
                     else:
                         self.adjust_from_x(entity)
                 elif isinstance(entity, Bomb):
-                    if entity.spawner == self and entity.is_spawner_inside:
+                    if entity.spawner_key == self.key and entity.is_spawner_inside:
                         continue  # ignore collision because the bomb was spawned immediately in spawner's position
 
                     self_c_x = self.px_x + self.px_w // 2

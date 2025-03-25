@@ -45,7 +45,7 @@ class WanderingBot(Bot):
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
             collisions = Collidable.get_collisions(self)
             for entity in collisions:
-                if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner == self))
+                if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key))
                         or not in_valid_range(self.x, self.y, globals.cols, globals.rows)):
                     self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                     self.moving = 2

@@ -7,7 +7,7 @@ from utils.interaction_api import is_clicked
 from config import load_config
 
 
-CONFIG_FILE = "pages/menu/config.ini"
+CONFIG_FILE = "config.ini"
 
 show_popup_window_p1 = False
 show_popup_window_p2 = False

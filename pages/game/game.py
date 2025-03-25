@@ -1,13 +1,13 @@
 import globals
 from pygame.locals import *
 
-from entitites.bot import get_bots
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
-from utils import paint_api
+from entitites.interfaces.BombSpawnable import BombSpawnable
+from utils import paint_api, snapshot_api
 from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
-from utils.interaction_api import is_clicked, is_pressed_once
+from utils.interaction_api import is_clicked, is_pressed
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
 from entitites.bonus import Bonus, bonus_types
@@ -40,7 +40,6 @@ def setup_game(**kwargs):
 
                 key = f"v-{i};{j}",
                 layer=-1,
-                entity_group=globals.entities,
             )  #endregion
 
     if globals.game_mode == "default":
@@ -59,12 +58,12 @@ def setup_game(**kwargs):
 
     for i in range(2):
         player = Player(  #region parameters
-            speed=calc_speed_per_time(8, 100),
-            lives=3,
+            speed=calc_speed_per_time(16, 100),
+            lives=1,
             bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
-            spread_type="star",
+            spread_type="bfs",
             character_skin_key=f"ch{[globals.skin_p1_id, globals.skin_p2_id][i]}",
 
             move_up_key=control_keys[0][i],
@@ -81,10 +80,15 @@ def setup_game(**kwargs):
             px_h=globals.PLAYER_CELL_SIZE,
 
             key=f"p-{i}",
-            entity_group=globals.entities,
         )  #endregion
 
     render_field()
+
+    while len(globals.state_snapshots):
+        globals.state_snapshots.pop().clear()
+    globals.cur_state_spawned_sprites.clear()
+    globals.cur_state_killed_sprites.clear()
+
 
 def render_field(**kwargs):
     field = globals.field
@@ -102,7 +106,6 @@ def render_field(**kwargs):
                     x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
@@ -117,7 +120,6 @@ def render_field(**kwargs):
                     x=x, y=y,
 
                     key = f"o-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.ORIGINAL_BOT_CELL:
@@ -125,6 +127,7 @@ def render_field(**kwargs):
                     speed=calc_speed_per_time(8, 100),
                     bomb_power=2,
                     bomb_countdown=get_tick_from_ms(1500),
+                    spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -132,7 +135,6 @@ def render_field(**kwargs):
                     color=(0, 255, 0),
 
                     key = f"orig-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
@@ -145,7 +147,6 @@ def render_field(**kwargs):
                     color=(0, 0, 255),
 
                     key = f"wand-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
@@ -153,6 +154,7 @@ def render_field(**kwargs):
                     speed=calc_speed_per_time(10, 100),
                     bomb_power=4,
                     bomb_countdown=get_tick_from_ms(3000),
+                    spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -160,7 +162,6 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
 
                     key = f"aggro-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
@@ -171,6 +172,7 @@ def render_field(**kwargs):
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
                     damage_countdown=get_tick_from_ms(500),
+                    spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     # px_w=globals.CELL_SIZE * 3, px_h=globals.CELL_SIZE * 3,
@@ -179,11 +181,12 @@ def render_field(**kwargs):
                     color=(255, 0, 0),
 
                     key = f"boss-bot-{x};{y}",
-                    entity_group=globals.entities,
                 )  #endregion
 
 def reset_game():
     paint_api.reset_frame()
+    globals.game_tick = 0
+    globals.state_snapshots.clear()
     globals.field = field_generator.generate(globals.cols, globals.rows, globals.game_mode)
     globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
 
@@ -213,7 +216,6 @@ def spawn_bonus(bonus_type = 0):
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_type],
 
             key=f"bonus-{bonus_x};{bonus_y}",
-            entity_group=globals.entities,
         )  #endregion
         return
 
@@ -235,7 +237,6 @@ def spawn_bonus(bonus_type = 0):
                     color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (0, 0, 0)][bonus_type],
 
                     key=f"bonus-{bonus_x};{bonus_y}",
-                    entity_group=globals.entities,
                 )  #endregion
                 return
 
@@ -257,7 +258,8 @@ def handle_bonus_items_render():
     # rendering bonuses in inventory
     for player in list(get_players(globals.entities)):
         x = 0
-        for bonus in player.bonuses:
+        for bonus in player.get_bonus_instances():
+
             if bonus.activated:
                 continue
 
@@ -279,9 +281,9 @@ def handle_bonus_items_render():
 def game(**kwargs):
     is_setup = kwargs.get("is_setup", False)
 
-    if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
-        globals.game_mode = "bossfight"
-        is_setup = True
+    # if len(get_bots(globals.entities)) == 0 and len(get_players(globals.entities)) > 0:
+    #     globals.game_mode = "bossfight"
+    #     is_setup = True
 
     if is_setup:
         setup_game(**kwargs)
@@ -295,21 +297,97 @@ def game(**kwargs):
         key="go_menu"
     )  #endregion
 
+    handle_bonus_items_render()
+
     if is_clicked(go_menu_button_sprite):
         navigate("menu")
 
-    if globals.tick % 400 == 0:
+    if is_pressed(K_t):
+        globals.time_reversing_count_down = 2
+
+    if globals.time_reversing_count_down:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_DELAY == 0:
+            snapshot_api.restore_last_snapshot()
+    else:
+        if globals.tick % globals.SNAPSHOT_CAPTURE_DELAY == 0:
+            snapshot_api.capture()
+
+    globals.time_reversing_count_down = max(0, globals.time_reversing_count_down - 1)
+    if globals.time_reversing_count_down:
+        return
+
+    if globals.game_tick % 400 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
-        raise Exception("You lost")
+        bg_overlay = paint_api.mount_rect( #region parameters
+            px_x=0, px_y=0,
+            px_w=globals.cols * globals.CELL_SIZE, px_h=globals.rows * globals.CELL_SIZE,
+            layer=globals.LAYER_SHIFT - 1,
+            image_path="assets/images/backgrounds/overlay.png",
+            key="bg_overlay"
+        ) #endregion
+        game_over_text = paint_api.mount_text( #region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y - 100,
+            layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Game over",
+            font_size=50,
+            color=(255, 0, 0),
+            key="game_over_text",
+        ) #endregion
+        back_button_sprite = paint_api.mount_rect( #region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y + 50,
+            px_w=200,
+            px_h=80,
+            layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+            key="game_over_back",
+        ) #endregion
+        back_pos = back_button_sprite.px_x, back_button_sprite.px_y
+        back_button_shadow = paint_api.mount_text( #region parameters
+            px_x=back_pos[0] + globals.SHADOW_OFFSET,
+            px_y=back_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Back",
+            font_size=50,
+            color=globals.SHADOW_COLOR,
 
-    handle_bonus_items_render()
+            key="back_text_shadow",
+        ) #endregion
+        back_button_text = paint_api.mount_text( #region parameters
+            px_x=back_pos[0],
+            px_y=back_pos[1],
+            layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Back",
+            font_size=50,
+            color=(255, 255, 255),
+            key="game_over_back_text",
+        ) # endregion
 
+        if is_clicked(back_button_sprite):
+            navigate("menu")
+            return
+
+
+    globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
+        entity.add_tick()
+
+        entity.cur_damage_countdown = max(entity.cur_damage_countdown - 1, 0)
+
+        if isinstance(entity, BombSpawnable):
+            entity.cur_bomb_countdown = max(entity.cur_bomb_countdown - 1, 0)
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
             entity.think()
+
+    for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Collidable):
             entity.handle_collision()
