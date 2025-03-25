@@ -36,7 +36,7 @@ class Fire(Collidable, Entity):
             self.spread()
 
         if self.tick > self.timer:
-            self.self_destroy()
+            self.kill()
             return
 
         if self.tick < self.timer // 3:
@@ -50,9 +50,9 @@ class Fire(Collidable, Entity):
             self.px_h = self.image_size[1] - 6
             self.set_image_path(globals.explosion_frames[2])
 
-    def self_destroy(self):
+    def kill(self, remove_from_memory=False):
         globals.field_fire_state[self.x][self.y] = 0
-        self.kill()
+        super().kill(remove_from_memory)
 
     def spread_bfs(self):
         directions = globals.BFS_DIRECTIONS

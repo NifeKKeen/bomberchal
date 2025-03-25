@@ -2,6 +2,8 @@ from typing import Protocol
 
 import globals
 from copy import deepcopy
+
+from entitites.StateSnapshot import try_snapshot_globals
 from utils.paint_api import SurfaceSprite
 
 
@@ -29,6 +31,7 @@ class Snapshotable(SnapshotableProtocol):
 
     def try_snapshot(self):
         if globals.SNAPSHOT_ALLOWED and not self.snapshotted:
+            try_snapshot_globals()
             self.snapshotted = True
             self.last_snapshot = self.get_snapshot()
 
