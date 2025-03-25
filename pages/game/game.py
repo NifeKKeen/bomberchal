@@ -369,7 +369,7 @@ def game(**kwargs):
             color=(255, 255, 255),
             key="game_over_back_text",
         ) # endregion
-        from pages.navigation import navigate
+
         if is_clicked(back_button_sprite):
             navigate("menu")
             return

@@ -9,7 +9,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
 Frame = None  # pygame.time.Clock()
-FPS = 40
+FPS = 60
 all_sprites = None  # pygame.sprite.LayeredUpdates()
 tick = 0  # whole app's tick
 
@@ -110,9 +110,9 @@ scores = dict()
 game_tick = 0  # current game's tick
 
 SNAPSHOT_ALLOWED = True
-SNAPSHOT_CAPTURE_DELAY = 15  # delay in ticks
+SNAPSHOT_CAPTURE_DELAY = 10  # delay in ticks
 state_snapshots = deque()
-STATE_SNAPSHOTS_LIMIT = 8 * math.ceil(FPS / SNAPSHOT_CAPTURE_DELAY)  # events from last 8 seconds
+STATE_SNAPSHOTS_LIMIT = 4 * math.ceil(FPS / SNAPSHOT_CAPTURE_DELAY)  # events from last 4 seconds
 cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
