@@ -231,3 +231,28 @@ skins = {
 
 skin_p1_id = 1
 skin_p2_id = 2
+
+# player_stats = {
+#     "p1": {
+#         # "user_name": user_name,
+#         "Duel": {"wins": 0, "loses": 0, "draws": 0},
+#         "PvE":  {"value": 0},
+#         "Bossfight": {"value": 0}
+#     },
+#     "p2": {
+#         "Duel": {"wins": 0, "loses": 0, "draws": 0},
+#         "PvE":  {"value": 0},
+#         "Bossfight": {"value": 0}
+#     },
+#     "p3": {
+#         "Duel": {"wins": 0, "loses": 0, "draws": 0},
+#         "PvE":  {"value": 0},
+#         "Bossfight": {"value": 0}
+#     }
+# }
+
+scoreboard = {
+    "pve": {},
+    "bossfight": {},
+    "duel": {}
+}

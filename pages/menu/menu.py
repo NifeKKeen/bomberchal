@@ -8,12 +8,13 @@ from config import save_config
 mute_button_sprite = None
 play_button_sprite = None
 customization_button_sprite = None
+scoreboard_button_sprite = None
 settings_button_sprite = None
 quit_button_sprite = None
 
 
 def menu(is_setup=False):
-    global mute_button_sprite, play_button_sprite, customization_button_sprite, settings_button_sprite, quit_button_sprite
+    global mute_button_sprite, play_button_sprite, customization_button_sprite, scoreboard_button_sprite, settings_button_sprite, quit_button_sprite
     if is_setup:
         play_menu_music(volume=.2)
         paint_api.reset_frame()
@@ -102,7 +103,7 @@ def menu(is_setup=False):
 
         settings_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X - 128,
-            px_y=globals.CENTER_Y + 100,
+            px_y=globals.CENTER_Y + 200,
             px_w=246,
             px_h=90,
             layer=globals.BUTTON_LAYER,
@@ -135,44 +136,44 @@ def menu(is_setup=False):
             key="settings_text",
         )  #endregion
 
-        # scoreboard_button_sprite = paint_api.mount_rect(  #region parameters
-        #     px_x=globals.CENTER_X,
-        #     px_y=globals.CENTER_Y + 200,
-        #     px_w=230,
-        #     px_h=90,
-        #     layer=globals.BUTTON_LAYER,
-        #     align="center",
-        #     image_path="assets/images/buttons/bar_button.png",
-        #
-        #     key="scoreboard",
-        # )
-        # scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
-        # scoreboard_button_shadow = paint_api.mount_text(  #region parameters
-        #     px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
-        #     px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
-        #     layer=globals.SHADOW_LAYER,
-        #     align="center",
-        #     text="Scoreboard",
-        #     font_size=50,
-        #     color=globals.SHADOW_COLOR,
-        #
-        #     key = "scoreboard_text_shadow",
-        # )  #endregion
-        # scoreboard_button_text = paint_api.mount_text(  #region parameters
-        #     px_x = scoreboard_pos[0],
-        #     px_y = scoreboard_pos[1],
-        #     layer=globals.TEXT_LAYER,
-        #     align="center",
-        #     text="Scoreboard",
-        #     font_size=50,
-        #     color=(255, 255, 255),
-        #
-        #     key="scoreboard_text",
-        # )  #endregion
+        scoreboard_button_sprite = paint_api.mount_rect(  #region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y + 100,
+            px_w=500,
+            px_h=90,
+            layer=globals.BUTTON_LAYER,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+        
+            key="scoreboard",
+        )
+        scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
+        scoreboard_button_shadow = paint_api.mount_text(  #region parameters
+            px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
+            px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER,
+            align="center",
+            text="Scoreboard",
+            font_size=50,
+            color=globals.SHADOW_COLOR,
+        
+            key = "scoreboard_text_shadow",
+        )  #endregion
+        scoreboard_button_text = paint_api.mount_text(  #region parameters
+            px_x = scoreboard_pos[0],
+            px_y = scoreboard_pos[1],
+            layer=globals.TEXT_LAYER,
+            align="center",
+            text="Scoreboard",
+            font_size=50,
+            color=(255, 255, 255),
+        
+            key="scoreboard_text",
+        )  #endregion
 
         quit_button_sprite = paint_api.mount_rect(  #region parameters
             px_x=globals.CENTER_X + 128,
-            px_y=globals.CENTER_Y + 100,
+            px_y=globals.CENTER_Y + 200,
             px_w=246,
             px_h=90,
             layer=globals.BUTTON_LAYER,
@@ -209,8 +210,8 @@ def menu(is_setup=False):
         navigate("game")
     elif is_clicked(settings_button_sprite):
         navigate("menu/settings")
-    # elif is_clicked(scoreboard_button_sprite):
-    #     navigate("menu/scoreboard")
+    elif is_clicked(scoreboard_button_sprite):
+        navigate("menu/scoreboard")
     elif is_clicked(customization_button_sprite):
         navigate("menu/customization")
     elif is_clicked(quit_button_sprite):
