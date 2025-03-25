@@ -4,25 +4,13 @@ import os
 from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
+from config import load_config
 
 
 CONFIG_FILE = "pages/menu/config.ini"
 
 show_popup_window_p1 = False
 show_popup_window_p2 = False
-def load_config():
-    if not os.path.exists(CONFIG_FILE):
-        globals.skin_p1_id = 1
-        globals.skin_p2_id = 2
-        return
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILE)
-    if "Skin" in config:
-        globals.skin_p1_id = config.getint("Skin", "skin_p1_id", fallback=1)
-        globals.skin_p2_id = config.getint("Skin", "skin_p2_id", fallback=2)
-    else:
-        globals.skin_p1_id = 1
-        globals.skin_p2_id = 2
 
 def save_skin_config():
     config = configparser.ConfigParser()
@@ -59,7 +47,6 @@ def pop_up_window():
                 for direction in ["up", "right", "down", "left"]],
 
         key="demo_gif",
-        # layer=10  # ниже, чем кнопка закрытия
     )  #endregion
 
     close_button = paint_api.mount_rect(  #region parameters
@@ -110,7 +97,6 @@ def pop_up_window():
 def menu_customization():
     global player_skins, show_popup_window
     player_skins = globals.skins
-    skin_display_index = 1
 
     global show_popup_window_p1
     global show_popup_window_p2

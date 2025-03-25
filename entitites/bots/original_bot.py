@@ -1,13 +1,16 @@
+import globals
 from entitites.bot import Bot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand
-import globals
 
 
 class OriginalBot(Bot, BombSpawnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.texture_type = "original"
+        self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
 
     def think(self):
         from entitites.bomb import Bomb

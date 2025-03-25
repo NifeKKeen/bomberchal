@@ -12,7 +12,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 2)
+        self._layer = globals.BASE_ENTITY_LAYER + 2
 
         self.timer = kwargs.get("timer", get_tick_from_ms(0))  # in ticks
         self.power = kwargs.get("power", 1)
@@ -41,7 +41,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
 
 
     def spread_fire(self):
-        if not in_valid_range(self.x, self.y, len(globals.field_fire_state), len(globals.field_fire_state[0])):
+        if not in_valid_range(self.x, self.y, len(globals.field_fire_state), len(globals.field_fire_state[0])) or globals.field_fire_state[self.x][self.y] > self.power:
             return
 
         npx_w = int(self.px_w * .8)

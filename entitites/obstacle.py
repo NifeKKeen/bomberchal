@@ -7,7 +7,7 @@ class Obstacle(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_OBSTACLE_LAYER)
+        self._layer = globals.BASE_OBSTACLE_LAYER
 
         self.type = kwargs.get("type", globals.D_OBSTACLE_CELL)
         self.texture_type = kwargs.get("texture_type", globals.OBSTACLE_CELL_BORDER1)
@@ -26,13 +26,13 @@ class Obstacle(Entity):
                 self.sub_seed = rand(0, len(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"]))
 
         if self.mounted:
-            self.set_image_path(globals.map_type_to_path[self.texture_type])
+            self.set_image_path(globals.map_obstacle_type_to_path[self.texture_type])
 
     def add_tick(self):
         self.tick += 1
         if self.seed is not None:
             self.set_image_path(
-                globals.map_type_to_path[
+                globals.map_obstacle_type_to_path[
                     get_texture_type(globals.map_obstacle_seed_to_props[self.seed]["stage_texture_types"], self.sub_seed, self.lives / self.initial_lives)
                 ]
             )

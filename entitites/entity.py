@@ -9,6 +9,8 @@ class Entity(SurfaceSprite):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self._layer = globals.BASE_ENTITY_LAYER
+
         self.x = kwargs.get("x", None)  # position x in board (from left) [целые коорды]
         self.y = kwargs.get("y", None)  # position y in board (from top) [целые коорды]
 
@@ -23,7 +25,6 @@ class Entity(SurfaceSprite):
         self.entity_group = kwargs.get("entity_group", None)  # entity group which this entity belongs to
         if self.entity_group is not None:
             self.entity_group.add(self)
-        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER)
 
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
@@ -44,9 +45,9 @@ class Entity(SurfaceSprite):
 
     def kill(self):
         self.unmount()
-        self.mounted = False
         if self.entity_group:
             self.entity_group.discard(self)
+        super().kill()
 
     def add_tick(self):
         self.tick += 1

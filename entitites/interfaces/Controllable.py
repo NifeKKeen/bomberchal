@@ -1,6 +1,6 @@
 from typing import Protocol
+
 from utils.interaction_api import is_pressed, is_pressed_once
-from entitites.bot import get_bots
 from entitites.entity import Entity
 
 class ControllableProtocol(Protocol):
@@ -18,9 +18,14 @@ class Controllable(Entity, ControllableProtocol):
         self.move_down_key = kwargs.get("move_down_key", None)
         self.attack_key = kwargs.get("attack_key", None)
         self.attack_func = kwargs.get("attack_func", None)
+        self.bonus_activation_key = kwargs.get("bonus_activation_key", None)
         self.movement_timer = 0 # maybe should be renamed. Means time in ticks during which a movement and/or attack occurs
 
     def handle_event(self):
+        from entitites.bot import get_bots
+        from entitites.interfaces.BonusCollectable import BonusCollectable
+
+
         if not self.mounted:
             return
 
@@ -48,6 +53,9 @@ class Controllable(Entity, ControllableProtocol):
         if self.attack_key and is_pressed_once(self.attack_key):
             self.attack_func(self)
             changes = True
+
+        if self.bonus_activation_key and is_pressed_once(self.bonus_activation_key) and isinstance(self, BonusCollectable):
+            self.activate_bonus_at(0)
 
         if not changes:
             return

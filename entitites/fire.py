@@ -8,7 +8,7 @@ class Fire(Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        globals.all_sprites.change_layer(self, globals.BASE_ENTITY_LAYER + 8)
+        self._layer = globals.BASE_ENTITY_LAYER + 8
 
         self.power = kwargs.get("power", 1)
         self.timer = kwargs.get("timer", get_tick_from_ms(300))
@@ -35,6 +35,7 @@ class Fire(Collidable, Entity):
 
         if self.tick > self.timer:
             self.self_destroy()
+            return
 
         if self.tick < self.timer // 3:
             self.set_image_path(globals.explosion_frames[0])
@@ -46,7 +47,6 @@ class Fire(Collidable, Entity):
             self.px_w = self.image_size[0] - 6
             self.px_h = self.image_size[1] - 6
             self.set_image_path(globals.explosion_frames[2])
-
 
     def self_destroy(self):
         globals.field_fire_state[self.x][self.y] = 0

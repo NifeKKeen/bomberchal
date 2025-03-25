@@ -3,48 +3,7 @@ from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key
 from utils.sound_api import play_menu_music
 from pages.navigation import navigate
-
-
-CONFIG_FILE = "pages/menu/config.ini"
-
-
-def load_config():
-    if not os.path.exists(CONFIG_FILE):
-        globals.game_mode = "default"
-        return
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILE)
-    if "Controls" in config:
-        key1_str = config.get("Controls", "explosion_key_p1", fallback="space").strip()
-        key2_str = config.get("Controls", "explosion_key_p2", fallback="m").strip()
-
-        globals.controls_players[0]["explosion_key"] = parse_key(key1_str)
-        globals.controls_players[1]["explosion_key"] = parse_key(key2_str)
-    if "Game" in config:
-        globals.game_mode = config.get("Game", "mode", fallback="default")  # исправлено: читаем ключ "mode"
-    else:
-        globals.game_mode = "default"
-
-
-def parse_key(key_str):
-    if key_str.lower() == "custom":
-        return "custom"
-    try:
-        return int(key_str)  
-    except ValueError:
-        return pygame.key.key_code(key_str.lower())  
-
-
-def save_config():
-    config = configparser.ConfigParser()
-    config["Controls"] = {
-        "explosion_key_p1": str(globals.controls_players[0]["explosion_key"]),
-        "explosion_key_p2": str(globals.controls_players[1]["explosion_key"])
-    }
-    config["Game"] = {"mode": str(globals.game_mode)}
-    with open(CONFIG_FILE, "w") as configfile:
-        config.write(configfile)
-
+from config import load_config, save_config
 
 def update_display(text_sprite, player_index, waiting):
     key_val = globals.controls_players[player_index]["explosion_key"]
@@ -400,19 +359,15 @@ def settings(is_setup=False):
 
     if is_clicked(default_button):
         globals.game_mode = "default"
-        print("default clicked")
         save_config()
     if is_clicked(boss_button):
-        print("boss clicked")
         globals.game_mode = "bossfight"
         save_config()
 
     if globals.game_mode == "default":
-        print("default")
         default_button_text.set_color((255, 255, 0))
         boss_button_text.set_color((255, 255, 255))
     elif (globals.game_mode == "bossfight"):
-        print()
         boss_button_text.set_color((255, 255, 0))
         default_button_text.set_color((255, 255, 255))
 
@@ -423,6 +378,8 @@ def settings(is_setup=False):
         else:
             globals.sound_muted = True
             bomb_mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH2)
+        save_config()
+            
     if is_clicked(back_button):
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
