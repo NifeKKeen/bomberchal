@@ -160,7 +160,7 @@ def render_field(**kwargs):
                     x=x, y=y,
                     speed=1,
                     color=(255, 0, 0),
-                    bomb_countdown=get_tick_from_ms(3000),
+                    bomb_countdown=get_tick_from_ms(7000),
                     layer=256,
                     bomb_power=3,
                     entity_group=globals.entities,
@@ -335,6 +335,7 @@ def game(**kwargs):
                 global_message(f"Player 2 won!")
         else:
             global_message(f"Player 1 won!")
+
         if timer == 0:
             timer = -1
             if globals.game_mode != "bossfight":
