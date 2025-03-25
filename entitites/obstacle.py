@@ -29,7 +29,9 @@ class Obstacle(Entity):
             self.set_image_path(globals.map_obstacle_type_to_path[self.texture_type])
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
+
         if self.seed is not None:
             self.set_image_path(
                 globals.map_obstacle_type_to_path[

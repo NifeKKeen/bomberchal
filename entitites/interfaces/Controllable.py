@@ -1,5 +1,6 @@
 from typing import Protocol
 
+import globals
 from utils.interaction_api import is_pressed, is_pressed_once
 from entitites.entity import Entity
 
@@ -7,6 +8,7 @@ class ControllableProtocol(Protocol):
     speed: int
     vel_px_x: int
     vel_px_y: int
+
 
 class Controllable(Entity, ControllableProtocol):
     def __init__(self, **kwargs):
@@ -68,5 +70,5 @@ class Controllable(Entity, ControllableProtocol):
             self.movement_timer = 0
 
             # if any player moves, recalculate distances (=> destination)
-            for entity in get_bots(list(self.entity_group)):
+            for entity in get_bots(list(globals.entities)):
                 entity.moving = 0

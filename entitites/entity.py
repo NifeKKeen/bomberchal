@@ -1,15 +1,19 @@
 import globals
+from entitites.interfaces.Snapshotable import Snapshotable
+from utils import snapshot_api
 from utils.helpers import get_pos, get_tick_from_ms
 from utils.paint_api import SurfaceSprite
 
 
-class Entity(SurfaceSprite):
+class Entity(SurfaceSprite, Snapshotable):
     EntityId = 0
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER
+        self._removed = False  # removed from memory
+        snapshot_api.spawn_happened(self)
 
         self.x = kwargs.get("x", None)  # position x in board (from left) [целые коорды]
         self.y = kwargs.get("y", None)  # position y in board (from top) [целые коорды]
@@ -22,15 +26,11 @@ class Entity(SurfaceSprite):
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(0))
         self.cur_damage_countdown = kwargs.get("cur_damage_countdown", get_tick_from_ms(0))
 
-        self.entity_group = kwargs.get("entity_group", None)  # entity group which this entity belongs to
-        if self.entity_group is not None:
-            self.entity_group.add(self)
-
+        globals.entities.add(self)
         self.entity_id = Entity.EntityId
         Entity.EntityId += 1
 
         self.tick = 0  # lifespan
-        self.lives = kwargs.get("lives", 1)
 
     def is_alive(self):
         return bool(self.lives)
@@ -43,11 +43,19 @@ class Entity(SurfaceSprite):
         if self.lives <= 0:
             self.kill()
 
-    def kill(self):
+    def kill(self, remove_from_memory = False):
         self.unmount()
-        if self.entity_group:
-            self.entity_group.discard(self)
+        globals.entities.discard(self)
+
+        if remove_from_memory:
+            self._kill_from_memory()
+        else:
+            snapshot_api.kill_happened(self)
+
+    def _kill_from_memory(self):
+        self._removed = True
         super().kill()
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1

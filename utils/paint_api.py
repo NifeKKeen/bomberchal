@@ -1,4 +1,5 @@
 import pygame, os, globals
+
 from utils.helpers import get_tick_from_ms, rand
 
 
@@ -21,6 +22,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
 
         self.color = kwargs.get("color", (rand(128, 256), 0, rand(128, 256)))
         self.layer = kwargs.get("layer", 0)  # Like z-index in CSS
+        self._layer = self.layer
 
         self.surface_id = SurfaceSprite.SurfaceId
         self.ignore_collision = kwargs.get("ignore_collision", False)
@@ -242,10 +244,16 @@ def refill_screen():
 
 
 def reset_frame():
+    from entitites.entity import Entity
+
     globals.to_render_keys.clear()
     globals.map_key_sprite.clear()
+    globals.state_snapshots.clear()
     for sprite in globals.all_sprites.sprites():
-        sprite.kill()
+        if isinstance(sprite, Entity):
+            sprite.kill(True)
+        else:
+            sprite.kill()
     globals.all_sprites.empty()
 
 
@@ -273,7 +281,15 @@ def draw_sprites():
             globals.all_sprites.remove(sprite)
 
 
+
+    refill_screen()
     globals.all_sprites.draw(globals.DISPLAYSURF)
+    if globals.time_reversing_count_down:
+        grey_overlay = pygame.Surface((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT), pygame.SRCALPHA)
+        grey_overlay.fill((128, 128, 128, 128))
+        globals.DISPLAYSURF.blit(grey_overlay, (0, 0))
+
+    pygame.display.flip()
 
     for sprite in will_remove:
         globals.all_sprites.remove(sprite)
@@ -282,6 +298,3 @@ def draw_sprites():
     for sprite in will_return:
         globals.all_sprites.add(sprite)
         globals.all_sprites.change_layer(sprite, sprite._layer)
-
-    pygame.display.flip()
-    refill_screen()

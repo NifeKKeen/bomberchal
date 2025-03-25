@@ -1,12 +1,11 @@
 import globals
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
-from utils.helpers import get_tick_from_ms, rand
+from utils.helpers import rand
 from entitites.entity import Entity
 
 
 class Bonus(Entity):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -26,37 +25,38 @@ class Bonus(Entity):
         else:
             self.activation_timer = float('inf')
 
-        self.collector = kwargs.get("collector", None)  # which entity collected bonus
+        self.collector_key = kwargs.get("collector_key", None)  # which entity collected bonus
         self.payload = kwargs.get("payload", None)
         self.activated = False
 
         self.set_image_path(globals.map_bonus_type_to_path[self.type])
 
     def activate(self):
-        if self.activated or not self.collector.alive():
+        collector = globals.map_key_sprite[self.collector_key]
+        if self.activated or not collector.alive():
             return
         self.activated = True
         self.activated_tick = self.tick
 
-        is_boss = isinstance(self.collector, BossBot)
-        is_aggressive_bot = isinstance(self.collector, AggressiveBot)
+        is_boss = isinstance(collector, BossBot)
+        is_aggressive_bot = isinstance(collector, AggressiveBot)
 
         if self.type == globals.BONUS_SPEED:
-            if self.collector.speed < 8:
+            if collector.speed < 8:
                 self.payload = 2 if not is_aggressive_bot else 1.5 if not is_boss else 1.25
 
-                self.collector.speed = self.collector.speed * self.payload
+                collector.speed = collector.speed * self.payload
             else:
                 self.payload = 1
         elif self.type == globals.BONUS_POWER:
             self.payload = (2 if not is_aggressive_bot else 1)
 
-            self.collector.bomb_power += self.payload
+            collector.bomb_power += self.payload
         elif self.type == globals.BONUS_CAPACITY:
             if not is_boss:
                 self.payload = 1
 
-                self.collector.bomb_allowed += self.payload
+                collector.bomb_allowed += self.payload
             else:
                 self.payload = 0
         elif self.type == globals.BONUS_LIFE:
@@ -68,14 +68,18 @@ class Bonus(Entity):
             else:
                 self.payload = 1
 
-            self.collector.lives += self.payload
+            collector.lives += self.payload
         else:
             raise Exception("Invalid bonus type")
 
     def add_tick(self):
+        self.try_snapshot()
         self.tick += 1
-        if not self.activated:
+
+        if not self.activated or self.collector_key is None:
             return
+
+        collector = globals.map_key_sprite[self.collector_key]
 
         time_since_activated = self.tick - self.activated_tick
 
@@ -83,13 +87,13 @@ class Bonus(Entity):
             return
 
         if self.type == globals.BONUS_SPEED:
-            self.collector.speed /= self.payload
+            collector.speed /= self.payload
         elif self.type == globals.BONUS_CAPACITY:
-            self.collector.bomb_allowed -= self.payload
+            collector.bomb_allowed -= self.payload
         elif self.type == globals.BONUS_POWER:
-            self.collector.bomb_power -= self.payload
+            collector.bomb_power -= self.payload
 
-        self.collector.bonuses.remove(self)
+        collector.bonus_keys.remove(self.key)
         self.kill()
 
 def bonus_types():
