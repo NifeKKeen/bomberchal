@@ -329,7 +329,48 @@ def game(**kwargs):
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
-        raise Exception("You lost")
+        bg_overlay = paint_api.mount_rect(
+            px_x=0, px_y=0,
+            px_w=globals.cols * globals.CELL_SIZE, px_h=globals.rows * globals.CELL_SIZE,
+            layer=globals.LAYER_SHIFT - 1,
+            image_path="assets/images/backgrounds/overlay.png",
+            key="bg_overlay"
+        )
+        game_over_text = paint_api.mount_text(
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y - 100,
+            layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Game over",
+            font_size=50,
+            color=(255, 0, 0),
+            key="game_over_text",
+        )
+        back_button = paint_api.mount_rect(
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y + 50,
+            px_w=200,
+            px_h=80,
+            layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+            key="game_over_back",
+        )
+        back_button_text = paint_api.mount_text(
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y + 50,
+            layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Back",
+            font_size=40,
+            color=(255, 255, 255),
+            key="game_over_back_text",
+        )
+        from pages.navigation import navigate
+        if is_clicked(back_button):
+            navigate("menu")
+            return
+
 
     globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
