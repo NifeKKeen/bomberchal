@@ -1,7 +1,7 @@
 from entitites.bot import Bot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
-from utils.helpers import get_pos, get_field_pos, in_valid_range
+from utils.helpers import get_pos, get_field_pos, in_valid_range, get_tick_from_ms, rand
 import globals
 from heapq import heappush, heappop
 
@@ -12,6 +12,9 @@ class AggressiveBot(Bot, BombSpawnable):
 
         self.texture_type = "aggressive"
         self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
+        self.boredom_countdown = kwargs.get("boredom_countdown", 0)
+        self.cur_boredom_countdown = kwargs.get("cur_boredom_countdown", 0)
+        self.cur_boredom_countdown = self.boredom_countdown
 
     def think(self):
         from entitites.player import Player, get_players
@@ -25,14 +28,19 @@ class AggressiveBot(Bot, BombSpawnable):
             return
 
         # In this algorithm, bot moves into direction of the closest player, trying to be far from bombs and fires. So, it is aggressive
-        # If bot is unable to reach any player, but can safely spawn bomb to break obstacles, it will do that (todo)
-        # Else, if then bomb will damage bot, it will walk within reachable cells
+        # If bot is unable to reach any player, it will walk within reachable cells
+        # If bot can't find path to player in [3; 50] seconds, it will get bored and spawn bomb
+        # TODO: If bot is unable to reach any player, but can safely spawn bomb to break obstacles, it should do that.
+        # TODO: Otherwise, if then bomb will damage bot, it will walk within reachable cells
 
         if len(get_players(globals.entities)) == 0:
             # Just for fun
-            self.bomb_allowed = 69420
             self.cur_bomb_countdown = 0
             self.spawn_bomb()
+
+        elif self.boredom_countdown <= 0:
+            self.spawn_bomb()
+            self.cur_boredom_countdown = self.boredom_countdown
 
         if self.moving == 1:
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
@@ -99,25 +107,25 @@ class AggressiveBot(Bot, BombSpawnable):
             def add(x, y):
                 heappush(queue, (self.dist[x][y], (x, y)))
 
-            self.spawn_bomb(is_simulation=True)
+            # self.spawn_bomb(is_simulation=True)
 
             for bomb in bombs_lst:
                 for fx in range(1, globals.cols - 1):
                     for fy in range(1, globals.rows - 1):
                         # TODO: Peredelat' na is_simulation
-                        if abs(bomb.x - fx) + abs(bomb.y - fy) <= 0: #bomb.power:
-                            self.weight[fx][fy] = bomb.power
+                        if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
+                            self.weight[fx][fy] = bomb.power + 1 - abs(bomb.x - fx) + abs(bomb.y - fy)
                             # self.used[fx][fy] = True
                             # self.dist[fx][fy] = 0
                             # self.prev[fx][fy] = (fx, fy)
 
             for entity in list(globals.entities):
-                if isinstance(entity, Bomb) or isinstance(entity, Fire):
+                if isinstance(entity, Fire):
                     x, y = entity.x, entity.y
                     if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
 
-                    self.weight[x][y] = 0
+                    self.weight[x][y] = 10
                     # self.used[x][y] = True
                     # self.dist[x][y] = 0
                     # self.prev[x][y] = (x, y)

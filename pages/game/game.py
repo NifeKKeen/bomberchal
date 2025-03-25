@@ -154,6 +154,7 @@ def render_field(**kwargs):
                     speed=calc_speed_per_time(10, 100),
                     bomb_power=4,
                     bomb_countdown=get_tick_from_ms(3000),
+                    boredom_countdown=get_tick_from_ms(10000),
                     spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -172,6 +173,7 @@ def render_field(**kwargs):
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
                     damage_countdown=get_tick_from_ms(500),
+                    boredom_countdown=get_tick_from_ms(10000),
                     spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -386,6 +388,9 @@ def game(**kwargs):
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
+            if isinstance(entity, AggressiveBot):
+                print("!!", entity.cur_boredom_countdown)
+                entity.cur_boredom_countdown = max(entity.cur_boredom_countdown - 1, 0)
             entity.think()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error

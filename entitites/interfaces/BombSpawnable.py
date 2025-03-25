@@ -1,5 +1,6 @@
 import globals
 from pygame.locals import *
+
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
 from entitites.entity import Entity
 
@@ -58,3 +59,8 @@ class BombSpawnable(Entity):
 
             color=([rand(64, 128)] * 3)
         )  #endregion
+
+        from entitites.bot import get_bots
+        # Recalculate distances (=> destination)
+        for entity in get_bots(list(globals.entities)):
+            entity.moving = 0
