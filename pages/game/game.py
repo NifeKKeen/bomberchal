@@ -16,6 +16,7 @@ from entitites.interfaces.Collidable import Collidable
 from entitites.interfaces.Controllable import Controllable
 from entitites.obstacle import Obstacle
 from entitites.player import Player, get_players
+from entitites.bot import get_bots 
 from pages.game import field_generator
 from pages.navigation import navigate
 from config import load_config
@@ -319,27 +320,63 @@ def game(**kwargs):
     if globals.game_tick % 400 == 0:
         spawn_bonus(rand(0, 4))
 
-    if len(get_players(globals.entities)) == 0:
-        bg_overlay = paint_api.mount_rect( #region parameters
-            px_x=0, px_y=0,
-            px_w=globals.cols * globals.CELL_SIZE, px_h=globals.rows * globals.CELL_SIZE,
+    # Проверка конца игры (игроки или боты умерли)
+    if len(get_players(globals.entities)) == 0 or len(get_bots(globals.entities)) == 0:
+        bg_overlay = paint_api.mount_rect(  #region parameters
+            px_x=0, 
+            px_y=0,
+            px_w=globals.cols * globals.CELL_SIZE, 
+            px_h=globals.rows * globals.CELL_SIZE,
             layer=globals.LAYER_SHIFT - 1,
             image_path="assets/images/backgrounds/overlay.png",
             key="bg_overlay"
-        ) #endregion
-        game_over_text = paint_api.mount_text( #region parameters
+        )  #endregion
+        message = "Game over" if len(get_players(globals.entities)) == 0 else "Win!"
+        game_over_text = paint_api.mount_text(  #region parameters
             px_x=globals.CENTER_X,
-            px_y=globals.CENTER_Y - 100,
+            px_y=globals.CENTER_Y - 300,
             layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
             align="center",
-            text="Game over",
+            text=message,
             font_size=50,
             color=(255, 0, 0),
             key="game_over_text",
+        )  #endregion
+
+        restart_button_sprite = paint_api.mount_rect( #region parameters
+            px_x=globals.CENTER_X,
+            px_y=globals.CENTER_Y + 140,
+            px_w=200,
+            px_h=80,
+            layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            image_path="assets/images/buttons/bar_button.png",
+            key="restart",
         ) #endregion
+        restart_pos = restart_button_sprite.px_x, restart_button_sprite.px_y
+        restart_button_shadow = paint_api.mount_text( #region parameters
+            px_x=restart_pos[0] + globals.SHADOW_OFFSET,
+            px_y=restart_pos[1] + globals.SHADOW_OFFSET,
+            layer=globals.SHADOW_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Restart",
+            font_size=40,
+            color=globals.SHADOW_COLOR,
+            key="restart_text_shadow",
+        ) #endregion
+        restart_button_text = paint_api.mount_text( #region parameters
+            px_x=restart_pos[0],
+            px_y=restart_pos[1],
+            layer=globals.TEXT_LAYER + globals.LAYER_SHIFT,
+            align="center",
+            text="Restart",
+            font_size=40,
+            color=(255, 255, 255),
+            key="restart_text",
+        ) # endregion
         back_button_sprite = paint_api.mount_rect( #region parameters
             px_x=globals.CENTER_X,
-            px_y=globals.CENTER_Y + 50,
+            px_y=globals.CENTER_Y + 250,
             px_w=200,
             px_h=80,
             layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
@@ -367,12 +404,16 @@ def game(**kwargs):
             text="Back",
             font_size=50,
             color=(255, 255, 255),
-            key="game_over_back_text",
+            key="back_text",
         ) # endregion
 
-        if is_clicked(back_button_sprite):
+        if is_clicked(restart_button_sprite):
+            setup_game(is_setup=True)
+            navigate("game") 
+        elif is_clicked(back_button_sprite):
             navigate("menu")
-            return
+        return
+
 
 
     globals.game_tick += 1
@@ -391,3 +432,8 @@ def game(**kwargs):
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Collidable):
             entity.handle_collision()
+
+def restart_game():
+    # Сброс состояния игры и переход в режим игры
+    setup_game(is_setup=True)
+    navigate("game")
