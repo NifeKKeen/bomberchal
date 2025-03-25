@@ -1,6 +1,8 @@
 import globals
+from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.BonusCollectable import BonusCollectable
 from entitites.interfaces.Collidable import Collidable
+from entitites.player import get_players
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
@@ -27,11 +29,11 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
         self.used = [
             [False for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
-        self.blocked = [
-            [False for _ in range(globals.rows)] for _ in range(globals.cols)
+        self.weight = [
+            [0 for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.dist = [
-            [0 for _ in range(globals.rows)] for _ in range(globals.cols)
+            [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.prev = [
             [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)

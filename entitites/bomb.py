@@ -20,6 +20,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         self.is_spawner_inside = True  # to ignore the collision when the bomb is spawned
         self.exploded = kwargs.get("exploded", False)
         self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
+        self.is_simulation = kwargs.get("is_simulation", False) # used for calculations in aggressive bot's logic
 
         if self.mounted:
             self.set_image_path(globals.bomb_frames[0])
@@ -57,6 +58,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             timer=get_tick_from_ms(500),
             spread_timer=get_tick_from_ms(25),
             spawner_key=self.key,
+            is_simulation=self.is_simulation,
 
             x=self.x,
             y=self.y,

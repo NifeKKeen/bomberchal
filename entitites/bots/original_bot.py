@@ -2,6 +2,7 @@ import globals
 from entitites.bot import Bot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
+from entitites.player import get_players
 from utils.helpers import rand
 
 
@@ -20,6 +21,7 @@ class OriginalBot(Bot, BombSpawnable):
             return
 
         self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+
         collisions = Collidable.get_collisions(self)
         for entity in collisions:
             if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key):

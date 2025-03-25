@@ -75,7 +75,7 @@ class WanderingBot(Bot):
             self.used = [
                 [False for _ in range(globals.rows)] for _ in range(globals.cols)
             ]
-            self.blocked = [
+            self.weight = [
                 [False for _ in range(globals.rows)] for _ in range(globals.cols)
             ]
             self.dist = [
@@ -106,7 +106,7 @@ class WanderingBot(Bot):
                     x, y = entity.x, entity.y
                     if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
-                    self.blocked[x][y] = True
+                    self.weight[x][y] = True
 
             for x in range(globals.cols):
                 for y in range(globals.rows):
@@ -118,9 +118,9 @@ class WanderingBot(Bot):
                     queue.pop(0)
                     for dx, dy in globals.BFS_DIRECTIONS:
                         nx, ny = x + dx, y + dy
-                        if nx < 0 or nx >= globals.cols or ny < 0 or ny >= globals.rows:
+                        if not in_valid_range(nx, ny, globals.cols, globals.rows):
                             continue
-                        if self.blocked[nx][ny]:
+                        if self.weight[nx][ny]:
                             continue
                         if not self.used[nx][ny]:
                             self.used[nx][ny] = True
@@ -134,14 +134,14 @@ class WanderingBot(Bot):
             farthest = []
             for x in range(globals.cols):
                 for y in range(globals.rows):
-                    if not self.blocked[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
+                    if not self.weight[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
                         if self.dist[x][y] > dst:
                             dst = self.dist[x][y]
 
 
             for x in range(globals.cols):
                 for y in range(globals.rows):
-                    if not self.blocked[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
+                    if not self.weight[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
                         if self.dist[x][y] >= dst - 5:
                             # If we left just dst, then in situation where one player moves too fast,
                             # the bot would have to move across the entire playing field, which would be disadvantageous for bot.

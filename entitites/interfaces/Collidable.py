@@ -95,12 +95,12 @@ class Collidable(Entity):
             if isinstance(self, Fire):
                 if isinstance(entity, Obstacle):
                     self.self_destroy()
-                    entity.make_damage(1)
+                    entity.make_damage(1 if not self.is_simulation else 0)
                 elif isinstance(entity, Bomb):
                     self.self_destroy()
                     entity.explode()
                 elif isinstance(entity, Player) or isinstance(entity, Bot):
-                    entity.make_damage(1)
+                    entity.make_damage(1 if not self.is_simulation else 0)
 
     def adjust_from(self, entity):
         self.adjust_from_x(entity)
