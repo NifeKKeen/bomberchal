@@ -134,7 +134,7 @@ class WanderingBot(Bot):
             farthest = []
             for x in range(globals.cols):
                 for y in range(globals.rows):
-                    if not self.weight[x][y] and self.used[x][y] and self.prev[x][y] != (-1, -1):
+                    if self.weight[x][y] < float('inf') and self.used[x][y] and self.prev[x][y] != (-1, -1):
                         if self.dist[x][y] > dst:
                             dst = self.dist[x][y]
 

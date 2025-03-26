@@ -32,8 +32,8 @@ class OriginalBot(Bot, BombSpawnable):
         if rand(0, 500) < 5: # to simulate randomness like in actual game
             self.direction ^= 1
 
-        if rand(0, 500) < 5:
-            self.spawn_bomb()
+        # if rand(0, 500) < 5:
+        #     self.spawn_bomb()
 
 def get_original_bots(entities):
     res = set()

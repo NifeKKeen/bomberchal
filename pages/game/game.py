@@ -152,9 +152,9 @@ def render_field(**kwargs):
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
                 bot = AggressiveBot(  #region parameters
                     speed=calc_speed_per_time(10, 100),
-                    bomb_power=4,
+                    bomb_power=1,
                     bomb_countdown=get_tick_from_ms(3000),
-                    boredom_countdown=get_tick_from_ms(10000),
+                    #boredom_countdown=get_tick_from_ms(10000),
                     spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -389,7 +389,6 @@ def game(**kwargs):
             entity.handle_event()
         if isinstance(entity, Bot):
             if isinstance(entity, AggressiveBot):
-                print("!!", entity.cur_boredom_countdown)
                 entity.cur_boredom_countdown = max(entity.cur_boredom_countdown - 1, 0)
             entity.think()
 
