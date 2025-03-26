@@ -166,3 +166,11 @@ class Fire(Collidable, Entity):
             self.spread_straight()
         else:
             raise Exception("Unknown type of spread!")
+
+
+def get_fires(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Fire):
+            res.add(entity)
+    return res

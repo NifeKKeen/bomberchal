@@ -1,4 +1,5 @@
 from entitites.bot import Bot
+from entitites.fire import get_fires
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import get_pos, get_field_pos, in_valid_range, rand
@@ -44,12 +45,14 @@ class AggressiveBot(Bot, BombSpawnable):
         #     self.spawn_bomb()
         #     self.cur_boredom_countdown = self.boredom_countdown
 
+        if self.moving == 0 and self.must_spawn_bomb:
+            self.moving = 1
+
         if self.moving == 1:
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
                 nx, ny = self.prev[self.x][self.y]
             else:
                 nx, ny = -1, -1
-            print(f"lets move from ({self.x}, {self.y}) to ({nx}, {ny}). Final destination: ({self.dest_x}, {self.dest_y})")
 
             if nx - self.x == 1:
                 self.direction = 1
@@ -60,6 +63,9 @@ class AggressiveBot(Bot, BombSpawnable):
             elif ny - self.y == -1:
                 self.direction = 0
             else: # if nx and ny are not changing or if there is some error
+                if self.must_spawn_bomb:
+                    self.spawn_bomb()
+                    self.must_spawn_bomb = False
                 self.moving = 0
 
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
@@ -85,7 +91,10 @@ class AggressiveBot(Bot, BombSpawnable):
             if dy < -self.speed:
                 dy = -self.speed
             if dx == 0 and dy == 0:
-                self.moving = 0
+                if self.dest_x == self.x and self.dest_y == self.y:
+                    self.moving = 0
+                else:
+                    self.moving = 1
 
             self.move_px(dx, dy)
             self.x, self.y = get_pos(self.px_x, self.px_y)
@@ -97,7 +106,7 @@ class AggressiveBot(Bot, BombSpawnable):
                     self.must_spawn_bomb = False
 
             queue = []
-            bombs_lst = list(get_bombs(globals.entities))
+            bombs_lst = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
             self.used = [
                 [False for _ in range(globals.rows)] for _ in range(globals.cols)
             ]
@@ -107,54 +116,46 @@ class AggressiveBot(Bot, BombSpawnable):
             self.dist = [
                 [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
             ]
+            self.weighted_dist = [
+                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
+            ]
             self.prev = [
                 [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
             ]
 
             def add(x, y):
-                heappush(queue, (self.dist[x][y], (x, y)))
+                heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
 
             # self.spawn_bomb(is_simulation=True)
 
             for bomb in bombs_lst:
-                for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power)):
-                    for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power)):
+                for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power + 1)):
+                    for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power + 1)):
                         # TODO: Peredelat' na is_simulation
                         if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
-                            self.weight[fx][fy] += bomb.power + 1234 - abs(bomb.x - fx) + abs(bomb.y - fy)
-                            # self.used[fx][fy] = True
-                            # self.dist[fx][fy] = 0
-                            # self.prev[fx][fy] = (fx, fy)
+                            self.weight[fx][fy] += bomb.power - (abs(bomb.x - fx) + abs(bomb.y - fy)) + 1
 
             for entity in list(globals.entities):
-                if isinstance(entity, Bomb) or isinstance(entity, Fire):
+                if isinstance(entity, Fire):
                     x, y = int(entity.x), int(entity.y)
                     if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
-
                     self.weight[x][y] += 10
-                    self.used[x][y] = True
-                    self.dist[x][y] = 0
-                    self.prev[x][y] = (x, y)
 
                 if isinstance(entity, Obstacle) or (isinstance(entity, Bot) and entity != self):
                     x, y = int(entity.x), int(entity.y)
                     if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
                     self.weight[x][y] = float('inf')
-            #
-            # for x in range(globals.cols):
-            #     for y in range(globals.rows):
-            #         if self.used[x][y]:
-            #             add(x, y)
 
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
-                self.dist[self.x][self.y] = self.weight[self.x][self.y]
+                self.weighted_dist[self.x][self.y] = self.weight[self.x][self.y]
+                self.dist[self.x][self.y] = 0
                 add(self.x, self.y)
 
             def dijkstra():
                 while queue:
-                    cur_dist, (x, y) = heappop(queue)
+                    (cur_weighted_dist, cur_dist), (x, y) = heappop(queue)
                     if self.used[x][y]: # skipping disadvantageous distances
                         continue
                     self.used[x][y] = True
@@ -166,27 +167,37 @@ class AggressiveBot(Bot, BombSpawnable):
                         if self.weight[x][y] == float('inf'):
                             continue
 
-                        new_dist = self.dist[x][y] + self.weight[nx][ny] + 1
-                        if new_dist < float('inf') and self.dist[nx][ny] > new_dist:
+                        new_weighted_dist = max(cur_weighted_dist, self.weight[nx][ny])
+                        new_dist = cur_dist + 1
+
+                        if (self.weighted_dist[nx][ny] > new_weighted_dist or
+                                (self.weighted_dist[nx][ny] == new_weighted_dist and self.dist[nx][ny] > new_dist)):
+                            self.weighted_dist[nx][ny] = new_weighted_dist
+                            self.dist[nx][ny] = new_dist
+                            self.prev[nx][ny] = (x, y)
+                            add(nx, ny)
+
+                        elif self.dist[nx][ny] > new_dist:
+                            self.weighted_dist[nx][ny] = new_weighted_dist
                             self.dist[nx][ny] = new_dist
                             self.prev[nx][ny] = (x, y)
                             add(nx, ny)
 
             dijkstra()
-            dst = float('inf')
+            min_dist = float('inf')
             nx, ny = 1, 1
 
             for player in list(get_players(globals.entities)):
                 x, y = player.x, player.y
-                if in_valid_range(x, y, globals.cols, globals.rows) and self.used[x][y] and self.dist[x][y] < dst:
-                    dst = self.dist[x][y]
+                if in_valid_range(x, y, globals.cols, globals.rows) and self.used[x][y] and self.dist[x][y] < min_dist:
+                    min_dist = self.dist[x][y]
                     nx, ny = x, y
 
-            if dst < float('inf'): # there is player that can be reached
+            if min_dist < float('inf'): # there is player that can be reached
                 self.dest_x, self.dest_y = nx, ny
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
-                if dst < self.bomb_power:
+                if min_dist < self.bomb_power:
                     # print(dst, self.bomb_power)
                     self.spawn_bomb()
                     self.moving = 0
@@ -202,6 +213,9 @@ class AggressiveBot(Bot, BombSpawnable):
                 self.dist = [
                     [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
                 ]
+                self.weighted_dist = [
+                    [0 for _ in range(globals.rows)] for _ in range(globals.cols)
+                ]
                 self.prev = [
                     [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
                 ]
@@ -211,57 +225,73 @@ class AggressiveBot(Bot, BombSpawnable):
                 dijkstra()
 
             else:
-                dst = -1
-                farthest = []
+                min_dist = float('inf')
+                max_dist = float('-inf')
+                min_weighted_dist = float('inf')
+                destinations = []
                 for x in range(globals.cols):
                     for y in range(globals.rows):
-                        if self.weight[x][y] == 0 and self.used[x][y]:
-                            if self.dist[x][y] > dst:
-                                dst = self.dist[x][y]
+                        if self.used[x][y]:
+                            if self.weighted_dist[x][y] < min_weighted_dist:
+                                min_weighted_dist = self.weighted_dist[x][y]
 
-                if dst == -1: # if anyway will be damaged by bomb, at least try to leave
+                for x in range(globals.cols):
+                    for y in range(globals.rows):
+                        if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                            if self.dist[x][y] < min_dist:
+                                min_dist = self.dist[x][y]
+                            if self.dist[x][y] > max_dist:
+                                max_dist = self.dist[x][y]
+
+                for x in range(globals.cols):
+                    for y in range(globals.rows):
+                        if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                            if self.dist[x][y] == max_dist:
+                                destinations.append((x, y))
+
+                if max_dist > self.bomb_power:
+                    self.spawn_bomb()
+                    destinations.clear()
+                    min_dist = float('inf')
                     for x in range(globals.cols):
                         for y in range(globals.rows):
-                            if self.used[x][y]:
-                                if self.dist[x][y] > dst:
-                                    dst = self.dist[x][y]
+                            if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                                if self.bomb_power < self.dist[x][y] < min_dist:
+                                    min_dist = self.dist[x][y]
 
-                for x in range(globals.cols):
-                    for y in range(globals.rows):
-                        if self.weight[x][y] == 0 and self.used[x][y]:
-                            if self.dist[x][y] >= dst:
-                                farthest.append((x, y))
+                    for x in range(globals.cols):
+                        for y in range(globals.rows):
+                            if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                                if self.dist[x][y] == min_dist:
+                                    destinations.append((x, y))
 
-                if (self.dest_x, self.dest_y) not in farthest and len(farthest) > 0:
+                if (self.dest_x, self.dest_y) not in destinations and destinations:
                     # if current goal is already one of the best options, then we don't update
-                    nx, ny = farthest[rand(0, len(farthest))]
+                    nx, ny = destinations[rand(0, len(destinations))]
                     self.dest_x, self.dest_y = nx, ny
                     self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
-                print(self.x, self.y, self.dest_x, self.dest_y)
-                print(self.weight[self.dest_x][self.dest_y], self.dest_x, self.dest_y)
-
                 queue.clear()
-
                 self.used = [
                     [False for _ in range(globals.rows)] for _ in range(globals.cols)
                 ]
                 self.dist = [
                     [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
                 ]
+                self.weighted_dist = [
+                    [0 for _ in range(globals.rows)] for _ in range(globals.cols)
+                ]
                 self.prev = [
                     [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
                 ]
-                self.dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
+                self.weighted_dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
+                self.dist[self.dest_x][self.dest_y] = 0
+
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 add(self.dest_x, self.dest_y)
                 dijkstra()
-                self.must_spawn_bomb = True
-                
 
-                # print(self.x, self.y, dst, self.dest_x, self.dest_y, self.dist[self.dest_x][self.dest_y])
                 self.moving = 1
-                # self.spawn_bomb(is_simulation=True)
 
 def get_aggressive_bots(entities):
     res = set()

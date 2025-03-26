@@ -63,5 +63,4 @@ class BombSpawnable(Entity):
         from entitites.bot import get_bots
         # Recalculate distances (=> destination)
         for entity in get_bots(list(globals.entities)):
-            print("recalc")
             entity.moving = 0
