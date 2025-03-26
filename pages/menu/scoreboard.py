@@ -1,6 +1,6 @@
 import pygame
 import globals
-from utils import paint_api
+from utils import paint_api, scoreboard_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked
 
@@ -15,18 +15,9 @@ def menu_scoreboard():
         color=(255, 255, 255),
         key="scoreboard_title",
     ) #endregion
-    #something
-    for index, score in enumerate():
-        paint_api.mount_text(  #region parameters
-            px_x=globals.CENTER_X,
-            px_y=globals.CENTER_Y - 250 + index * 50,
-            layer=globals.TEXT_LAYER,
-            align="center",
-            text=f"{index + 1}. {score}",
-            font_size=30,
-            color=(255, 255, 255),
-            key=f"score_{index}",
-        )  #endregion
+    display_scoreboard = scoreboard_api.load_scoreboard()
+
+    
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
