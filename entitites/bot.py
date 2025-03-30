@@ -33,7 +33,7 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
             [0 for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.dist = [
-            [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
+            [globals.inf for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.weighted_dist = [
             [0 for _ in range(globals.rows)] for _ in range(globals.cols)

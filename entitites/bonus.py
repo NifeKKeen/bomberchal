@@ -17,13 +17,13 @@ class Bonus(Entity):
         # Capacity - increases capacity (bomb_allowed) of collector by 1 for 10 seconds (does not apply for boss)
         # Life - adds extra life for collector (for boss will be added 10 lives, but with 20% chance)
 
-        self.activated_tick = float('inf')
+        self.activated_tick = globals.inf
         self.activation_timer = kwargs.get("timer", None)
 
         if self.activation_timer is None:
             self.activation_timer = globals.map_bonus_type_to_timer[self.type]
         else:
-            self.activation_timer = float('inf')
+            self.activation_timer = globals.inf
 
         self.collector_key = kwargs.get("collector_key", None)  # which entity collected bonus
         self.payload = kwargs.get("payload", None)

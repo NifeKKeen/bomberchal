@@ -410,7 +410,7 @@ def game(**kwargs):
             x, y = int(entity.x), int(entity.y)
             if not in_valid_range(x, y, globals.cols, globals.rows):
                 continue
-            globals.field_weight[x][y] = float('inf')
+            globals.field_weight[x][y] = globals.inf
 
     globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
@@ -423,8 +423,6 @@ def game(**kwargs):
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
-            if isinstance(entity, AggressiveBot):
-                entity.cur_boredom_countdown = max(entity.cur_boredom_countdown - 1, 0)
             entity.think()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error

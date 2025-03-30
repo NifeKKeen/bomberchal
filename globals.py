@@ -110,6 +110,7 @@ time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
 scores = dict()
 game_tick = 0  # current game's tick
+inf = 1e9 # formal infinity used in field_weight and pathfinding in general
 
 SNAPSHOT_ALLOWED = True
 SNAPSHOT_CAPTURE_DELAY = 10  # delay in ticks
@@ -119,7 +120,7 @@ cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
 entities = set()
-initial_bots_count = [0, 0, 50, 0]  # original, wandering, aggressive, boss
+initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
 initial_obstacle_count = 200
 
 # GAME CONSTRAINTS

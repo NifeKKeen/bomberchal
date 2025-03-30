@@ -79,21 +79,13 @@ class WanderingBot(Bot):
         if self.moving == 0:
             queue = []
             bombs_lst = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
-            self.used = [
-                [False for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weight = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.dist = [
-                [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weighted_dist = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.prev = [
-                [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
+            for x in range(globals.cols):
+                for y in range(globals.rows):
+                    self.used[x][y] = False
+                    self.weight[x][y] = 0
+                    self.dist[x][y] = globals.inf
+                    self.weighted_dist[x][y] = 0
+                    self.prev[x][y] = (-1, -1)
 
             def add(x, y):
                 heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
@@ -121,7 +113,7 @@ class WanderingBot(Bot):
                     x, y = int(entity.x), int(entity.y)
                     if not in_valid_range(x, y, globals.cols, globals.rows):
                         continue
-                    self.weight[x][y] = float('inf')
+                    self.weight[x][y] = globals.inf
 
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
                 self.weighted_dist[self.x][self.y] = self.weight[self.x][self.y]
@@ -139,7 +131,7 @@ class WanderingBot(Bot):
                         nx, ny = x + dx, y + dy
                         if not in_valid_range(nx, ny, globals.cols, globals.rows):
                             continue
-                        if self.weight[x][y] == float('inf'):
+                        if self.weight[x][y] == globals.inf:
                             continue
 
                         new_weighted_dist = max(cur_weighted_dist, self.weight[nx][ny])
@@ -159,9 +151,9 @@ class WanderingBot(Bot):
                             add(nx, ny)
 
             dijkstra()
-            min_dist = float('inf')
+            min_dist = globals.inf
             max_dist = float('-inf')
-            min_weighted_dist = float('inf')
+            min_weighted_dist = globals.inf
             destinations = []
             for x in range(globals.cols):
                 for y in range(globals.rows):
@@ -191,18 +183,12 @@ class WanderingBot(Bot):
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
             queue.clear()
-            self.used = [
-                [False for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.dist = [
-                [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weighted_dist = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.prev = [
-                [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
+            for x in range(globals.cols):
+                for y in range(globals.rows):
+                    self.used[x][y] = False
+                    self.dist[x][y] = globals.inf
+                    self.weighted_dist[x][y] = 0
+                    self.prev[x][y] = (-1, -1)
             self.weighted_dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
             self.dist[self.dest_x][self.dest_y] = 0
 

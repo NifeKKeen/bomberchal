@@ -63,8 +63,6 @@ class Controllable(Entity, ControllableProtocol):
         else:
             self.movement_timer += 1
 
-        print(self.movement_timer)
-
         if self.movement_timer >= 30: # if something controllable changes for more than 200 ticks, distances recalculating
             self.movement_timer = 0
 

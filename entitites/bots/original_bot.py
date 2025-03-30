@@ -2,7 +2,7 @@ import globals
 from entitites.bot import Bot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
-from utils.helpers import rand
+from utils.helpers import rand, in_valid_range
 
 
 class OriginalBot(Bot, BombSpawnable):
@@ -30,6 +30,25 @@ class OriginalBot(Bot, BombSpawnable):
 
         if rand(0, 100) == 0: # to simulate randomness like in actual game
             self.direction ^= 1
+            locked = True
+
+            dx, dy = globals.BFS_DIRECTIONS[self.direction]
+            nx, ny = self.x + dx, self.y + dy
+            if in_valid_range(nx, ny, globals.cols, globals.rows):
+                if globals.field_weight[nx][ny] < globals.inf:
+                    locked = False
+
+            self.direction ^= 2
+
+            dx, dy = globals.BFS_DIRECTIONS[self.direction]
+            nx, ny = self.x + dx, self.y + dy
+            if in_valid_range(nx, ny, globals.cols, globals.rows):
+                if globals.field_weight[nx][ny] == globals.inf:
+                    locked = False
+
+            self.direction ^= 2
+            if locked:
+                self.direction ^= 1
 
         if rand(0, 10000) == 0:
             self.spawn_bomb()
