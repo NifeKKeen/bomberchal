@@ -8,14 +8,21 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
 
 
+PLAYER_KEY = "player"
+
+
 class Player(BonusCollectable, Collidable, Controllable, BombSpawnable, Movable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
+        self.entity_key = PLAYER_KEY
 
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(3000))
         self.character_skin_key = kwargs.get("character_skin_key", "ch1")
+        self.player_id = kwargs.get("player_id")
+        if self.player_id is None:
+            raise "player_id must be specified!"
 
         self.image_size = self.px_w + 16, self.px_h
         self.set_image_path(globals.character_frames[self.character_skin_key]["top_static"][0])

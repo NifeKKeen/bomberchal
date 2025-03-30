@@ -2,6 +2,7 @@ import pygame, sys
 from pygame.locals import *
 
 from pages.menu.menu import menu
+from pages.menu.play import play
 from pages.menu.settings import settings
 from pages.menu.customization import menu_customization
 from pages.menu.scoreboard import menu_scoreboard 
@@ -38,6 +39,8 @@ if __name__ == "__main__":
                 globals.frame_event_code_pairs.add((event.type, event.button))
             if event.type in (KEYDOWN, KEYUP):
                 globals.frame_event_code_pairs.add((event.type, event.key))
+            if event.type == KEYDOWN:
+                globals.frame_unicodes.add(event.unicode)
             globals.frame_event_types.add(event.type)
 
             globals.frame_keys_map = pygame.key.get_pressed()
@@ -49,6 +52,8 @@ if __name__ == "__main__":
 
         if globals.current_page == "menu":
             menu(is_setup=globals.switched_page_this_frame)
+        elif globals.current_page == "menu/play":
+            play(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "menu/settings":
             settings(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "menu/customization":
@@ -67,6 +72,7 @@ if __name__ == "__main__":
 
         # Clean up
         globals.frame_event_code_pairs.clear()
+        globals.frame_unicodes.clear()
         globals.frame_event_types.clear()
         globals.frame_keys.clear()
 

@@ -1,5 +1,6 @@
 import globals
 from pygame.locals import *
+
 from utils.helpers import rand, get_field_pos, get_tick_from_ms
 from entitites.entity import Entity
 
@@ -18,7 +19,6 @@ class BombSpawnable(Entity):
 
     def spawn_bomb(self):
         from entitites.bomb import Bomb, get_bombs
-
         if self.bomb_allowed <= 0 or self.cur_bomb_countdown > 0:
             return
 
@@ -31,7 +31,7 @@ class BombSpawnable(Entity):
             return
 
         # print(self.x, self.y, self.px_x, self.px_y)
-        bombpx_x, bombpx_y = get_field_pos(self.x, self.y)
+        bomb_px_x, bomb_px_y = get_field_pos(self.x, self.y)
 
         self.cur_bomb_countdown = self.bomb_countdown
         self.bombs_spawned += 1
@@ -50,10 +50,15 @@ class BombSpawnable(Entity):
 
             x=self.x,
             y=self.y,
-            px_x=bombpx_x,
-            px_y=bombpx_y,
+            px_x=bomb_px_x,
+            px_y=bomb_px_y,
             px_w=globals.CELL_SIZE,
             px_h=globals.CELL_SIZE,
 
-            color=([rand(64, 128)] * 3),
+            color=([rand(64, 128)] * 3)
         )  #endregion
+
+        from entitites.bot import get_bots
+        # Recalculate distances (=> destination)
+        for entity in get_bots(list(globals.entities)):
+            entity.moving = 0

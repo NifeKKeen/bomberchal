@@ -1,9 +1,14 @@
 import globals
+from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.BonusCollectable import BonusCollectable
 from entitites.interfaces.Collidable import Collidable
+from entitites.player import get_players
 from utils.helpers import rand
 from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
+
+
+BOT_KEY = "bot"
 
 
 class Bot(BonusCollectable, Movable, Collidable, Entity):
@@ -11,6 +16,7 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
+        self.entity_key = BOT_KEY
 
         self.texture_type = "wandering"
 
@@ -27,10 +33,13 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
         self.used = [
             [False for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
-        self.blocked = [
-            [False for _ in range(globals.rows)] for _ in range(globals.cols)
+        self.weight = [
+            [0 for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.dist = [
+            [globals.inf for _ in range(globals.rows)] for _ in range(globals.cols)
+        ]
+        self.weighted_dist = [
             [0 for _ in range(globals.rows)] for _ in range(globals.cols)
         ]
         self.prev = [

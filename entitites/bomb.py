@@ -8,11 +8,15 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.interfaces.Movable import Movable
 
 
+BOMB_KEY = "bomb"
+
+
 class Bomb(Movable, Controllable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 2
+        self.entity_key = BOMB_KEY
 
         self.timer = kwargs.get("timer", get_tick_from_ms(0))  # in ticks
         self.power = kwargs.get("power", 1)
@@ -42,7 +46,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             self.set_image_path(globals.bomb_frames[2])
 
 
-    def spread_fire(self):
+    def spread_fire(self, exploder_key):
         if not in_valid_range(self.x, self.y, len(globals.field_fire_state), len(globals.field_fire_state[0])) or globals.field_fire_state[self.x][self.y] > self.power:
             return
 
@@ -56,7 +60,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             power=self.power,
             timer=get_tick_from_ms(500),
             spread_timer=get_tick_from_ms(25),
-            spawner_key=self.key,
+            spawner_key=exploder_key,
 
             x=self.x,
             y=self.y,
@@ -71,9 +75,11 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         if fire.spread_timer == 0:
             fire.spread()
 
-    def explode(self):
+    def explode(self, exploder_key=None):
         if self.exploded:
             return
+        if exploder_key is None:
+            exploder_key = self.spawner_key
 
         self.exploded = True
         play_explosion_sound(volume=.2)
@@ -82,7 +88,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             spawner = globals.map_key_sprite[self.spawner_key]
             spawner.bomb_allowed += 1
 
-        self.spread_fire()
+        self.spread_fire(exploder_key)
 
         self.kill()
 

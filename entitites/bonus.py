@@ -2,7 +2,15 @@ import globals
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from utils.helpers import rand
-from entitites.entity import Entity
+from entitites.entity import Entity, is_entity_key, add_score
+
+BONUS_KEY = "bonus"
+MAP_SEED_BONUS_TYPE = {
+    0: globals.BONUS_SPEED,
+    1: globals.BONUS_POWER,
+    2: globals.BONUS_CAPACITY,
+    3: globals.BONUS_LIFE,
+}
 
 
 class Bonus(Entity):
@@ -10,6 +18,7 @@ class Bonus(Entity):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER
+        self.entity_key = BONUS_KEY
 
         self.type = kwargs.get("type", globals.BONUS_SPEED)
         # Speed - multiplies speed of collector by 2 (1.25 for bosses, 1.5 for aggressive bots) for 4 seconds, but at most 8
@@ -17,13 +26,13 @@ class Bonus(Entity):
         # Capacity - increases capacity (bomb_allowed) of collector by 1 for 10 seconds (does not apply for boss)
         # Life - adds extra life for collector (for boss will be added 10 lives, but with 20% chance)
 
-        self.activated_tick = float('inf')
+        self.activated_tick = globals.inf
         self.activation_timer = kwargs.get("timer", None)
 
         if self.activation_timer is None:
             self.activation_timer = globals.map_bonus_type_to_timer[self.type]
         else:
-            self.activation_timer = float('inf')
+            self.activation_timer = globals.inf
 
         self.collector_key = kwargs.get("collector_key", None)  # which entity collected bonus
         self.payload = kwargs.get("payload", None)
@@ -32,6 +41,13 @@ class Bonus(Entity):
         self.set_image_path(globals.map_bonus_type_to_path[self.type])
 
     def activate(self):
+        from entitites.player import PLAYER_KEY
+        print(self.collector_key)
+
+        if is_entity_key(PLAYER_KEY, self.collector_key):
+            print("!!!!!")
+            add_score(self.collector_key, globals.scoring["USE"][self.type])
+
         collector = globals.map_key_sprite[self.collector_key]
         if self.activated or not collector.alive():
             return
@@ -96,8 +112,6 @@ class Bonus(Entity):
         collector.bonus_keys.remove(self.key)
         self.kill()
 
-def bonus_types():
-    return [globals.BONUS_SPEED, globals.BONUS_POWER, globals.BONUS_CAPACITY, globals.BONUS_LIFE]
 
 def get_bonuses(entities):
     res = set()

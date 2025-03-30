@@ -1,10 +1,17 @@
 import math
-from collections import deque
-from pygame.locals import K_a, K_d, K_w, K_s, K_SPACE, K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN  # необходимые ключи
-from config import load_controls
 import utils.helpers
 
-# PYGAME VARIABLES
+from collections import deque
+from pygame.locals import K_a, K_d, K_w, K_s, K_LEFT, K_RIGHT, K_UP, K_DOWN
+from config import load_controls
+from entitites.bots.aggressive_bot import AGGRESSIVE_BOT_KEY
+from entitites.bots.boss_bot import BOSS_BOT_KEY
+from entitites.bots.original_bot import ORIGINAL_BOT_KEY
+from entitites.bots.wandering_bot import WANDERING_BOT_KEY
+from entitites.obstacle import MAP_SEED_OBSTACLE_KEY
+from entitites.player import PLAYER_KEY
+
+# region PYGAME VARIABLES
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 DISPLAYSURF = None  # pygame.display.set_mode((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
@@ -12,16 +19,21 @@ Frame = None  # pygame.time.Clock()
 FPS = 60
 all_sprites = None  # pygame.sprite.LayeredUpdates()
 tick = 0  # whole app's tick
+# endregion
 
-# FOR PAINT RENDER API
+# region FOR PAINT RENDER API
 to_render_keys = set()
 map_key_sprite = dict()
+# endregion
 
-# ASSETS
+# region ASSETS
 SOUND_PATH = "assets/sound/"
 MENU_MUSIC_PATH = "assets/sound/menu3.mp3"
-GAME_MUSIC_PATH1 = "assets/sound/BG.mpeg"
-GAME_MUSIC_PATH2 = "assets/sound/BFG Division 2020.mp3"
+MAP_GAMEMODE_MUSIC = {
+    "pve": ["assets/sound/BG.mpeg", .1],
+    "bossfight": ["assets/sound/BFG Division 2020.mp3", .4],
+    "duel": ["assets/sound/BFG Division 2020.mp3", .4],
+}
 EXPLOSION_SOUND_PATH = "assets/sound/explosion1.mp3"
 
 menu_background_img = None
@@ -63,9 +75,10 @@ bricks_frames = [f"assets/images/terrain/wall1.png"]
 bricks_crack_frames = [f"assets/images/terrain/wall_crack{i}.png" for i in range(1, 3)]
 border_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
 grass_frames = ["assets/images/terrain/grass1.png"]
-bonus_frames = ["assets/images/bonus/bomb_bonus.png", "assets/images/bonus/explosion.png", "assets/images/bonus/health.png"]
+bonus_frames = [f"assets/images/bonus/{bonus_type}.png" for bonus_type in ["bomb_bonus", "explosion", "health", "speed"]]
+# endregion
 
-# LAYOUT CONSTRAINTS
+# region LAYOUT CONSTRAINTS
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_HEIGHT // 2
 SHADOW_OFFSET = 4
@@ -77,50 +90,65 @@ SHADOW_LAYER = 59
 LAYER_SHIFT = 100  # for popups
 BASE_ENTITY_LAYER = 10
 BASE_OBSTACLE_LAYER = 20
+# endregion
 
-# MIXER VARIABLES
+# region MIXER VARIABLES
 music_muted = True
 sound_muted = False
 current_music = None  # currently playing music name (as relative path to a file)
+# endregion
 
-# FONT
+# region FONT
 FONT_PARAMETER = (None, 36)
 TEXT_FONT = "assets/font/Pixeloid_Sans.ttf"
+# endregion
 
-# NAVIGATION
+# region NAVIGATION
 current_page = "menu"
 switched_page = False  # can change in current frame
 switched_page_this_frame = True # will be updated when frame ends
+# endregion
 
-# EVENTS
+# region EVENTS
 frame_event_code_pairs = set()  # {(event_type, event_code)}
+frame_unicodes = set() # # {(event_type, event_unicode)}
 frame_event_types = set()  # {event_type}
 frame_keys_map = None  # pygame.get_pressed()
 frame_keys = []  # list of currently pressed keys
+# endregion
 
-# GAME STATES
-cols = 0
-rows = 0
+# region GAME STATES
+cols = 21
+rows = 21
 field = None
 field_fire_state = None  # power of fire in specific cell in ticks
+field_free_state = None  # True if cell is free (empty or bonus), else False
+field_weight = None  # weights of cells
 paused = False
 time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
 scores = dict()
 game_tick = 0  # current game's tick
+inf = 1e9 # formal infinity used in field_weight and pathfinding in general
 
 SNAPSHOT_ALLOWED = True
-SNAPSHOT_CAPTURE_DELAY = 10  # delay in ticks
+SNAPSHOT_CAPTURE_DELAY = 15  # delay in ticks
 state_snapshots = deque()
 STATE_SNAPSHOTS_LIMIT = 4 * math.ceil(FPS / SNAPSHOT_CAPTURE_DELAY)  # events from last 4 seconds
 cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
 entities = set()
-initial_bots_count = [5, 5, 5, 0]  # original, wandering, aggressive, boss
-initial_obstacle_count = 200
+INITIAL_ORIGINAL_BOTS = 5
+INITIAL_WANDERING_BOTS = 5
+INITIAL_AGGRESSIVE_BOTS = 5
+INITIAL_BOSS_BOTS = 0
+INITIAL_BOXES = 50
+INITIAL_BRICKS = 30
+INITIAL_BONUS_SPAWN_DELAY = 400
+# endregion
 
-# GAME CONSTRAINTS
+# region GAME CONSTRAINTS
 CELL_SIZE = 32
 PLAYER_CELL_SIZE = 28
 VOID_CELL = 0
@@ -130,12 +158,13 @@ ORIGINAL_BOT_CELL = 3  # starting cell for original bot
 WANDERING_BOT_CELL = 4  # starting cell for wandering bot
 AGGRESSIVE_BOT_CELL = 5  # starting cell for aggressive bot
 BOSS_BOT_CELL = 6  # starting cell for boss bot
-BONUS_SPEED = "Speed"
-BONUS_POWER = "Power"
-BONUS_CAPACITY = "Capacity"
-BONUS_LIFE = "Life"
+BONUS_SPEED = "speed"
+BONUS_POWER = "power"
+BONUS_CAPACITY = "capacity"
+BONUS_LIFE = "life"
+# endregion
 
-# TEXTURE TYPES
+# region TEXTURE TYPES
 OBSTACLE_CELL_BORDER1 = 10
 OBSTACLE_CELL_BORDER2 = 11
 OBSTACLE_CELL_BOX1 = 12
@@ -153,13 +182,14 @@ map_obstacle_type_to_path = {
     OBSTACLE_CELL_BRICKS_STATE2: bricks_crack_frames[1],
 }
 map_bonus_type_to_path = {
-    BONUS_SPEED: None ,
+    BONUS_SPEED: bonus_frames[3],
     BONUS_POWER: bonus_frames[1],
     BONUS_CAPACITY: bonus_frames[0],
     BONUS_LIFE: bonus_frames[2],
 }
+# endregion
 
-# OBJECT PROPERTIES
+# region OBJECT PROPERTIES
 map_obstacle_seed_to_props = {
     0: {
         "stage_texture_types": [
@@ -188,8 +218,39 @@ map_bonus_type_to_timer = {
     BONUS_CAPACITY: utils.helpers.get_tick_from_ms(30000),
     BONUS_SPEED: utils.helpers.get_tick_from_ms(5000),
 }
+# endregion
 
-# MOVE DIRECTIONS
+# region SCORING
+scoring = {  # NOTE: for game_mode="dual" this variable is meaningless
+    "KILL": {
+        BOSS_BOT_KEY: 10000,
+        AGGRESSIVE_BOT_KEY: 200,
+        ORIGINAL_BOT_KEY: 100,
+        WANDERING_BOT_KEY: 100,
+        MAP_SEED_OBSTACLE_KEY[1]: 10,
+        MAP_SEED_OBSTACLE_KEY[2]: 20,
+    },
+    "USE": {
+        BONUS_SPEED: 10,
+        BONUS_POWER: 10,
+        BONUS_CAPACITY: 5,
+        BONUS_LIFE: 10,
+    },
+    "DAMAGE": {
+        BOSS_BOT_KEY: 100,
+        AGGRESSIVE_BOT_KEY: 20,
+        ORIGINAL_BOT_KEY: 10,
+        WANDERING_BOT_KEY: 10,
+        MAP_SEED_OBSTACLE_KEY[1]: 3,
+        MAP_SEED_OBSTACLE_KEY[2]: 3,
+        PLAYER_KEY: -20,  # assuming the game mode is pve
+    },
+    "SELF_DAMAGE": -20,
+    "SELF_KILL": -100,
+}
+# endregion
+
+# region MOVE DIRECTIONS
 BFS_DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 UP_DIRECTION = (0, -1)
 RIGHT_DIRECTION = (1, 0)
@@ -201,8 +262,37 @@ MAP_DIRECTION = {
     "down": DOWN_DIRECTION,
     "left": LEFT_DIRECTION,
 }
+# endregion
 
-# CUSTOM SETTINGS VARIABLES
+# region CUSTOM SETTINGS VARIABLES
+MAX_USERNAME_LENGTH = 15
+usernames = ["", ""]
+
+setup_data = {
+    "ranges":
+        [  # label, texture_path, value, left_arrow sprite, value_text sprite, right_arrow sprite, step]
+            ["Boxes", map_obstacle_type_to_path[OBSTACLE_CELL_BOX1], INITIAL_BOXES, None, None, None, 10],
+            ["Bricks", map_obstacle_type_to_path[OBSTACLE_CELL_BRICKS], INITIAL_BRICKS, None, None, None, 10],
+            ["Bonuse delay", bonus_frames[0], INITIAL_BONUS_SPAWN_DELAY, None, None, None, 20],
+            ["Original bots", bot_frames["original"]["down_static"][0], INITIAL_ORIGINAL_BOTS, None, None, None, 1],
+            ["Aggressive bots", bot_frames["aggressive"]["down_static"][0], INITIAL_AGGRESSIVE_BOTS, None, None, None, 1],
+            ["Wandering bots", bot_frames["wandering"]["down_static"][0], INITIAL_WANDERING_BOTS, None, None, None, 1],
+            ["Rows", None, rows, None, None, None, 1],
+            ["Cols", None, cols, None, None, None, 1],
+        ],
+    "players": 1,
+    "index": {
+        "boxes": 0,
+        "bricks": 1,
+        "bonus_delay": 2,
+        "original_bots": 3,
+        "aggressive_bots": 4,
+        "wandering_bots": 5,
+        "rows": 6,
+        "cols": 7,
+    }
+}
+
 exp_key_p1, exp_key_p2 = load_controls()
 controls_players = [
     {
@@ -221,7 +311,6 @@ controls_players = [
     }
 ]
 
-
 skins = {
     "ch1": "assets/images/characters/ch1/down.png",
     "ch2": "assets/images/characters/ch2/down.png",
@@ -231,3 +320,4 @@ skins = {
 
 skin_p1_id = 1
 skin_p2_id = 2
+# endregion

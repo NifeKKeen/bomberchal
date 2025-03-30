@@ -24,10 +24,6 @@ class Controllable(Entity, ControllableProtocol):
         self.movement_timer = 0 # maybe should be renamed. Means time in ticks during which a movement and/or attack occurs
 
     def handle_event(self):
-        from entitites.bot import get_bots
-        from entitites.interfaces.BonusCollectable import BonusCollectable
-
-
         if not self.mounted:
             return
 
@@ -56,19 +52,21 @@ class Controllable(Entity, ControllableProtocol):
             self.attack_func(self)
             changes = True
 
-        if self.bonus_activation_key and is_pressed_once(self.bonus_activation_key) and isinstance(self, BonusCollectable):
-            self.activate_bonus_at(0)
+
+        if self.bonus_activation_key and is_pressed_once(self.bonus_activation_key):
+            from entitites.interfaces.BonusCollectable import BonusCollectable
+            if isinstance(self, BonusCollectable):
+                self.activate_bonus_at(0)
 
         if not changes:
             return
         else:
             self.movement_timer += 1
 
-        # print(self.movement_timer)
-
-        if self.movement_timer >= 20: # if something controllable changes for more than 20 ticks, distances recalculating
+        if self.movement_timer >= 30: # if something controllable changes for more than 200 ticks, distances recalculating
             self.movement_timer = 0
 
+            from entitites.bot import get_bots
             # if any player moves, recalculate distances (=> destination)
             for entity in get_bots(list(globals.entities)):
                 entity.moving = 0
