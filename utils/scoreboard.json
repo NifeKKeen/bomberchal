@@ -3,13 +3,13 @@
         {
             "username": "user1",
             "pve": {
-                "score": 0
+                "score": 100
             },
             "bossfight": {
-                "score": 0
+                "score": 100
             },
             "duel": {
-                "wins": 0,
+                "wins": 21,
                 "losses": 0,
                 "draws": 0
             }
@@ -64,13 +64,11 @@
             "bossfight": {
                 "score": 7
             },
-                "duel": {
+            "duel": {
                 "wins": 9,
                 "losses": 0,
                 "draws": 0
             }
         }
-              
     ]
-
 }

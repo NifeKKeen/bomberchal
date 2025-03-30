@@ -142,14 +142,46 @@ def menu_scoreboard():
         duel_text.set_color((255, 255, 255))
         bossfight_text.set_color((255, 255, 0))
       
+    for key in ["scoreboard_header"] + [f"scoreboard_line_{i}" for i in range(5)]:
+        if key in globals.map_key_sprite:
+            paint_api.unmount(key)
 
-    scoreboard_sprite = scoreboard_api.mount_scoreboard(
-        game_mode, 
-        px_x=globals.CENTER_X, 
-        px_y=globals.CENTER_Y + 50,
+    score_data = scoreboard_api.get_scoreboard(game_mode)
+    font_size = 30
+    padding = int(font_size * 0.8)
+    y_offset = globals.CENTER_Y - 100
+    if game_mode == "duel":
+        header_text = f"{'Username':<12} {'Wins':^6} {'Losses':^6} {'Draws':^6}"
+    else:
+        header_text = f"{'Username':<12} {'Score':^10}"
+    paint_api.mount_text(
+        px_x=globals.CENTER_X,
+        px_y=y_offset,
         align="center",
-        bg_color=(0,0,0,0)
-    )  
+        text=header_text,
+        font_size=font_size,
+        color=(255, 255, 255),
+        key="scoreboard_header",
+    )
+    y_offset += font_size + padding
+    for i, entry in enumerate(score_data):
+        if game_mode in ("pve", "bossfight"):
+            key_mode = "pve" if game_mode == "pve" else "bossfight"
+            line_text = f"{entry.get('username', ''):<12} {entry.get(key_mode, {}).get('score', 0):^10}"
+        elif game_mode == "duel":
+            duel = entry.get("duel", {"wins": 0, "losses": 0, "draws": 0})
+            line_text = f"{entry.get('username', ''):<12} {duel.get('wins', 0):^6} {duel.get('losses', 0):^6} {duel.get('draws', 0):^6}"
+        paint_api.mount_text(
+            px_x=globals.CENTER_X,
+            px_y=y_offset,
+            align="center",
+            text=line_text,
+            font_size=font_size,   
+            color=(255, 255, 255),
+            key=f"scoreboard_line_{i}",
+        )
+        y_offset += font_size + padding
+    # print("game mode", game_mode)
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
