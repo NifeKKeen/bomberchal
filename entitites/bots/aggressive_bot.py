@@ -108,11 +108,9 @@ class AggressiveBot(Bot, BombSpawnable):
                     self.must_spawn_bomb = False
 
             queue = []
-            bombs_lst = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
             for x in range(globals.cols):
                 for y in range(globals.rows):
                     self.used[x][y] = False
-                    self.weight[x][y] = 0
                     self.dist[x][y] = float('inf')
                     self.weighted_dist[x][y] = 0
                     self.prev[x][y] = (-1, -1)
@@ -120,30 +118,9 @@ class AggressiveBot(Bot, BombSpawnable):
             def add(x, y):
                 heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
 
-            # self.spawn_bomb(is_simulation=True)
-
-            for bomb in bombs_lst:
-                for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power + 1)):
-                    for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power + 1)):
-                        # TODO: Peredelat' na is_simulation
-                        if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
-                            self.weight[fx][fy] += bomb.power - (abs(bomb.x - fx) + abs(bomb.y - fy)) + 1
-
-            for entity in list(globals.entities):
-                if isinstance(entity, Fire):
-                    x, y = int(entity.x), int(entity.y)
-                    if not in_valid_range(x, y, globals.cols, globals.rows):
-                        continue
-                    self.weight[x][y] += 10
-
-                if isinstance(entity, Obstacle) or (isinstance(entity, Bot) and entity != self):
-                    x, y = int(entity.x), int(entity.y)
-                    if not in_valid_range(x, y, globals.cols, globals.rows):
-                        continue
-                    self.weight[x][y] = float('inf')
 
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
-                self.weighted_dist[self.x][self.y] = self.weight[self.x][self.y]
+                self.weighted_dist[self.x][self.y] = globals.field_weight[self.x][self.y]
                 self.dist[self.x][self.y] = 0
                 add(self.x, self.y)
 
@@ -158,10 +135,10 @@ class AggressiveBot(Bot, BombSpawnable):
                         nx, ny = x + dx, y + dy
                         if not in_valid_range(nx, ny, globals.cols, globals.rows):
                             continue
-                        if self.weight[x][y] == float('inf'):
+                        if globals.field_weight[x][y] == float('inf'):
                             continue
 
-                        new_weighted_dist = max(cur_weighted_dist, self.weight[nx][ny])
+                        new_weighted_dist = max(cur_weighted_dist, globals.field_weight[nx][ny])
                         new_dist = cur_dist + 1
 
                         if (self.weighted_dist[nx][ny] > new_weighted_dist or
@@ -207,7 +184,7 @@ class AggressiveBot(Bot, BombSpawnable):
                         self.weighted_dist[x][y] = 0
                         self.prev[x][y] = (-1, -1)
 
-                self.dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
+                self.dist[self.dest_x][self.dest_y] = globals.field_weight[self.dest_x][self.dest_y]
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 add(self.dest_x, self.dest_y)
                 dijkstra()
@@ -294,7 +271,7 @@ class AggressiveBot(Bot, BombSpawnable):
                         self.weighted_dist[x][y] = 0
                         self.prev[x][y] = (-1, -1)
 
-                self.weighted_dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
+                self.weighted_dist[self.dest_x][self.dest_y] = globals.field_weight[self.dest_x][self.dest_y]
                 self.dist[self.dest_x][self.dest_y] = 0
 
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
@@ -309,3 +286,6 @@ def get_aggressive_bots(entities):
         if isinstance(entity, AggressiveBot):
             res.add(entity)
     return res
+
+
+
