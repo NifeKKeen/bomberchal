@@ -120,7 +120,7 @@ class AggressiveBot(Bot, BombSpawnable):
 
 
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
-                self.weighted_dist[self.x][self.y] = globals.field_weight[self.x][self.y]
+                self.weighted_dist[self.x][self.y] = 0
                 self.dist[self.x][self.y] = 0
                 add(self.x, self.y)
 
