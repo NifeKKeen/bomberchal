@@ -1,6 +1,9 @@
 import globals
 import random
 
+from pages.menu.play import get_setup_data_value
+
+
 # Generator like in real game
 def generate(cols, rows, game_mode):
     boss_fight = (True if game_mode == "bossfight" else False)
@@ -9,11 +12,13 @@ def generate(cols, rows, game_mode):
                                     i == 0 or i == cols - 1 or j == 0 or j == rows - 1) else globals.VOID_CELL
                                     for j in range(rows)] for i in range(cols)
     ]
-    bot_count = globals.initial_bots_count
+    bot_count = [get_setup_data_value("original_bots"), get_setup_data_value("wandering_bots"), get_setup_data_value("aggressive_bots"), 0]
     if boss_fight:
         bot_count = [0] * 4 # only boss, and position will be defined later
 
-    obstacle_count = globals.initial_obstacle_count
+    boxes_count = get_setup_data_value("boxes")
+    bricks_count = get_setup_data_value("bricks")
+    obstacle_count = boxes_count + bricks_count
     objects = []
     current = 0
     max_bomb_power = 8

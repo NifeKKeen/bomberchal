@@ -1,5 +1,5 @@
-from os import path
 import globals, pygame
+from os import path
 from utils.helpers import rand
 
 
@@ -13,9 +13,11 @@ def play_music(music_path, volume = 1, override = False, ignore_mute = False):
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.play(-1)
 
+
 def stop_music():
     globals.current_music = None
     pygame.mixer.music.stop()
+
 
 def play_sound(sound_path, volume = 1, ignore_mute = False):
     if not ignore_mute and globals.sound_muted:
@@ -25,11 +27,13 @@ def play_sound(sound_path, volume = 1, ignore_mute = False):
     sound.set_volume(volume)
     sound.play()
 
+
 def play_menu_music(randomly = True, index = None, volume = 1, ignore_mute = False):
     if not ignore_mute and globals.music_muted:
         return
 
     play_music(globals.MENU_MUSIC_PATH, volume=volume)
+
 
 def play_explosion_sound(randomly = True, index = None, volume = 1, ignore_mute = False):
     if not ignore_mute and globals.sound_muted:

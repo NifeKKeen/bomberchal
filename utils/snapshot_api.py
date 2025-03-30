@@ -20,6 +20,7 @@ def restore_last_snapshot():
     last_state_snapshot = globals.state_snapshots.pop()
     last_state_snapshot.killed_sprites.update(globals.cur_state_killed_sprites)
     last_state_snapshot.spawned_sprites.update(globals.cur_state_spawned_sprites)
+    last_state_snapshot.try_snapshot_globals()
 
     globals.__dict__.update(last_state_snapshot.globals_snapshot)
 

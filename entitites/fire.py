@@ -4,11 +4,15 @@ from entitites.entity import Entity
 from entitites.interfaces.Collidable import Collidable
 
 
+FIRE_KEY = "player"
+
+
 class Fire(Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 8
+        self.entity_key = FIRE_KEY
 
         self.power = kwargs.get("power", 1)
         self.timer = kwargs.get("timer", get_tick_from_ms(300))
@@ -36,7 +40,7 @@ class Fire(Collidable, Entity):
             self.spread()
 
         if self.tick > self.timer:
-            self.self_destroy()
+            self.kill()
             return
 
         if self.tick < self.timer // 3:
@@ -50,9 +54,9 @@ class Fire(Collidable, Entity):
             self.px_h = self.image_size[1] - 6
             self.set_image_path(globals.explosion_frames[2])
 
-    def self_destroy(self):
+    def kill(self, remove_from_memory=False, killer_key=None):
         globals.field_fire_state[self.x][self.y] = 0
-        self.kill()
+        super().kill(remove_from_memory, killer_key)
 
     def spread_bfs(self):
         directions = globals.BFS_DIRECTIONS
@@ -162,3 +166,11 @@ class Fire(Collidable, Entity):
             self.spread_straight()
         else:
             raise Exception("Unknown type of spread!")
+
+
+def get_fires(entities):
+    res = set()
+    for entity in entities:
+        if isinstance(entity, Fire):
+            res.add(entity)
+    return res
