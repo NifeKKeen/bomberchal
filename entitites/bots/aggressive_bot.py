@@ -1,4 +1,5 @@
 from entitites.bot import Bot
+from entitites.fire import get_fires
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import get_pos, get_field_pos, in_valid_range, rand
@@ -27,11 +28,24 @@ class AggressiveBot(Bot, BombSpawnable):
         # TODO: If bot is unable to reach any player, but can safely spawn bomb to break obstacles, it should do that.
         # TODO: Otherwise, if then bomb will damage bot, it will walk within reachable cells
 
+        locked = True
+        for dx, dy in globals.BFS_DIRECTIONS:
+            nx, ny = self.x + dx, self.y + dy
+            if not in_valid_range(nx, ny, globals.cols, globals.rows):
+                continue
+            if globals.field_free_state[nx][ny]:
+                locked = False
+                break
+
+        if locked:
+            return
+
         from entitites.player import Player, get_players
         from entitites.bomb import Bomb
+        from entitites.bomb import get_bombs
+        from entitites.fire import Fire
         from entitites.bonus import Bonus
-
-        # print(self.moving, self.x, self.y, self.dest_x, self.dest_y)
+        from entitites.obstacle import Obstacle
 
         if self.moving == 0 and self.must_spawn_bomb:
             self.moving = 1
@@ -56,17 +70,16 @@ class AggressiveBot(Bot, BombSpawnable):
                     self.must_spawn_bomb = False
                 self.moving = 0
 
-            if self.moving != 0:
-                self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-                collisions = Collidable.get_collisions(self)
-                for entity in collisions:
-                    if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key))
-                            or not in_valid_range(self.x, self.y, globals.cols, globals.rows)):
-                        self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-                        self.moving = 2
-                        break
+            self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+            collisions = Collidable.get_collisions(self)
+            for entity in collisions:
+                if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key))
+                        or not in_valid_range(self.x, self.y, globals.cols, globals.rows)):
+                    self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+                    self.moving = 2
+                    break
 
-                self.x, self.y = get_pos(self.px_x, self.px_y)
+            self.x, self.y = get_pos(self.px_x, self.px_y)
 
         if self.moving == 2:
             cur_px_x, cur_px_y = get_field_pos(self.x, self.y)
@@ -89,38 +102,48 @@ class AggressiveBot(Bot, BombSpawnable):
             self.x, self.y = get_pos(self.px_x, self.px_y)
 
         if self.moving == 0:
-            locked = True
-            for dx, dy in globals.BFS_DIRECTIONS:
-                nx, ny = self.x + dx, self.y + dy
-                if not in_valid_range(nx, ny, globals.cols, globals.rows):
-                    continue
-                if globals.field_free_state[nx][ny]:
-                    locked = False
-                    break
-
-            # print(locked)
-
-            if locked:
-                return
-
             if (self.x, self.y) == (self.dest_x, self.dest_y):
                 if self.must_spawn_bomb:
                     self.spawn_bomb()
                     self.must_spawn_bomb = False
 
             queue = []
+            bombs_lst = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
             for x in range(globals.cols):
                 for y in range(globals.rows):
                     self.used[x][y] = False
+                    self.weight[x][y] = 0
                     self.dist[x][y] = float('inf')
-                    self.weighted_dist[x][y] = float('inf')
+                    self.weighted_dist[x][y] = 0
                     self.prev[x][y] = (-1, -1)
 
             def add(x, y):
                 heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
 
+            # self.spawn_bomb(is_simulation=True)
+
+            for bomb in bombs_lst:
+                for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power + 1)):
+                    for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power + 1)):
+                        # TODO: Peredelat' na is_simulation
+                        if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
+                            self.weight[fx][fy] += bomb.power - (abs(bomb.x - fx) + abs(bomb.y - fy)) + 1
+
+            for entity in list(globals.entities):
+                if isinstance(entity, Fire):
+                    x, y = int(entity.x), int(entity.y)
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
+                        continue
+                    self.weight[x][y] += 10
+
+                if isinstance(entity, Obstacle) or (isinstance(entity, Bot) and entity != self):
+                    x, y = int(entity.x), int(entity.y)
+                    if not in_valid_range(x, y, globals.cols, globals.rows):
+                        continue
+                    self.weight[x][y] = float('inf')
+
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
-                self.weighted_dist[self.x][self.y] = 0
+                self.weighted_dist[self.x][self.y] = self.weight[self.x][self.y]
                 self.dist[self.x][self.y] = 0
                 add(self.x, self.y)
 
@@ -135,10 +158,10 @@ class AggressiveBot(Bot, BombSpawnable):
                         nx, ny = x + dx, y + dy
                         if not in_valid_range(nx, ny, globals.cols, globals.rows):
                             continue
-                        if globals.field_weight[nx][ny] == float('inf') and not (nx == self.x and ny == self.y):
+                        if self.weight[x][y] == float('inf'):
                             continue
 
-                        new_weighted_dist = max(cur_weighted_dist, globals.field_weight[nx][ny])
+                        new_weighted_dist = max(cur_weighted_dist, self.weight[nx][ny])
                         new_dist = cur_dist + 1
 
                         if (self.weighted_dist[nx][ny] > new_weighted_dist or
@@ -169,6 +192,7 @@ class AggressiveBot(Bot, BombSpawnable):
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
                 if min_dist < self.bomb_power:
+                    # print(dst, self.bomb_power)
                     self.spawn_bomb()
                     self.moving = 0
                 else:
@@ -183,7 +207,7 @@ class AggressiveBot(Bot, BombSpawnable):
                         self.weighted_dist[x][y] = 0
                         self.prev[x][y] = (-1, -1)
 
-                self.dist[self.dest_x][self.dest_y] = globals.field_weight[self.dest_x][self.dest_y]
+                self.dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
                 add(self.dest_x, self.dest_y)
                 dijkstra()
@@ -193,19 +217,15 @@ class AggressiveBot(Bot, BombSpawnable):
                 max_dist = float('-inf')
                 min_weighted_dist = float('inf')
                 destinations = []
-
                 from entitites.bonus import get_bonuses
                 for bonus in list(get_bonuses(globals.entities)):
                     x, y = bonus.x, bonus.y
                     if in_valid_range(x, y, globals.cols, globals.rows) and self.used[x][y] and self.weighted_dist[x][y] < min_weighted_dist:
                         min_weighted_dist = self.weighted_dist[x][y]
-                # print("!", min_weighted_dist)
 
                 if min_weighted_dist == 0: # if there is available bonus and path to it isn't risky
                     for bonus in list(get_bonuses(globals.entities)):
                         x, y = bonus.x, bonus.y
-                        if not in_valid_range(x, y, globals.cols, globals.rows):
-                            continue
                         if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
                             if self.dist[x][y] < min_dist:
                                 min_dist = self.dist[x][y]
@@ -214,8 +234,6 @@ class AggressiveBot(Bot, BombSpawnable):
 
                     for bonus in list(get_bonuses(globals.entities)):
                         x, y = bonus.x, bonus.y
-                        if not in_valid_range(x, y, globals.cols, globals.rows):
-                            continue
                         if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
                             if self.dist[x][y] == min_dist:
                                 destinations.append((x, y))
@@ -242,25 +260,25 @@ class AggressiveBot(Bot, BombSpawnable):
                                 if self.dist[x][y] == max_dist:
                                     destinations.append((x, y))
 
-                    if max_dist > self.bomb_power:
-                        self.must_spawn_bomb = True
-                        destinations.clear()
-                        min_dist = float('inf')
-                        for x in range(globals.cols):
-                            for y in range(globals.rows):
-                                if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
-                                    if self.bomb_power < self.dist[x][y] < min_dist:
-                                        min_dist = self.dist[x][y]
+                if max_dist > self.bomb_power:
+                    self.spawn_bomb()
+                    destinations.clear()
+                    min_dist = float('inf')
+                    for x in range(globals.cols):
+                        for y in range(globals.rows):
+                            if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                                if self.bomb_power < self.dist[x][y] < min_dist:
+                                    min_dist = self.dist[x][y]
 
-                        for x in range(globals.cols):
-                            for y in range(globals.rows):
-                                if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
-                                    if self.dist[x][y] == min_dist:
-                                        destinations.append((x, y))
+                    for x in range(globals.cols):
+                        for y in range(globals.rows):
+                            if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
+                                if self.dist[x][y] == min_dist:
+                                    destinations.append((x, y))
 
-                    if max_dist <= 1:
-                        destinations.clear()
-                        destinations.append((self.x, self.y))
+                if max_dist <= 1:
+                    destinations.clear()
+                    destinations.append((x, y))
 
                 if (self.dest_x, self.dest_y) not in destinations and destinations:
                     # if current goal is already one of the best options, then we don't update
@@ -276,7 +294,7 @@ class AggressiveBot(Bot, BombSpawnable):
                         self.weighted_dist[x][y] = 0
                         self.prev[x][y] = (-1, -1)
 
-                self.weighted_dist[self.dest_x][self.dest_y] = globals.field_weight[self.dest_x][self.dest_y]
+                self.weighted_dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
                 self.dist[self.dest_x][self.dest_y] = 0
 
                 self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
