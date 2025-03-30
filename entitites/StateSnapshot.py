@@ -3,6 +3,11 @@ from copy import deepcopy, copy
 import globals
 
 
+def try_snapshot_globals():
+    if len(globals.state_snapshots) != 0:
+        StateSnapshot.try_snapshot_globals(globals.state_snapshots[-1])
+
+
 class StateSnapshot:  # class with side effects!
     def __init__(self, sprites):
         if not globals.SNAPSHOT_ALLOWED:
@@ -10,14 +15,7 @@ class StateSnapshot:  # class with side effects!
 
         from entitites.interfaces.Snapshotable import Snapshotable
 
-        self.globals_snapshot = deepcopy(
-            {
-                key: getattr(globals, key)
-                for key in ["field_fire_state", "field", "game_tick", "scores"]
-            }
-        )
-        self.globals_snapshot["entities"] = copy(globals.entities)
-
+        self.globals_snapshot = None
         self.map_key_to_sprite_snapshot = {}
         self.map_key_to_sprite_original = {}
         self.killed_sprites = globals.cur_state_killed_sprites
@@ -36,3 +34,13 @@ class StateSnapshot:  # class with side effects!
                 self.map_key_to_sprite_snapshot[sprite.key] = sprite_snapshot
                 self.map_key_to_sprite_original[sprite.key] = sprite
                 sprite.snapshotted = False
+
+    def try_snapshot_globals(self):
+        if self.globals_snapshot is None:
+            self.globals_snapshot = deepcopy(
+                {
+                    key: getattr(globals, key)
+                    for key in ["field_fire_state", "field", "game_tick", "scores", "field_free_state", "field_weight"]
+                }
+            )
+            self.globals_snapshot["entities"] = copy(globals.entities)

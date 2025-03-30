@@ -8,11 +8,15 @@ from entitites.entity import Entity
 from entitites.interfaces.Movable import Movable
 
 
+BOT_KEY = "bot"
+
+
 class Bot(BonusCollectable, Movable, Collidable, Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self._layer = globals.BASE_ENTITY_LAYER + 5
+        self.entity_key = BOT_KEY
 
         self.texture_type = "wandering"
 

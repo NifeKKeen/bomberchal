@@ -135,87 +135,6 @@ def mount_sprites():
 
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X - 350,
-        px_y=globals.CENTER_Y + 50,
-        layer=globals.TEXT_LAYER,
-        text="Game mode",
-        font_size=30,
-        color=(255, 255, 255),
-
-        key="game_mode",
-    )  #endregion
-
-    default_button = paint_api.mount_rect(  #region parameters
-        px_x=globals.CENTER_X - 65,
-        px_y=globals.CENTER_Y + 70,
-        px_w=170,
-        px_h=60,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
-
-        key="default",
-    )  #endregion
-    default_pos = default_button.px_x, default_button.px_y
-    default_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=default_pos[0] + globals.SHADOW_OFFSET,
-        px_y=default_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Default",
-        font_size=40,
-        color=globals.SHADOW_COLOR,
-
-        key="default_text_shadow",
-    )  #endregion
-    default_button_text = paint_api.mount_text(  #region parameters
-        px_x=default_pos[0],
-        px_y=default_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Default",
-        font_size=40,
-        color=(255, 255, 255),
-
-        key="default_text",
-    )  #endregion
-
-    boss_button = paint_api.mount_rect(  #region parameters
-        px_x=globals.CENTER_X + 150,
-        px_y=globals.CENTER_Y + 70,
-        px_w=250,
-        px_h=60,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
-
-        key="boss",
-    )  #endregion
-    boss_pos = boss_button.px_x, boss_button.px_y
-    boss_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=boss_pos[0] + globals.SHADOW_OFFSET,
-        px_y=boss_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Boss Fight",
-        font_size=40,
-        color=globals.SHADOW_COLOR,
-
-        key="boss_text_shadow",
-    )  #endregion
-    boss_button_text = paint_api.mount_text(  #region parameters
-        px_x=boss_pos[0],
-        px_y=boss_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Boss Fight",
-        font_size=40,
-        color=(255, 255, 255),
-
-        key="boss_text",
-    )  #endregion
-
-    paint_api.mount_text(
-        px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 150,
         layer=globals.TEXT_LAYER,
         text="Mute bomb sound",
@@ -223,17 +142,17 @@ def mount_sprites():
         color=(255, 255, 255),
 
         key="bomb_mute_text",
-    )
+    )  #endregion
     bomb_mute_button_sprite = paint_api.mount_rect(  #region parameters
-            px_x=globals.CENTER_X + 20,
-            px_y=globals.CENTER_Y + 165,
-            px_w=65,
-            px_h=65,
-            layer=globals.BUTTON_LAYER,
-            align="center",
-            image_path=globals.MUTED_IMG_PATH2 if globals.sound_muted else globals.UNMUTED_IMG_PATH2,
+        px_x=globals.CENTER_X + 20,
+        px_y=globals.CENTER_Y + 165,
+        px_w=65,
+        px_h=65,
+        layer=globals.BUTTON_LAYER,
+        align="center",
+        image_path=globals.MUTED_IMG_PATH2 if globals.sound_muted else globals.UNMUTED_IMG_PATH2,
 
-            key="bomb_mute",
+        key="bomb_mute",
     )  #endregion
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
@@ -353,23 +272,6 @@ def settings(is_setup=False):
                 waiting_for_key2 = False
                 update_display(display_p1, 1, waiting_for_key2)
                 save_config()
-
-
-
-
-    if is_clicked(default_button):
-        globals.game_mode = "default"
-        save_config()
-    if is_clicked(boss_button):
-        globals.game_mode = "bossfight"
-        save_config()
-
-    if globals.game_mode == "default":
-        default_button_text.set_color((255, 255, 0))
-        boss_button_text.set_color((255, 255, 255))
-    elif (globals.game_mode == "bossfight"):
-        boss_button_text.set_color((255, 255, 0))
-        default_button_text.set_color((255, 255, 255))
 
     if is_clicked(bomb_mute_button_sprite):
         if globals.sound_muted:

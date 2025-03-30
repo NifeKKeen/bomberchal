@@ -6,9 +6,14 @@ import globals
 from heapq import heappush, heappop
 
 
+AGGRESSIVE_BOT_KEY = "aggressive_bot"
+
+
 class AggressiveBot(Bot, BombSpawnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.entity_key = AGGRESSIVE_BOT_KEY
 
         self.texture_type = "aggressive"
         self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
@@ -266,6 +271,7 @@ class AggressiveBot(Bot, BombSpawnable):
                 dijkstra()
 
                 self.moving = 1
+
 
 def get_aggressive_bots(entities):
     res = set()

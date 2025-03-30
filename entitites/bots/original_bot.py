@@ -5,9 +5,14 @@ from entitites.interfaces.Collidable import Collidable
 from utils.helpers import rand, in_valid_range
 
 
+ORIGINAL_BOT_KEY = "original_bot"
+
+
 class OriginalBot(Bot, BombSpawnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.entity_key = ORIGINAL_BOT_KEY
 
         self.texture_type = "original"
         self.set_image_path(globals.bot_frames[self.texture_type]["top_static"][0])
@@ -52,6 +57,7 @@ class OriginalBot(Bot, BombSpawnable):
 
         if rand(0, 10000) == 0:
             self.spawn_bomb()
+
 
 def get_original_bots(entities):
     res = set()

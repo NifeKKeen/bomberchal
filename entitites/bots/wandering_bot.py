@@ -6,9 +6,14 @@ import globals
 from heapq import heappush, heappop
 
 
+WANDERING_BOT_KEY = "wandering_bot"
+
+
 class WanderingBot(Bot):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.entity_key = WANDERING_BOT_KEY
 
         self.map_allowed_bonus_types[globals.BONUS_CAPACITY] = False
         self.map_allowed_bonus_types[globals.BONUS_POWER] = False
@@ -197,6 +202,7 @@ class WanderingBot(Bot):
             dijkstra()
 
             self.moving = 1
+
 
 def get_wandering_bots(entities):
     res = set()

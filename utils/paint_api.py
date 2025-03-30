@@ -136,12 +136,19 @@ class TextSprite(SurfaceSprite):
             self.rect.y -= self.rect.height // 2
 
     def set_text(self, text):
+        if self.text == text:
+            return
+
         self.text = text
         self.should_refresh = True
 
     def set_color(self, color):
+        if self.color == color:
+            return
+
         self.color = color
         self.should_refresh = True
+
 
 class GIFSprite(SurfaceSprite):
     def __init__(self, **kwargs):
@@ -235,7 +242,7 @@ def unmount(obj):
 
 
 def refill_screen():
-    if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization") and globals.brown_background_img:
+    if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization", "menu/play") and globals.brown_background_img:
         globals.DISPLAYSURF.blit(globals.brown_background_img, (0, 0))
     elif globals.current_page in ("menu") and globals.menu_background_img:
         globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))

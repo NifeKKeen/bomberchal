@@ -12,6 +12,7 @@ CONFIG_FILE = "config.ini"
 show_popup_window_p1 = False
 show_popup_window_p2 = False
 
+
 def save_skin_config():
     config = configparser.ConfigParser()
     if os.path.exists(CONFIG_FILE):
@@ -23,11 +24,13 @@ def save_skin_config():
     with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
+
 def get_available_skin(current_skin, other_skin, delta):
     candidate = (current_skin + delta - 1) % len(globals.skins) + 1
     while candidate == other_skin:
         candidate = (candidate + delta - 1) % len(globals.skins) + 1
     return candidate
+
 
 def pop_up_window():
     global show_popup_window_p1, show_popup_window_p2
@@ -49,6 +52,16 @@ def pop_up_window():
         key="demo_gif",
     )  #endregion
 
+    bg_overlay = paint_api.mount_rect(  #region parameters
+        px_x=0,
+        px_y=0,
+        px_w=globals.SCREEN_WIDTH,
+        px_h=globals.SCREEN_HEIGHT,
+        layer=globals.LAYER_SHIFT - 1,
+        image_path="assets/images/backgrounds/overlay.png",
+
+        key="bg_overlay"
+    )  #endregion
     close_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 110,
@@ -92,6 +105,8 @@ def pop_up_window():
         close_button.unmount()
         close_button_shadow.unmount()
         close_button_text.unmount()
+        bg_overlay.unmount()
+
 
 
 def menu_customization():
