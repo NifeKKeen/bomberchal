@@ -103,6 +103,8 @@ cols = 0
 rows = 0
 field = None
 field_fire_state = None  # power of fire in specific cell in ticks
+field_free_state = None  # True if cell is free (empty or bonus), else False
+field_weight = None  # weights of cells
 paused = False
 time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
@@ -117,7 +119,7 @@ cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
 entities = set()
-initial_bots_count = [0, 0, 10, 0]  # original, wandering, aggressive, boss
+initial_bots_count = [0, 0, 50, 0]  # original, wandering, aggressive, boss
 initial_obstacle_count = 200
 
 # GAME CONSTRAINTS

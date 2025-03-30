@@ -1,12 +1,14 @@
 import globals
 from pygame.locals import *
 
+from entitites.bomb import get_bombs
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
+from entitites.fire import get_fires, Fire
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from utils import paint_api, snapshot_api
-from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
+from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time, in_valid_range
 from utils.interaction_api import is_clicked, is_pressed
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
@@ -19,10 +21,6 @@ from entitites.player import Player, get_players
 from pages.game import field_generator
 from pages.navigation import navigate
 from config import load_config
-
-DEFAULT_FIELD = [
-    [globals.VOID_CELL if rand(0, 100) < 50 else globals.U_OBSTACLE_CELL for j in range(20)] for i in range(20)
-]
 
 def setup_game(**kwargs):
     globals.rows = kwargs.get("rows", 23)
@@ -60,7 +58,7 @@ def setup_game(**kwargs):
         player = Player(  #region parameters
             speed=calc_speed_per_time(16, 100),
             lives=1,
-            bomb_power=1,
+            bomb_power=7,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
             spread_type="bfs",
@@ -152,9 +150,10 @@ def render_field(**kwargs):
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
                 bot = AggressiveBot(  #region parameters
                     speed=calc_speed_per_time(10, 100),
-                    bomb_power=2,
+                    bomb_power=1,
                     bomb_countdown=get_tick_from_ms(3000),
-                    spread_type="bfs",
+                    #boredom_countdown=get_tick_from_ms(10000),
+                    spread_type="star",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -172,6 +171,7 @@ def render_field(**kwargs):
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
                     damage_countdown=get_tick_from_ms(500),
+                    boredom_countdown=get_tick_from_ms(10000),
                     spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -189,9 +189,10 @@ def reset_game():
     globals.state_snapshots.clear()
     globals.field = field_generator.generate(globals.cols, globals.rows, globals.game_mode)
     globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
+    globals.field_free_state = [[False] * globals.rows for _ in range(globals.cols)]
+    globals.field_weight = [[0] * globals.rows for _ in range(globals.cols)]
 
 def spawn_bonus(bonus_type = 0):
-    from entitites.bot import get_bots
     attempts = 0
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
@@ -218,7 +219,7 @@ def spawn_bonus(bonus_type = 0):
 
             key=f"bonus-{bonus_x};{bonus_y}",
         )  #endregion
-
+        from entitites.bot import get_bots
         for entity in get_bots(list(globals.entities)):
             entity.moving = 0
         return
@@ -242,6 +243,7 @@ def spawn_bonus(bonus_type = 0):
 
                     key=f"bonus-{bonus_x};{bonus_y}",
                 )  #endregion
+                from entitites.bot import get_bots
                 for entity in get_bots(list(globals.entities)):
                     entity.moving = 0
                 return
@@ -322,7 +324,7 @@ def game(**kwargs):
     if globals.time_reversing_count_down:
         return
 
-    if globals.game_tick % 5 == 0:
+    if globals.game_tick % 400 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
@@ -380,6 +382,35 @@ def game(**kwargs):
             navigate("menu")
             return
 
+    for x in range(globals.cols):
+        for y in range(globals.rows):
+            globals.field_free_state[x][y] = False
+            globals.field_weight[x][y] = 0
+
+    for entity in list(globals.entities):
+        if not in_valid_range(entity.x, entity.y, globals.cols, globals.rows):
+            continue
+        globals.field_free_state[entity.x][entity.y] = True
+
+    bombs_list = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
+    for bomb in bombs_list:
+        for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power + 1)):
+            for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power + 1)):
+                if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
+                    globals.field_weight[fx][fy] += bomb.power - (abs(bomb.x - fx) + abs(bomb.y - fy)) + 1
+
+    for entity in list(globals.entities):
+        if isinstance(entity, Fire):
+            x, y = int(entity.x), int(entity.y)
+            if not in_valid_range(x, y, globals.cols, globals.rows):
+                continue
+            globals.field_weight[x][y] += 10
+
+        if isinstance(entity, Obstacle) or isinstance(entity, Bot):
+            x, y = int(entity.x), int(entity.y)
+            if not in_valid_range(x, y, globals.cols, globals.rows):
+                continue
+            globals.field_weight[x][y] = float('inf')
 
     globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
@@ -392,6 +423,8 @@ def game(**kwargs):
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
+            if isinstance(entity, AggressiveBot):
+                entity.cur_boredom_countdown = max(entity.cur_boredom_countdown - 1, 0)
             entity.think()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
