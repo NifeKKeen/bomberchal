@@ -171,13 +171,16 @@ def render_input():
         if fields_focused[order]:
             current_username = current_usernames[order]
             current_text = INPUT_PLACEHOLDER_TEXT
+            updated = False
 
             if get_last_pressed_key() == K_BACKSPACE:
                 if current_username:
                     current_username = current_username[:-1]
+                    updated = True
             elif last_pressed_char:
                 if len(current_username) < globals.MAX_USERNAME_LENGTH:
                     current_username += last_pressed_char
+                    updated = True
 
             if current_username:
                 current_text = current_username
@@ -186,7 +189,8 @@ def render_input():
 
             globals.usernames = current_usernames
             input_field_text.set_text(current_text)
-            save_config()
+            if updated:
+                save_config()
 
 
 def render_menu():

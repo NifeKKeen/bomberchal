@@ -1,72 +1,30 @@
 {
     "scoreboard": [
         {
-            "username": "user1",
+            "username": "Kanich",
             "pve": {
-                "score": 100
+                "score": 126
             },
             "bossfight": {
-                "score": 100
+                "score": 0
             },
             "duel": {
-                "wins": 21,
-                "losses": 0,
-                "draws": 0
-            }
-        },
-        {
-            "username": "user2",
-            "pve": {
-                "score": 1
-            },
-            "bossfight": {
-                "score": 1
-            },
-            "duel": {
-                "wins": 2,
+                "wins": 4,
                 "losses": 3,
-                "draws": 1
-            }
-        },
-        {
-            "username": "user3",
-            "pve": {
-                "score": 1
-            },
-            "bossfight": {
-                "score": 4
-            },
-            "duel": {
-                "wins": 2,
-                "losses": 0,
-                "draws": 6
-            }
-        },
-        {
-            "username": "user4",
-            "pve": {
-                "score": 1
-            },
-            "bossfight": {
-                "score": 4
-            },
-            "duel": {
-                "wins": 1,
-                "losses": 1,
                 "draws": 0
             }
         },
         {
-            "username": "user5",
+            "username": "NifeKKeen",
             "pve": {
-                "score": 7
+                "score": 0
             },
             "bossfight": {
-                "score": 7
+                "score": 0
             },
             "duel": {
-                "wins": 9,
-                "losses": 0,
+                "wins": 2,
+                "losses": 2,
                 "draws": 0
             }
         }

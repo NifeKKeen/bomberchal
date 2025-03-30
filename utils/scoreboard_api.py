@@ -1,8 +1,12 @@
 import os
 import json
 import globals
+from pages.menu.play import get_setup_data_value
+from utils.helpers import players_sum_of_scores
+
 
 SCOREBOARD_FILE = "utils/scoreboard.json"
+
 
 def load_scoreboard_data():
     if not os.path.exists(SCOREBOARD_FILE):
@@ -20,9 +24,11 @@ def load_scoreboard_data():
             data["scoreboard"] = []
         return data
 
+
 def save_scoreboard_data(data):
     with open(SCOREBOARD_FILE, 'w') as f:
         json.dump(data, f, indent=4)
+
 
 def get_scoreboard(mode):
     mode = mode.lower()
@@ -47,22 +53,23 @@ def get_scoreboard(mode):
         sorted_list = scoreboard_list
     return sorted_list[:5]
 
+
 def update_score(mode, username, score):
     mode = mode.lower()
     if mode not in ("pve", "bossfight"):
         raise ValueError("update only for pve or bossfight modes.")
-    
-    key = "pve" if mode == "pve" else "bossfight"
+
     data = load_scoreboard_data()
     updated = False
     for entry in data["scoreboard"]:
         if entry.get("username") == username:
-            if key not in entry:
-                entry[key] = {"score": 0}
-            if score > entry[key].get("score", 0):
-                entry[key]["score"] = score
+            if mode not in entry:
+                entry[mode] = { "score": 0 }
+            if score > entry[mode].get("score", 0):
+                entry[mode]["score"] = score
             updated = True
             break
+
     if not updated:
         new_entry = {
             "username": username,
@@ -73,6 +80,7 @@ def update_score(mode, username, score):
         data["scoreboard"].append(new_entry)
     save_scoreboard_data(data)
     return get_scoreboard(mode)
+
 
 def update_duel(username, wins=0, losses=0, draws=0):
     data = load_scoreboard_data()
@@ -96,3 +104,37 @@ def update_duel(username, wins=0, losses=0, draws=0):
         data["scoreboard"].append(new_entry)
     save_scoreboard_data(data)
     return get_scoreboard("duel")
+
+
+def save_data(data):
+    game_mode = data["game_mode"]
+    player_cnt = get_setup_data_value("players")
+    if game_mode == "duel":
+        for idx in range(player_cnt):
+            if not len(globals.usernames[idx]):
+                continue
+            print(idx + 1, data["payload"])
+
+            if data["payload"] == -1:  # draw
+                update_duel(
+                    globals.usernames[idx],
+                    0, 0, 1
+                )
+            elif idx + 1 == data["payload"]:  # winner
+                update_duel(
+                    globals.usernames[idx],
+                    1, 0, 0
+                )
+            else:
+                print("!!!!!!!")
+                update_duel(
+                    globals.usernames[idx],
+                    0, 1, 0
+                )
+    elif game_mode == "pve" or game_mode == "bossfight":
+        score = players_sum_of_scores(data["payload"])
+        for idx in range(player_cnt):
+            if not len(globals.usernames[idx]):
+                continue
+
+            update_score(game_mode, globals.usernames[idx], score)

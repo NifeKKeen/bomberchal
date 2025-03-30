@@ -15,6 +15,7 @@ bossfight_text = None
 back_button = None
 back_button_text = None
 header_text = "Scoreboard"
+
 def table():
     font_size = 30
     padding = int(font_size * 0.8)
