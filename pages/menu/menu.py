@@ -8,27 +8,16 @@ from utils.paint_api import mount_button
 from utils.sound_api import play_menu_music, stop_music
 from pages.navigation import navigate
 
-mute_button_sprite = None
-play_button_sprite = None
-play_button_text = None
-play_button_shadow = None
-scoreboard_button_sprite = None
-scoreboard_button_text = None
-scoreboard_button_shadow = None
-customization_button_sprite = None
-customization_button_text = None
-customization_button_shadow = None
-settings_button_sprite = None
-settings_button_text = None
-settings_button_shadow = None
-quit_button_sprite = None
-quit_button_text = None
-quit_button_shadow = None
-input_button_sprite = None
-input_button_text = None
-input_button_shadow = None
 
 INPUT_PLACEHOLDER_TEXT = "Enter your name..."
+
+mute_button_sprite = None
+input_button_c = None
+play_button_c = None
+scoreboard_button_c = None
+customization_button_c = None
+settings_button_c = None
+quit_button_c = None
 
 input_is_active = False
 fields_focused = [True, False]
@@ -239,7 +228,7 @@ def render_menu():
         font_size=50,
 
         key="scoreboard",
-    )
+    )  #endregion
 
     quit_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X + 128,
