@@ -1,9 +1,10 @@
-import globals, pygame
+import globals
+import pygame
 from pygame.locals import *
 from utils.event_api import is_fired
 
 
-def is_clicked(sprite, should_check_layers = False):
+def is_clicked(sprite, should_check_layers=False):
     if sprite is None or not sprite.mounted:
         return False
     if is_fired(MOUSEBUTTONDOWN, 1):

@@ -1,4 +1,5 @@
-import pygame, sys
+import pygame
+import sys
 from pygame.locals import *
 
 from pages.menu.menu import menu
@@ -21,10 +22,15 @@ if __name__ == "__main__":
 
     globals.all_sprites = pygame.sprite.LayeredUpdates()
     globals.brown_background_img = pygame.image.load("assets/images/backgrounds/settings.jpg")
-    globals.brown_background_img = pygame.transform.scale(globals.brown_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
+    globals.brown_background_img = pygame.transform.scale(
+        globals.brown_background_img,
+        (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT)
+    )
     globals.menu_background_img = pygame.image.load("assets/images/backgrounds/menu.jpg")
-    globals.menu_background_img = pygame.transform.scale(globals.menu_background_img, (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT))
-
+    globals.menu_background_img = pygame.transform.scale(
+        globals.menu_background_img,
+        (globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT)
+    )
 
     while True:
         if globals.switched_page:

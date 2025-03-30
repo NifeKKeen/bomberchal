@@ -45,7 +45,6 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         else:
             self.set_image_path(globals.bomb_frames[2])
 
-
     def spread_fire(self, exploder_key):
         if not in_valid_range(self.x, self.y, len(globals.field_fire_state), len(globals.field_fire_state[0])) or globals.field_fire_state[self.x][self.y] > self.power:
             return
@@ -70,7 +69,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
             px_h=npx_h,
 
             color=(rand(128, 256), 0, 0),
-        ) #endregion
+        )  # endregion
 
         if fire.spread_timer == 0:
             fire.spread()
@@ -91,6 +90,7 @@ class Bomb(Movable, Controllable, Collidable, Entity):
         self.spread_fire(exploder_key)
 
         self.kill()
+
 
 def get_bombs(entities):
     res = set()

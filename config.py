@@ -1,7 +1,12 @@
-import os, pygame, json, configparser, globals
-from copy import copy
+import os
+import configparser
+import globals
+import json
+import pygame
 
+from copy import copy
 from utils.paint_api import SurfaceSprite
+
 
 CONFIG_FILE = "config.ini"
 

@@ -16,7 +16,6 @@ class BombSpawnable(Entity):
         self.cur_bomb_countdown = kwargs.get("cur_bomb_countdown", 0)
         self.spread_type = kwargs.get("spread_type", "bfs")
 
-
     def spawn_bomb(self):
         from entitites.bomb import Bomb, get_bombs
         if self.bomb_allowed <= 0 or self.cur_bomb_countdown > 0:
@@ -25,7 +24,7 @@ class BombSpawnable(Entity):
         collision = True
         for bomb in get_bombs(globals.entities):
             if self.x == bomb.x and self.y == bomb.y:
-                collision = False #there's already bomb in this position
+                collision = False  # there's already bomb in this position
 
         if not collision:
             return
@@ -36,7 +35,7 @@ class BombSpawnable(Entity):
         self.cur_bomb_countdown = self.bomb_countdown
         self.bombs_spawned += 1
         self.bomb_allowed -= 1
-        bomb = Bomb(  #region parameters
+        bomb = Bomb(  # region parameters
             timer=self.bomb_timer,
             spawner_key=self.key,
             spread_type=self.spread_type,
@@ -56,7 +55,7 @@ class BombSpawnable(Entity):
             px_h=globals.CELL_SIZE,
 
             color=([rand(64, 128)] * 3)
-        )  #endregion
+        )  # endregion
 
         from entitites.bot import get_bots
         # Recalculate distances (=> destination)

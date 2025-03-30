@@ -22,6 +22,7 @@ from pages.game import field_generator
 from pages.navigation import navigate
 from config import load_config
 
+
 def setup_game():
     reset_game()
     load_config()
@@ -50,19 +51,17 @@ def setup_game():
 def handle_game_end():
     if globals.game_mode == "pve" or globals.game_mode == "bossfight":
         if len(get_players(globals.entities)) == 0:
-            render_game_end("You died!", True, { "game_mode": globals.game_mode, "payload": globals.scores })
+            render_game_end("You died!", True, {"game_mode": globals.game_mode, "payload": globals.scores})
             return True
         elif len(get_bots(globals.entities)) == 0:
-            render_game_end("You won!", True, { "game_mode": globals.game_mode, "payload": globals.scores })
+            render_game_end("You won!", True, {"game_mode": globals.game_mode, "payload": globals.scores})
             return True
         else:
             return False
     elif globals.game_mode == "duel":
         players = list(get_players(globals.entities))
         if len(players) == 0:
-
-
-            render_game_end("Draw!", False, { "game_mode": globals.game_mode, "payload": -1 })
+            render_game_end("Draw!", False, {"game_mode": globals.game_mode, "payload": -1})
             return True
         if len(players) == 1:
             winner_player_id = players[0].player_id
@@ -85,14 +84,14 @@ def game(**kwargs):
     if is_setup:
         setup_game()
 
-    go_menu_button_sprite = paint_api.mount_rect(  #region parameters
+    go_menu_button_sprite = paint_api.mount_rect(  # region parameters
         px_x=0, px_y=0,
         px_w=40, px_h=40,
         layer=globals.BUTTON_LAYER + globals.LAYER_SHIFT,
         image_path="assets/images/buttons/menu.png",
 
         key="go_menu"
-    )  #endregion
+    )  # endregion
 
     render_bonus_inventory()
 

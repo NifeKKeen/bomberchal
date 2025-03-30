@@ -33,7 +33,7 @@ class OriginalBot(Bot, BombSpawnable):
                 self.direction ^= 2  # 0 to 2, 2 to 0, 1 to 3, 3 to 1 (UP <-> DOWN, LEFT <-> RIGHT)
                 break
 
-        if rand(0, 100) == 0: # to simulate randomness like in actual game
+        if rand(0, 100) == 0:  # to simulate randomness like in actual game
             self.direction ^= 1
             locked = True
 

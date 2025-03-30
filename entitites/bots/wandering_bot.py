@@ -47,7 +47,7 @@ class WanderingBot(Bot):
                 self.direction = 2
             elif ny - self.y == -1:
                 self.direction = 0
-            else: # if nx and ny are not changing or if there is some error
+            else:  # if nx and ny are not changing or if there is some error
                 self.moving = 0
 
             self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
@@ -128,7 +128,7 @@ class WanderingBot(Bot):
             def dijkstra():
                 while queue:
                     (cur_weighted_dist, cur_dist), (x, y) = heappop(queue)
-                    if self.used[x][y]: # skipping disadvantageous distances
+                    if self.used[x][y]:  # skipping disadvantageous distances
                         continue
                     self.used[x][y] = True
 

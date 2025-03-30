@@ -81,7 +81,6 @@ class Entity(SurfaceSprite, Snapshotable):
                     else:
                         add_score(damager_key, int(globals.scoring["SELF_KILL"] * ratio))
 
-
         self.unmount()
         globals.entities.discard(self)
 

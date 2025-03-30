@@ -75,7 +75,10 @@ bricks_frames = [f"assets/images/terrain/wall1.png"]
 bricks_crack_frames = [f"assets/images/terrain/wall_crack{i}.png" for i in range(1, 3)]
 border_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
 grass_frames = ["assets/images/terrain/grass1.png"]
-bonus_frames = [f"assets/images/bonus/{bonus_type}.png" for bonus_type in ["bomb_bonus", "explosion", "health", "speed"]]
+bonus_frames = [
+    f"assets/images/bonus/{bonus_type}.png"
+    for bonus_type in ["bomb_bonus", "explosion", "health", "speed"]
+]
 # endregion
 
 # region LAYOUT CONSTRAINTS
@@ -106,12 +109,12 @@ TEXT_FONT = "assets/font/Pixeloid_Sans.ttf"
 # region NAVIGATION
 current_page = "menu"
 switched_page = False  # can change in current frame
-switched_page_this_frame = True # will be updated when frame ends
+switched_page_this_frame = True  # will be updated when frame ends
 # endregion
 
 # region EVENTS
 frame_event_code_pairs = set()  # {(event_type, event_code)}
-frame_unicodes = set() # # {(event_type, event_unicode)}
+frame_unicodes = set()  # # {(event_type, event_unicode)}
 frame_event_types = set()  # {event_type}
 frame_keys_map = None  # pygame.get_pressed()
 frame_keys = []  # list of currently pressed keys
@@ -129,7 +132,7 @@ time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
 scores = dict()
 game_tick = 0  # current game's tick
-inf = 1e9 # formal infinity used in field_weight and pathfinding in general
+inf = 1e9  # formal infinity used in field_weight and pathfinding in general
 
 SNAPSHOT_ALLOWED = True
 SNAPSHOT_CAPTURE_DELAY = 15  # delay in ticks
@@ -275,7 +278,8 @@ setup_data = {
             ["Bricks", map_obstacle_type_to_path[OBSTACLE_CELL_BRICKS], INITIAL_BRICKS, None, None, None, 10],
             ["Bonuse delay", bonus_frames[0], INITIAL_BONUS_SPAWN_DELAY, None, None, None, 20],
             ["Original bots", bot_frames["original"]["down_static"][0], INITIAL_ORIGINAL_BOTS, None, None, None, 1],
-            ["Aggressive bots", bot_frames["aggressive"]["down_static"][0], INITIAL_AGGRESSIVE_BOTS, None, None, None, 1],
+            ["Aggressive bots", bot_frames["aggressive"]["down_static"][0], INITIAL_AGGRESSIVE_BOTS, None, None, None,
+             1],
             ["Wandering bots", bot_frames["wandering"]["down_static"][0], INITIAL_WANDERING_BOTS, None, None, None, 1],
             ["Rows", None, rows, None, None, None, 1],
             ["Cols", None, cols, None, None, None, 1],
@@ -290,7 +294,7 @@ setup_data = {
         "wandering_bots": 5,
         "rows": 6,
         "cols": 7,
-    }
+    },
 }
 
 exp_key_p1, exp_key_p2 = load_controls()
@@ -308,14 +312,14 @@ controls_players = [
         "to_up_key": K_UP,
         "to_down_key": K_DOWN,
         "explosion_key": exp_key_p2
-    }
+    },
 ]
 
 skins = {
     "ch1": "assets/images/characters/ch1/down.png",
     "ch2": "assets/images/characters/ch2/down.png",
     "ch3": "assets/images/characters/ch3/down.png",
-    "ch4": "assets/images/characters/ch4/down.png"
+    "ch4": "assets/images/characters/ch4/down.png",
 }
 
 skin_p1_id = 1

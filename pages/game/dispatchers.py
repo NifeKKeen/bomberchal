@@ -18,17 +18,16 @@ from utils.paint_api import mount_rect
 def build_field():
     for i in range(globals.cols):
         for j in range(globals.rows):
-            mount_rect(  #region parameters
+            mount_rect(  # region parameters
                 image_path="assets/images/terrain/grass1.png",
 
                 px_x=i * globals.CELL_SIZE, px_y=j * globals.CELL_SIZE,
-                px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                 x=i, y=j,
 
-                key = f"v-{i};{j}",
+                key=f"v-{i};{j}",
                 layer=-1,
-            )  #endregion
-
+            )  # endregion
 
     field = globals.field
     rows = globals.rows
@@ -38,21 +37,20 @@ def build_field():
 
     box_ratio = boxes_count / (boxes_count + bricks_count) if boxes_count + bricks_count != 0 else 0
 
-
     # ENVIRONMENT GENERATION --------------------------
     for x in range(cols):
         for y in range(rows):
             if field[x][y] == globals.U_OBSTACLE_CELL:
-                obstacle_sprite = Obstacle(  #region parameters
+                obstacle_sprite = Obstacle(  # region parameters
                     type=field[x][y],
                     seed=0,
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
-                    px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                    px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
 
-                    key = format_obstacle_key(0, f"{x};{y}"),
-                )  #endregion
+                    key=format_obstacle_key(0, f"{x};{y}"),
+                )  # endregion
 
             elif field[x][y] == globals.D_OBSTACLE_CELL:
                 obstacle_seed = 1 if rand(0, 1000000) < int(box_ratio * 1000000) else 2
@@ -65,19 +63,19 @@ def build_field():
                 if obstacle_seed == 2:
                     bricks_count -= 1
 
-                obstacle_sprite = Obstacle(  #region parameters
+                obstacle_sprite = Obstacle(  # region parameters
                     type=field[x][y],
                     seed=obstacle_seed,
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
-                    px_w = globals.CELL_SIZE, px_h = globals.CELL_SIZE,
+                    px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
                     x=x, y=y,
 
-                    key = format_obstacle_key(obstacle_seed, f"{x};{y}"),
-                )  #endregion
+                    key=format_obstacle_key(obstacle_seed, f"{x};{y}"),
+                )  # endregion
 
             elif field[x][y] == globals.ORIGINAL_BOT_CELL:
-                bot = OriginalBot(  #region parameters
+                bot = OriginalBot(  # region parameters
                     speed=calc_speed_per_time(8, 100),
                     bomb_power=2,
                     bomb_countdown=get_tick_from_ms(1500),
@@ -89,10 +87,10 @@ def build_field():
                     color=(0, 255, 0),
 
                     key=format_entity_key(ORIGINAL_BOT_KEY, f"{x};{y}"),
-                )  #endregion
+                )  # endregion
 
             elif field[x][y] == globals.WANDERING_BOT_CELL:
-                bot = WanderingBot(  #region parameters
+                bot = WanderingBot(  # region parameters
                     speed=calc_speed_per_time(12, 100),
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -101,10 +99,10 @@ def build_field():
                     color=(0, 0, 255),
 
                     key=format_entity_key(WANDERING_BOT_KEY, f"{x};{y}"),
-                )  #endregion
+                )  # endregion
 
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
-                bot = AggressiveBot(  #region parameters
+                bot = AggressiveBot(  # region parameters
                     speed=calc_speed_per_time(10, 100),
                     bomb_power=4,
                     bomb_countdown=get_tick_from_ms(3000),
@@ -116,10 +114,10 @@ def build_field():
                     color=(255, 0, 0),
 
                     key=format_entity_key(AGGRESSIVE_BOT_KEY, f"{x};{y}"),
-                )  #endregion
+                )  # endregion
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
-                bot = BossBot(  #region parameters
+                bot = BossBot(  # region parameters
                     lives=5,
                     speed=calc_speed_per_time(12, 100),
                     bomb_power=4,
@@ -135,7 +133,7 @@ def build_field():
                     color=(255, 0, 0),
 
                     key=format_entity_key(BOSS_BOT_KEY, f"{x};{y}"),
-                )  #endregion
+                )  # endregion
     # -------------------------------------------------
 
     # PLAYERS GENERATION ------------------------------
@@ -153,7 +151,7 @@ def build_field():
     ]
 
     for i in range(player_cnt):
-        player = Player(  #region parameters
+        player = Player(  # region parameters
             speed=calc_speed_per_time(8, 100),
             lives=1,
             bomb_power=2,
@@ -178,12 +176,12 @@ def build_field():
             px_h=globals.PLAYER_CELL_SIZE,
 
             key=format_entity_key(PLAYER_KEY, i + 1),
-        )  #endregion
+        )  # endregion
 
     # -------------------------------------------------
 
 
-def spawn_bonus(bonus_seed = 0):
+def spawn_bonus(bonus_seed=0):
     attempts = 0
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
@@ -200,7 +198,7 @@ def spawn_bonus(bonus_seed = 0):
             continue
 
         # found position
-        bonus = Bonus(  #region parameters
+        bonus = Bonus(  # region parameters
             type=MAP_SEED_BONUS_TYPE[bonus_seed],
 
             px_x=bonus_x * globals.CELL_SIZE, px_y=bonus_y * globals.CELL_SIZE,
@@ -209,7 +207,7 @@ def spawn_bonus(bonus_seed = 0):
             color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_seed],
 
             key=format_entity_key(BONUS_KEY, f"{bonus_x};{bonus_y}"),
-        )  #endregion
+        )  # endregion
         return
 
     for x in range(globals.cols):
@@ -220,7 +218,7 @@ def spawn_bonus(bonus_seed = 0):
                     collision = True
                     break
             if not collision:
-                bonus = Bonus(  #region parameters
+                bonus = Bonus(  # region parameters
                     speed=0,
                     type=MAP_SEED_BONUS_TYPE[bonus_seed],
 
@@ -230,7 +228,7 @@ def spawn_bonus(bonus_seed = 0):
                     color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (0, 0, 0)][bonus_seed],
 
                     key=format_entity_key(BONUS_KEY, f"{bonus_x};{bonus_y}"),
-                )  #endregion
+                )  # endregion
                 return
 
 

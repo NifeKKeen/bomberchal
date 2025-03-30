@@ -28,7 +28,6 @@ class Fire(Collidable, Entity):
             if self.spread_timer == 0:
                 self.handle_collision()
 
-
     def add_tick(self):
         self.tick += 1
         self.try_snapshot()
@@ -63,7 +62,8 @@ class Fire(Collidable, Entity):
         for dx, dy in directions:
             nx = self.x + dx
             ny = self.y + dy
-            if (self.power - 1 <= 0 or
+            if (
+                self.power - 1 <= 0 or
                 not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0]))
             ):
                 continue
@@ -73,7 +73,7 @@ class Fire(Collidable, Entity):
             if globals.field_fire_state[nx][ny] and (rand(0, 2) or globals.field_fire_state[nx][ny] >= self.power - 1):  # with 50% chance it the fire with higher power will proceed
                 continue
 
-            new_fire = Fire(  #region parameters
+            new_fire = Fire(  # region parameters
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,
@@ -89,7 +89,7 @@ class Fire(Collidable, Entity):
                 px_h=self.px_h,
 
                 color=self.color,
-            )  #endregion
+            )  # endregion
 
             if new_fire.spread_timer == 0:
                 new_fire.spread()
@@ -101,7 +101,7 @@ class Fire(Collidable, Entity):
             if not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0])):
                 continue
 
-            new_fire = Fire(  #region parameters
+            new_fire = Fire(  # region parameters
                 is_initial=False,
                 power=self.power - 1,
                 timer=self.timer,
@@ -117,7 +117,7 @@ class Fire(Collidable, Entity):
                 px_h=self.px_h,
 
                 color=self.color,
-            )  #endregion
+            )  # endregion
 
             if new_fire.spread_timer == 0:
                 new_fire.spread()
@@ -129,7 +129,7 @@ class Fire(Collidable, Entity):
         if not in_valid_range(nx, ny, len(globals.field_fire_state), len(globals.field_fire_state[0])):
             return
 
-        new_fire = Fire(  #region parameters
+        new_fire = Fire(  # region parameters
             is_initial=False,
             power=self.power - 1,
             timer=self.timer,
@@ -145,7 +145,7 @@ class Fire(Collidable, Entity):
             px_h=self.px_h,
 
             color=self.color,
-        )  #endregion
+        )  # endregion
 
         if new_fire.spread_timer == 0:
             new_fire.spread()

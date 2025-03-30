@@ -38,7 +38,7 @@ class BonusCollectable(Entity):
         if isinstance(self, Bot):
             bonus.activate()
 
-    def activate_bonus_at(self, idx = 0):  # NOTE: CANNOT receive negative index
+    def activate_bonus_at(self, idx=0):  # NOTE: CANNOT receive negative index
         needed_idx = 0
         x = 0
         for i, b_key in enumerate(self.bonus_keys):  # ignoring activated bonuses and iterating over them

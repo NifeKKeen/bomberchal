@@ -64,7 +64,7 @@ def update_score(mode, username, score):
     for entry in data["scoreboard"]:
         if entry.get("username") == username:
             if mode not in entry:
-                entry[mode] = { "score": 0 }
+                entry[mode] = {"score": 0}
             if score > entry[mode].get("score", 0):
                 entry[mode]["score"] = score
             updated = True

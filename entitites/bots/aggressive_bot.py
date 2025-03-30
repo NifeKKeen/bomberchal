@@ -46,7 +46,6 @@ class AggressiveBot(Bot, BombSpawnable):
                 self.moving = 0
                 return
 
-
             if nx - self.x == 1:
                 self.direction = 1
             elif nx - self.x == -1:
@@ -55,7 +54,7 @@ class AggressiveBot(Bot, BombSpawnable):
                 self.direction = 2
             elif ny - self.y == -1:
                 self.direction = 0
-            else: # if nx and ny are not changing or if there is some error
+            else:  # if nx and ny are not changing or if there is some error
                 if self.must_spawn_bomb:
                     self.spawn_bomb()
                     self.must_spawn_bomb = False
@@ -110,7 +109,6 @@ class AggressiveBot(Bot, BombSpawnable):
             def add(x, y):
                 heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
 
-
             if in_valid_range(self.x, self.y, globals.cols, globals.rows):
                 self.weighted_dist[self.x][self.y] = 0
                 self.dist[self.x][self.y] = 0
@@ -119,7 +117,7 @@ class AggressiveBot(Bot, BombSpawnable):
             def dijkstra():
                 while queue:
                     (cur_weighted_dist, cur_dist), (x, y) = heappop(queue)
-                    if self.used[x][y]: # skipping disadvantageous distances
+                    if self.used[x][y]:  # skipping disadvantageous distances
                         continue
                     self.used[x][y] = True
 
@@ -156,7 +154,7 @@ class AggressiveBot(Bot, BombSpawnable):
                     min_dist = self.dist[x][y]
                     nx, ny = x, y
 
-            if min_dist < globals.inf: # there is player that can be reached
+            if min_dist < globals.inf:  # there is player that can be reached
                 self.dest_x, self.dest_y = nx, ny
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
@@ -191,7 +189,7 @@ class AggressiveBot(Bot, BombSpawnable):
                     if in_valid_range(x, y, globals.cols, globals.rows) and self.used[x][y] and self.weighted_dist[x][y] < min_weighted_dist:
                         min_weighted_dist = self.weighted_dist[x][y]
 
-                if min_weighted_dist == 0: # if there is available bonus and path to it isn't risky
+                if min_weighted_dist == 0:  # if there is available bonus and path to it isn't risky
                     for bonus in list(get_bonuses(globals.entities)):
                         x, y = bonus.x, bonus.y
                         if self.used[x][y] and self.weighted_dist[x][y] == min_weighted_dist:
@@ -279,6 +277,3 @@ def get_aggressive_bots(entities):
         if isinstance(entity, AggressiveBot):
             res.add(entity)
     return res
-
-
-

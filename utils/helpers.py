@@ -1,4 +1,6 @@
-import math, random, globals
+import globals
+import math
+import random
 
 
 def get_ms_from_tick(tick):
@@ -40,7 +42,7 @@ def in_valid_range(i, j, cols, rows):
     return 0 <= i < cols and 0 <= j < rows
 
 
-def get_texture_type(stage_textures, sub_seed=0, ratio = 0):
+def get_texture_type(stage_textures, sub_seed=0, ratio=0):
     if math.isnan(ratio) or ratio * len(stage_textures[sub_seed]) >= len(stage_textures[sub_seed]):
         return stage_textures[sub_seed][0]
     return stage_textures[sub_seed][len(stage_textures[sub_seed]) - max(1, int(ratio * len(stage_textures[sub_seed])))]

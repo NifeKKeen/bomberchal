@@ -21,7 +21,7 @@ class Controllable(Entity, ControllableProtocol):
         self.attack_key = kwargs.get("attack_key", None)
         self.attack_func = kwargs.get("attack_func", None)
         self.bonus_activation_key = kwargs.get("bonus_activation_key", None)
-        self.movement_timer = 0 # maybe should be renamed. Means time in ticks during which a movement and/or attack occurs
+        self.movement_timer = 0  # maybe should be renamed. Means time in ticks during which a movement and/or attack occurs
 
     def handle_event(self):
         if not self.mounted:
@@ -63,7 +63,7 @@ class Controllable(Entity, ControllableProtocol):
         else:
             self.movement_timer += 1
 
-        if self.movement_timer >= 30: # if something controllable changes for more than 200 ticks, distances recalculating
+        if self.movement_timer >= 30:  # if something controllable changes for more than 200 ticks, distances recalculating
             self.movement_timer = 0
 
             from entitites.bot import get_bots

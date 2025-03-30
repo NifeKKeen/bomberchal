@@ -1,13 +1,13 @@
-import globals, sys
+import globals
+import sys
 
 from pygame import K_BACKSPACE, K_RETURN
 from config import save_config, load_config
+from pages.navigation import navigate
 from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, get_last_pressed_char, are_clicked, is_pressed_once
 from utils.paint_api import mount_button
 from utils.sound_api import play_menu_music, stop_music
-from pages.navigation import navigate
-
 
 INPUT_PLACEHOLDER_TEXT = "Enter your name..."
 
@@ -24,8 +24,8 @@ fields_focused = [True, False]
 current_usernames = ["", ""]
 
 
-def get_input_components(y_level, order, username = "", is_focused = False):
-    input_label = paint_api.mount_text(  #region parameters
+def get_input_components(y_level, order, username="", is_focused=False):
+    input_label = paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 300,
         px_y=y_level,
         layer=globals.LAYER_SHIFT + globals.TEXT_LAYER,
@@ -35,8 +35,8 @@ def get_input_components(y_level, order, username = "", is_focused = False):
         color=(255, 255, 255),
 
         key=f"input_label{order}",
-    )  #endregion
-    input_field_bg = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    input_field_bg = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 50,
         px_y=y_level,
         px_w=500,
@@ -46,8 +46,8 @@ def get_input_components(y_level, order, username = "", is_focused = False):
         image_path="assets/images/buttons/bar_button.png",
 
         key=f"input_field_bg{order}",
-    )  #endregion
-    input_field_text = paint_api.mount_text(  #region parameters
+    )  # endregion
+    input_field_text = paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X + 50,
         px_y=y_level,
         px_w=500,
@@ -59,7 +59,7 @@ def get_input_components(y_level, order, username = "", is_focused = False):
         color=(255, 255, 0) if is_focused else (255, 255, 255),
 
         key=f"input_field_text{order}",
-    )  #endregion
+    )  # endregion
 
     return {
         "input_label": input_label,
@@ -84,7 +84,7 @@ def focus(inputs, order):
 def render_input():
     global input_is_active, fields_focused, current_usernames
 
-    bg_overlay = paint_api.mount_rect(  #region parameters
+    bg_overlay = paint_api.mount_rect(  # region parameters
         px_x=0,
         px_y=0,
         px_w=globals.SCREEN_WIDTH,
@@ -93,14 +93,14 @@ def render_input():
         image_path="assets/images/backgrounds/overlay.png",
 
         key="bg_overlay"
-    )  #endregion
+    )  # endregion
 
     inputs = [
         get_input_components(globals.CENTER_Y - 120, 1, current_usernames[0], True),
         get_input_components(globals.CENTER_Y, 2, current_usernames[1])
     ]
 
-    back_button_c = paint_api.mount_button(  #region parameters
+    back_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -110,7 +110,7 @@ def render_input():
         font_size=50,
 
         key="back",
-    )  #endregion
+    )  # endregion
 
     if is_pressed_once(K_RETURN) or are_clicked(*back_button_c):
         input_is_active = False
@@ -163,7 +163,7 @@ def render_menu():
     global mute_button_sprite
     global input_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
 
-    mute_button_sprite = paint_api.mount_rect(  #region parameters
+    mute_button_sprite = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 200,
         px_w=65,
@@ -173,9 +173,9 @@ def render_menu():
         image_path=globals.MUTED_IMG_PATH1 if globals.music_muted else globals.UNMUTED_IMG_PATH1,
 
         key="mute",
-    )  #endregion
+    )  # endregion
 
-    input_button_c = paint_api.mount_button(  #region parameters
+    input_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 345,
         px_y=40,
         px_w=100,
@@ -184,9 +184,9 @@ def render_menu():
         font_size=30,
 
         key="input",
-    )  #endregion
+    )  # endregion
 
-    play_button_c = mount_button(  #region parameters
+    play_button_c = mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 100,
         px_w=500,
@@ -195,9 +195,9 @@ def render_menu():
         font_size=50,
 
         key="play",
-    )  #endregion
+    )  # endregion
 
-    customization_button_c = paint_api.mount_button(  #region parameters
+    customization_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y,
         px_w=500,
@@ -206,9 +206,9 @@ def render_menu():
         font_size=50,
 
         key="customization",
-    )  #endregion
+    )  # endregion
 
-    settings_button_c = paint_api.mount_button(  #region parameters
+    settings_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X - 128,
         px_y=globals.CENTER_Y + 200,
         px_w=246,
@@ -217,9 +217,9 @@ def render_menu():
         font_size=50,
 
         key="settings",
-    )  #endregion
+    )  # endregion
 
-    scoreboard_button_c = paint_api.mount_button(  #region parameters
+    scoreboard_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 100,
         px_w=500,
@@ -228,9 +228,9 @@ def render_menu():
         font_size=50,
 
         key="scoreboard",
-    )  #endregion
+    )  # endregion
 
-    quit_button_c = paint_api.mount_button(  #region parameters
+    quit_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 128,
         px_y=globals.CENTER_Y + 200,
         px_w=246,
@@ -239,7 +239,7 @@ def render_menu():
         font_size=50,
 
         key="quit",
-    )  #endregion
+    )  # endregion
 
 
 def menu(is_setup=False):

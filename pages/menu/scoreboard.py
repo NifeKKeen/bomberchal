@@ -11,21 +11,20 @@ bossfight_button_c = None
 back_button_c = None
 
 selected_game_mode = "pve"
-header_text = "Scoreboard"
-font_size = 30
-padding = int(font_size * 0.8)
-initial_y_offset = globals.CENTER_Y - 100
 
 
 def render_table():
-    global header_text, font_size, padding, initial_y_offset
+    header_text = "Scoreboard"
+    font_size = 30
+    padding = int(font_size * 0.8)
+    initial_y_offset = globals.CENTER_Y - 100
 
     if selected_game_mode == "duel":
         header_text = f"{'Username':<12} {'Wins':^6} {'Losses':^6} {'Draws':^6}"
     else:
         header_text = f"{'Username':<12} {'Score':^10}"
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X,
         px_y=initial_y_offset,
         align="center",
@@ -35,7 +34,7 @@ def render_table():
 
         dynamic=True,
         key="scoreboard_header",
-    )  #endregion
+    )  # endregion
     y_offset = initial_y_offset + font_size + padding
 
     # Rendering results
@@ -67,7 +66,7 @@ def render_table():
 def render_scoreboard():
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 300,
         layer=globals.TEXT_LAYER,
@@ -76,9 +75,9 @@ def render_scoreboard():
         font_size=40,
         color=(255, 255, 255),
         key="scoreboard_title",
-    )  #endregion
+    )  # endregion
 
-    pve_button_c = paint_api.mount_button(  #region parameters
+    pve_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X - 250,
         px_y=globals.CENTER_Y - 200,
         px_w=150,
@@ -87,9 +86,9 @@ def render_scoreboard():
         font_size=50,
 
         key="pve",
-    )  #endregion
+    )  # endregion
 
-    duel_button_c = paint_api.mount_button(  #region parameters
+    duel_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X - 70,
         px_y=globals.CENTER_Y - 200,
         px_w=150,
@@ -98,9 +97,9 @@ def render_scoreboard():
         text="Duel",
 
         key="duel",
-    )  #endregion
+    )  # endregion
 
-    bossfight_button_c = paint_api.mount_button(  #region parameters
+    bossfight_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 190,
         px_y=globals.CENTER_Y - 200,
         px_w=300,
@@ -109,9 +108,9 @@ def render_scoreboard():
         font_size=50,
 
         key="bossfight",
-    )  #endregion
+    )  # endregion
 
-    back_button_c = paint_api.mount_button(  #region parameters
+    back_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -120,12 +119,11 @@ def render_scoreboard():
         font_size=50,
 
         key="back",
-    )  #endregion
+    )  # endregion
 
 
 def scoreboard(is_setup=False):
     global selected_game_mode
-    global header_text, font_size, y_offset
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     if is_setup:

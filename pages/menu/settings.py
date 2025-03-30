@@ -1,9 +1,11 @@
-import globals, pygame, configparser, os
+import globals
+import pygame
+from config import load_config, save_config
+from pages.navigation import navigate
 from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, are_clicked
 from utils.sound_api import play_menu_music
-from pages.navigation import navigate
-from config import load_config, save_config
+
 
 def update_display(text_sprite, player_index, waiting):
     key_val = globals.controls_players[player_index]["explosion_key"]
@@ -31,7 +33,7 @@ def render_settings():
     global current_key_text_p1, current_key_text_p2
     global bomb_mute_button_sprite
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 250,
         layer=globals.TEXT_LAYER,
@@ -41,8 +43,8 @@ def render_settings():
         color=(255, 255, 255),
 
         key="change_bomb_button",
-    )  #endregion
-    paint_api.mount_text(  #region parameters
+    )  # endregion
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 170,
         layer=globals.TEXT_LAYER,
@@ -51,9 +53,9 @@ def render_settings():
         color=(255, 255, 255),
 
         key="label_p1",
-    )  #endregion
+    )  # endregion
 
-    left_arrow_p1 = paint_api.mount_rect(  #region parameters
+    left_arrow_p1 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -62,8 +64,8 @@ def render_settings():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p1",
-    )  #endregion
-    display_p1 = paint_api.mount_text(  #region parameters
+    )  # endregion
+    display_p1 = paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 150,
         layer=globals.TEXT_LAYER,
@@ -73,8 +75,8 @@ def render_settings():
         color=(255, 255, 0),
 
         key="display_p1",
-    )  #endregion
-    right_arrow_p1 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    right_arrow_p1 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -83,9 +85,9 @@ def render_settings():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
-    )  #endregion
+    )  # endregion
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 50,
         layer=globals.TEXT_LAYER,
@@ -94,9 +96,9 @@ def render_settings():
         color=(255, 255, 255),
 
         key="label_p2",
-    )  #endregion
+    )  # endregion
 
-    left_arrow_p2 = paint_api.mount_rect(  #region parameters
+    left_arrow_p2 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 65,
         px_w=75,
@@ -105,8 +107,8 @@ def render_settings():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p2",
-    )  #endregion
-    display_p2 = paint_api.mount_text(  #region parameters
+    )  # endregion
+    display_p2 = paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X + 35,
         px_y=globals.CENTER_Y - 35,
         layer=globals.TEXT_LAYER,
@@ -116,8 +118,8 @@ def render_settings():
         color=(255, 255, 0),
 
         key="display_p2",
-    )  #endregion
-    right_arrow_p2 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    right_arrow_p2 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y - 65,
         px_w=75,
@@ -126,9 +128,9 @@ def render_settings():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p2",
-    )  #endregion
+    )  # endregion
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 150,
         layer=globals.TEXT_LAYER,
@@ -137,8 +139,8 @@ def render_settings():
         color=(255, 255, 255),
 
         key="bomb_mute_text",
-    )  #endregion
-    bomb_mute_button_sprite = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    bomb_mute_button_sprite = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 20,
         px_y=globals.CENTER_Y + 165,
         px_w=65,
@@ -148,9 +150,9 @@ def render_settings():
         image_path=globals.MUTED_IMG_PATH2 if globals.sound_muted else globals.UNMUTED_IMG_PATH2,
 
         key="bomb_mute",
-    )  #endregion
+    )  # endregion
 
-    back_button_c = paint_api.mount_button(  #region parameters
+    back_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -159,7 +161,7 @@ def render_settings():
         font_size=50,
 
         key="back",
-    )  #endregion
+    )  # endregion
 
 
 def settings(is_setup=False):

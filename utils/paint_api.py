@@ -1,4 +1,6 @@
-import pygame, os, globals
+import globals
+import os
+import pygame
 
 from utils.helpers import get_tick_from_ms, rand
 
@@ -46,7 +48,6 @@ class SurfaceSprite(pygame.sprite.Sprite):
         if not self.mounted and self.should_mount:
             self.mount()
 
-
     def refresh(self):  # NOTE: it is expensive operation if this sprite has an image
         # print("REQUESTED REFRESH")
         self.image = pygame.Surface([self.px_w, self.px_h], pygame.SRCALPHA)  # SRCALPHA will ensure that blit png image will be transparent
@@ -66,7 +67,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
             self.image.set_colorkey((0, 0, 0))  # color to make transparent
             self.image.fill(self.color)  # Color of surface
             pygame.draw.rect(self.image, self.color, pygame.Rect((0, 0, self.px_w, self.px_h)))
-
+        
         self.rect = self.image.get_rect()
         self.rect.x = self.px_x
         self.rect.y = self.px_y
@@ -78,7 +79,7 @@ class SurfaceSprite(pygame.sprite.Sprite):
         if self.mounted:
             self.mount()
 
-    def set_image_path(self, image_path, size = None):
+    def set_image_path(self, image_path, size=None):
         if size is None:
             size = self.image_size
         if self.image_path == image_path and self.image_size == size:
@@ -213,7 +214,7 @@ def mount_button(**kwargs):
     key = kwargs.get("key")
     popup_layer = kwargs.get("popup_layer", 0)
 
-    button = mount_rect(  #region parameters
+    button = mount_rect(  # region parameters
         px_x=kwargs.get("px_x"),
         px_y=kwargs.get("px_y"),
         px_w=kwargs.get("px_w"),
@@ -222,10 +223,11 @@ def mount_button(**kwargs):
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
+        is_dynamic=kwargs.get("dynamic"),
         key=f"button_{key}",
-    )  #endregion
+    )  # endregion
     pos = button.px_x, button.px_y
-    button_text = mount_text(  #region parameters
+    button_text = mount_text(  # region parameters
         px_x=pos[0],
         px_y=pos[1],
         layer=globals.LAYER_SHIFT * popup_layer + globals.TEXT_LAYER,
@@ -234,9 +236,10 @@ def mount_button(**kwargs):
         font_size=kwargs.get("font_size"),
         color=kwargs.get("color", (255, 255, 255)),
 
+        is_dynamic=kwargs.get("dynamic"),
         key=f"button_text_{key}",
-    )  #endregion
-    button_text_shadow = mount_text(  #region parameters
+    )  # endregion
+    button_text_shadow = mount_text(  # region parameters
         px_x=pos[0] + globals.SHADOW_OFFSET,
         px_y=pos[1] + globals.SHADOW_OFFSET,
         layer=globals.LAYER_SHIFT * popup_layer + globals.SHADOW_LAYER,
@@ -245,8 +248,9 @@ def mount_button(**kwargs):
         font_size=button_text.font_size,
         color=globals.SHADOW_COLOR,
 
+        is_dynamic=kwargs.get("dynamic"),
         key=f"button_shadow_{key}",
-    )  #endregion
+    )  # endregion
 
     return [button, button_text, button_text_shadow]
 
@@ -284,9 +288,10 @@ def unmount(obj):
 
 
 def refill_screen():
-    if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization", "menu/play") and globals.brown_background_img:
+    if globals.current_page in ("menu/settings", "menu/scoreboard", "menu/customization", "menu/play") and \
+       globals.brown_background_img:
         globals.DISPLAYSURF.blit(globals.brown_background_img, (0, 0))
-    elif globals.current_page in ("menu") and globals.menu_background_img:
+    elif globals.current_page == "menu" and globals.menu_background_img:
         globals.DISPLAYSURF.blit(globals.menu_background_img, (0, 0))
     else:
         globals.DISPLAYSURF.fill((0, 0, 20))
@@ -328,8 +333,6 @@ def draw_sprites():
         elif sprite.hidden:
             will_return.append(sprite)
             globals.all_sprites.remove(sprite)
-
-
 
     refill_screen()
     globals.all_sprites.draw(globals.DISPLAYSURF)

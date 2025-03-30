@@ -14,6 +14,7 @@ show_popup_window_p2 = False
 show_popup_window = False
 player_skins = None
 
+
 def save_skin_config():
     config = configparser.ConfigParser()
     if os.path.exists(CONFIG_FILE):
@@ -39,7 +40,7 @@ def pop_up_window():
         idx = globals.skin_p1_id
     else:
         idx = globals.skin_p2_id
-    demo_gif = paint_api.mount_gif(  #region parameters
+    demo_gif = paint_api.mount_gif(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 60,
         px_w=280,
@@ -51,9 +52,9 @@ def pop_up_window():
                 for direction in ["up", "right", "down", "left"]],
 
         key="demo_gif",
-    )  #endregion
+    )  # endregion
 
-    bg_overlay = paint_api.mount_rect(  #region parameters
+    bg_overlay = paint_api.mount_rect(  # region parameters
         px_x=0,
         px_y=0,
         px_w=globals.SCREEN_WIDTH,
@@ -62,9 +63,9 @@ def pop_up_window():
         image_path="assets/images/backgrounds/overlay.png",
 
         key="bg_overlay"
-    )  #endregion
+    )  # endregion
 
-    close_button_c = paint_api.mount_button(  #region parameters
+    close_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 110,
         px_w=50,
@@ -74,7 +75,7 @@ def pop_up_window():
         font_size=30,
 
         key="close_popup",
-    )  #endregion
+    )  # endregion
 
     if are_clicked(*close_button_c):
         show_popup_window_p1 = False
@@ -85,7 +86,6 @@ def pop_up_window():
         bg_overlay.unmount()
 
 
-
 def customization():
     global player_skins, show_popup_window
     player_skins = globals.skins
@@ -94,7 +94,7 @@ def customization():
     global show_popup_window_p2
     load_config()
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 300,
         layer=globals.TEXT_LAYER,
@@ -104,9 +104,9 @@ def customization():
         color=(255, 255, 255),
 
         key="Customization_text",
-    )  #endregion
+    )  # endregion
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y - 170,
         layer=globals.TEXT_LAYER,
@@ -115,8 +115,8 @@ def customization():
         color=(255, 255, 255),
 
         key="label_p1",
-    )  #endregion
-    left_arrow_p1 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    left_arrow_p1 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -125,8 +125,8 @@ def customization():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p1",
-    )  #endregion
-    right_arrow_p1 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    right_arrow_p1 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y - 185,
         px_w=75,
@@ -135,9 +135,9 @@ def customization():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
-    )  #endregion
+    )  # endregion
 
-    preview_button_p1_c = paint_api.mount_button(  #region parameters
+    preview_button_p1_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 225,
         px_y=globals.CENTER_Y - 230,
         px_w=150,
@@ -146,9 +146,9 @@ def customization():
         font_size=30,
 
         key="skin_preview_p1",
-    )  #endregion
+    )  # endregion
 
-    display_p1 = paint_api.mount_rect(  #region parameters
+    display_p1 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 40,
         px_y=globals.CENTER_Y - 230,
         px_w=160,
@@ -159,9 +159,9 @@ def customization():
         # image_path="assets/gifs/ch1/1.png",
         key="display_p1",
         image_path=globals.skins[f"ch{globals.skin_p1_id}"],
-    )  #endregion
+    )  # endregion
 
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=globals.CENTER_X - 350,
         px_y=globals.CENTER_Y + 50,
         layer=globals.TEXT_LAYER,
@@ -170,8 +170,8 @@ def customization():
         color=(255, 255, 255),
 
         key="label_p2_skin",
-    )  #endregion
-    left_arrow_p2 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    left_arrow_p2 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 150,
         px_y=globals.CENTER_Y + 30,
         px_w=75,
@@ -180,8 +180,8 @@ def customization():
         image_path="assets/images/buttons/left.png",
 
         key="left_arrow_p2_skin",
-    )  #endregion
-    display_p2 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    display_p2 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 40,
         px_y=globals.CENTER_Y + 10,
         px_w=160,
@@ -190,8 +190,8 @@ def customization():
         image_path=globals.skins[f"ch{globals.skin_p2_id}"],
 
         key="display_p2",
-    )  #endregion
-    right_arrow_p2 = paint_api.mount_rect(  #region parameters
+    )  # endregion
+    right_arrow_p2 = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X + 150,
         px_y=globals.CENTER_Y + 30,
         px_w=75,
@@ -200,20 +200,20 @@ def customization():
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p2_skin",
-    )  #endregion
+    )  # endregion
 
-    preview_button_p2_c = paint_api.mount_button(  #region parameters
+    preview_button_p2_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 225,
-        px_y=globals.CENTER_Y - 20 ,
+        px_y=globals.CENTER_Y - 20,
         px_w=150,
         px_h=50,
         text="Preview",
         font_size=30,
 
         key="skin_preview_p2",
-    )  #endregion
+    )  # endregion
 
-    back_button_c = paint_api.mount_button(  #region parameters
+    back_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -222,9 +222,8 @@ def customization():
         font_size=50,
 
         key="back",
-    )  #endregion
+    )  # endregion
 
-    one_is_opened = show_popup_window_p1 or show_popup_window_p2
     if show_popup_window_p1 == 0 and show_popup_window_p2 == 0:
         if are_clicked(*preview_button_p1_c):
             show_popup_window_p1 = True
@@ -232,7 +231,6 @@ def customization():
             show_popup_window_p2 = True
     if show_popup_window_p1 or show_popup_window_p2:
         pop_up_window()
-
 
     if is_clicked(left_arrow_p1, True) or is_clicked(right_arrow_p1, True):
         ind = -1 if is_clicked(left_arrow_p1) else 1

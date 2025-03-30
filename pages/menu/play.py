@@ -23,7 +23,7 @@ def render_range(order):
         label_pos = globals.CENTER_X + 300, 100 + order * 100
     else:
         label_pos = globals.CENTER_X - 300, 100 + (order - 6) * 100
-    paint_api.mount_text(  #region parameters
+    paint_api.mount_text(  # region parameters
         px_x=label_pos[0],
         px_y=label_pos[1],
         layer=globals.TEXT_LAYER,
@@ -33,10 +33,10 @@ def render_range(order):
         color=(255, 255, 255),
 
         key=f"label_text{order}",
-    )  #endregion
+    )  # endregion
 
     item_image = None
-    left_arrow = paint_api.mount_rect(  #region parameters
+    left_arrow = paint_api.mount_rect(  # region parameters
         px_x=label_pos[0] - 60,
         px_y=label_pos[1] + 40,
         px_w=40,
@@ -46,9 +46,9 @@ def render_range(order):
         image_path="assets/images/buttons/left.png",
 
         key=f"left_arrow{order}",
-    )  #endregion
+    )  # endregion
     if globals.setup_data["ranges"][order][1]:
-        item_image = paint_api.mount_rect(  #region parameters
+        item_image = paint_api.mount_rect(  # region parameters
             px_x=label_pos[0],
             px_y=label_pos[1] + 40,
             px_w=40,
@@ -58,8 +58,8 @@ def render_range(order):
             image_path=globals.setup_data["ranges"][order][1],
 
             key=f"item_image{order}",
-        )  #endregion
-    right_arrow = paint_api.mount_rect(  #region parameters
+        )  # endregion
+    right_arrow = paint_api.mount_rect(  # region parameters
         px_x=label_pos[0] + 60,
         px_y=label_pos[1] + 40,
         px_w=40,
@@ -69,8 +69,8 @@ def render_range(order):
         image_path="assets/images/buttons/right.png",
 
         key=f"right_arrow{order}",
-    )  #endregion
-    value_text = paint_api.mount_text(  #region parameters
+    )  # endregion
+    value_text = paint_api.mount_text(  # region parameters
         px_x=label_pos[0],
         px_y=label_pos[1] + 70 if item_image else label_pos[1] + 40,
         layer=globals.TEXT_LAYER,
@@ -80,7 +80,7 @@ def render_range(order):
         color=(255, 255, 255),
 
         key=f"value_text{order}",
-    )  #endregion
+    )  # endregion
 
     globals.setup_data["ranges"][order][3] = left_arrow
     globals.setup_data["ranges"][order][4] = value_text
@@ -93,7 +93,7 @@ def render_layout():
     for i in range(len(globals.setup_data["ranges"])):
         render_range(i)
 
-    players1_button_c = paint_api.mount_button(  #region parameters
+    players1_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X - 100,
         px_y=globals.CENTER_Y - 140,
         px_w=195,
@@ -102,9 +102,9 @@ def render_layout():
         font_size=30,
 
         key="players1_button",
-    )  #endregion
+    )  # endregion
 
-    players2_button_c = paint_api.mount_button(  #region parameters
+    players2_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X + 100,
         px_y=globals.CENTER_Y - 140,
         px_w=195,
@@ -113,9 +113,9 @@ def render_layout():
         font_size=30,
 
         key="players2_button",
-    )  #endregion
+    )  # endregion
 
-    pve_button_c = paint_api.mount_button(  #region parameters
+    pve_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 70,
         px_w=400,
@@ -124,9 +124,9 @@ def render_layout():
         font_size=40,
 
         key="pve_button",
-    )  #endregion
+    )  # endregion
 
-    bossfight_button_c = paint_api.mount_button(  #region parameters
+    bossfight_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y,
         px_w=400,
@@ -135,9 +135,9 @@ def render_layout():
         font_size=40,
 
         key="bossfight_button",
-    )  #endregion
+    )  # endregion
 
-    duel_button_c = paint_api.mount_button(  #region parameters
+    duel_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 70,
         px_w=400,
@@ -146,9 +146,9 @@ def render_layout():
         font_size=40,
 
         key="duel_button",
-    )  #endregion
+    )  # endregion
 
-    back_button_c = paint_api.mount_button(  #region parameters
+    back_button_c = paint_api.mount_button(  # region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
@@ -157,7 +157,7 @@ def render_layout():
         font_size=50,
 
         key="back",
-    )  #endregion
+    )  # endregion
 
 
 def play(is_setup=False):
@@ -175,7 +175,7 @@ def play(is_setup=False):
 
         if is_clicked(left_arrow):
             if value - data[6] >= 0:
-               value -= data[6]
+                value -= data[6]
             value_text.set_text(str(value))
         elif is_clicked(right_arrow):
             value += data[6]
