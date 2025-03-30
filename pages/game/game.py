@@ -117,6 +117,12 @@ def game(**kwargs):
     if is_game_over:
         return
 
+    globals.time_slowdown_count_down = max(0, globals.time_slowdown_count_down - 1)
+    if globals.time_slowdown_count_down % 4 >= 1:
+        return
+
+    globals.game_tick += 1
+
     for x in range(globals.cols):
         for y in range(globals.rows):
             globals.field_free_state[x][y] = False
@@ -147,10 +153,10 @@ def game(**kwargs):
                 continue
             globals.field_weight[x][y] = globals.inf
 
-    globals.game_tick += 1
+
     bonus_delay = get_setup_data_value("bonus_delay")
     if bonus_delay == 0 or globals.game_tick % bonus_delay == 0:
-        spawn_bonus(rand(0, 4))
+        spawn_bonus(rand(4, 6))
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()

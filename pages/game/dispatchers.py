@@ -204,7 +204,6 @@ def spawn_bonus(bonus_seed=0):
             px_x=bonus_x * globals.CELL_SIZE, px_y=bonus_y * globals.CELL_SIZE,
             px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
             x=bonus_x, y=bonus_y,
-            color=[(123, 123, 0), (123, 0, 123), (0, 123, 123), (123, 0, 0)][bonus_seed],
 
             key=format_entity_key(BONUS_KEY, f"{bonus_x};{bonus_y}"),
         )  # endregion
@@ -235,6 +234,8 @@ def spawn_bonus(bonus_seed=0):
 def reset_game():
     paint_api.reset_frame()
     globals.game_tick = 0
+    globals.time_reversing_count_down = 0
+    globals.time_slowdown_count_down = 0
     globals.scores.clear()
     globals.state_snapshots.clear()
     globals.cur_state_spawned_sprites.clear()

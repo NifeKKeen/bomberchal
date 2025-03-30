@@ -25,7 +25,14 @@ class Snapshotable(SnapshotableProtocol):
         for key, value in self.__dict__.items():
             if key not in ("image", "_Sprite__g", "last_snapshot", "kwargs"):
                 # print(self.key, key, value)
-                snapshot[key] = deepcopy(value)
+                if key == "bonus_keys":
+                    new_bonus_keys = []
+                    for bonus_key in value:
+                        if globals.map_key_sprite[bonus_key].type != globals.BONUS_REVERSE:
+                            new_bonus_keys.append(bonus_key)
+                    snapshot[key] = new_bonus_keys
+                else:
+                    snapshot[key] = deepcopy(value)
         self.snapshotted = True
         return snapshot
 

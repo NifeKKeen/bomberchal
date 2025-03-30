@@ -77,7 +77,7 @@ border_frames = [f"assets/images/terrain/block{i}.png" for i in range(1, 3)]
 grass_frames = ["assets/images/terrain/grass1.png"]
 bonus_frames = [
     f"assets/images/bonus/{bonus_type}.png"
-    for bonus_type in ["bomb_bonus", "explosion", "health", "speed"]
+    for bonus_type in ["bomb_bonus", "explosion", "health", "speed", "slowdown", "reverse"]
 ]
 # endregion
 
@@ -128,11 +128,13 @@ field_fire_state = None  # power of fire in specific cell in ticks
 field_free_state = None  # True if cell is free (empty or bonus), else False
 field_weight = None  # weights of cells
 paused = False
-time_reversing_count_down = 0  # the number of ticks to do time reversing
 game_mode = None
 scores = dict()
 game_tick = 0  # current game's tick
 inf = 1e9  # formal infinity used in field_weight and pathfinding in general
+
+time_reversing_count_down = 0  # the number of ticks to do time reversing
+time_slowdown_count_down = 0  # the number of ticks to run time slowly
 
 SNAPSHOT_ALLOWED = True
 SNAPSHOT_CAPTURE_DELAY = 15  # delay in ticks
@@ -165,6 +167,8 @@ BONUS_SPEED = "speed"
 BONUS_POWER = "power"
 BONUS_CAPACITY = "capacity"
 BONUS_LIFE = "life"
+BONUS_SLOWDOWN = "slow"
+BONUS_REVERSE = "reverse"
 # endregion
 
 # region TEXTURE TYPES
@@ -189,6 +193,8 @@ map_bonus_type_to_path = {
     BONUS_POWER: bonus_frames[1],
     BONUS_CAPACITY: bonus_frames[0],
     BONUS_LIFE: bonus_frames[2],
+    BONUS_SLOWDOWN: bonus_frames[4],
+    BONUS_REVERSE: bonus_frames[5],
 }
 # endregion
 
@@ -220,6 +226,8 @@ map_bonus_type_to_timer = {
     BONUS_POWER: utils.helpers.get_tick_from_ms(10000),
     BONUS_CAPACITY: utils.helpers.get_tick_from_ms(30000),
     BONUS_SPEED: utils.helpers.get_tick_from_ms(5000),
+    BONUS_SLOWDOWN: utils.helpers.get_tick_from_ms(8000),
+    BONUS_REVERSE: utils.helpers.get_tick_from_ms(7000),
 }
 # endregion
 
@@ -238,6 +246,8 @@ scoring = {  # NOTE: for game_mode="dual" this variable is meaningless
         BONUS_POWER: 10,
         BONUS_CAPACITY: 5,
         BONUS_LIFE: 10,
+        BONUS_SLOWDOWN: 10,
+        BONUS_REVERSE: 10,
     },
     "DAMAGE": {
         BOSS_BOT_KEY: 100,

@@ -40,7 +40,10 @@ class StateSnapshot:  # class with side effects!
             self.globals_snapshot = deepcopy(
                 {
                     key: getattr(globals, key)
-                    for key in ["field_fire_state", "field", "game_tick", "scores", "field_free_state", "field_weight"]
+                    for key in [
+                        "field_fire_state", "field", "game_tick", "scores", "field_free_state", "field_weight",
+                        "time_slowdown_count_down"
+                    ]
                 }
             )
             self.globals_snapshot["entities"] = copy(globals.entities)

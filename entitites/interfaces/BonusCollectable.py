@@ -12,6 +12,8 @@ class BonusCollectable(Entity):
             globals.BONUS_POWER: True,
             globals.BONUS_CAPACITY: True,
             globals.BONUS_LIFE: True,
+            globals.BONUS_SLOWDOWN: True,
+            globals.BONUS_REVERSE: True,
         }
 
     def collect(self, bonus):

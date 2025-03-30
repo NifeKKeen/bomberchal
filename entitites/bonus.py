@@ -10,6 +10,8 @@ MAP_SEED_BONUS_TYPE = {
     1: globals.BONUS_POWER,
     2: globals.BONUS_CAPACITY,
     3: globals.BONUS_LIFE,
+    4: globals.BONUS_SLOWDOWN,
+    5: globals.BONUS_REVERSE,
 }
 
 
@@ -84,6 +86,10 @@ class Bonus(Entity):
                 self.payload = 1
 
             collector.lives += self.payload
+        elif self.type == globals.BONUS_SLOWDOWN:
+            globals.time_slowdown_count_down = globals.map_bonus_type_to_timer[self.type]
+        elif self.type == globals.BONUS_REVERSE:
+            globals.time_reversing_count_down = globals.map_bonus_type_to_timer[self.type]
         else:
             raise Exception("Invalid bonus type")
 

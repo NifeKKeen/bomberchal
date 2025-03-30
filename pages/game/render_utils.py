@@ -104,6 +104,7 @@ def render_game_end(message, show_score, payload):
         px_y=globals.CENTER_Y + 140,
         px_w=500,
         px_h=60,
+        popup_layer=1,
         text="Restart",
         font_size=30,
 
@@ -116,6 +117,7 @@ def render_game_end(message, show_score, payload):
         px_y=globals.CENTER_Y + 210,
         px_w=500,
         px_h=60,
+        popup_layer=1,
         text="Title screen",
         font_size=30,
 
@@ -128,6 +130,6 @@ def render_game_end(message, show_score, payload):
 
         save_data(payload)
         setup_game()
-    elif are_clicked(back_button_c):
+    elif are_clicked(*back_button_c):
         save_data(payload)
         navigate("menu")
