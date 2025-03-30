@@ -60,7 +60,7 @@ def setup_game(**kwargs):
         player = Player(  #region parameters
             speed=calc_speed_per_time(16, 100),
             lives=1,
-            bomb_power=7,
+            bomb_power=1,
             bomb_allowed=5,
             bomb_timer=get_tick_from_ms(3000),
             spread_type="bfs",
@@ -152,10 +152,9 @@ def render_field(**kwargs):
             elif field[x][y] == globals.AGGRESSIVE_BOT_CELL:
                 bot = AggressiveBot(  #region parameters
                     speed=calc_speed_per_time(10, 100),
-                    bomb_power=1,
+                    bomb_power=2,
                     bomb_countdown=get_tick_from_ms(3000),
-                    #boredom_countdown=get_tick_from_ms(10000),
-                    spread_type="star",
+                    spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
                     px_w=globals.CELL_SIZE, px_h=globals.CELL_SIZE,
@@ -173,7 +172,6 @@ def render_field(**kwargs):
                     bomb_allowed=1,
                     bomb_countdown=get_tick_from_ms(3500),
                     damage_countdown=get_tick_from_ms(500),
-                    boredom_countdown=get_tick_from_ms(10000),
                     spread_type="bfs",
 
                     px_x=x * globals.CELL_SIZE, px_y=y * globals.CELL_SIZE,
@@ -193,6 +191,7 @@ def reset_game():
     globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
 
 def spawn_bonus(bonus_type = 0):
+    from entitites.bot import get_bots
     attempts = 0
     while True:
         bonus_x, bonus_y = rand(0, globals.cols), rand(0, globals.rows)
@@ -219,6 +218,9 @@ def spawn_bonus(bonus_type = 0):
 
             key=f"bonus-{bonus_x};{bonus_y}",
         )  #endregion
+
+        for entity in get_bots(list(globals.entities)):
+            entity.moving = 0
         return
 
     for x in range(globals.cols):
@@ -240,6 +242,8 @@ def spawn_bonus(bonus_type = 0):
 
                     key=f"bonus-{bonus_x};{bonus_y}",
                 )  #endregion
+                for entity in get_bots(list(globals.entities)):
+                    entity.moving = 0
                 return
 
 def handle_bonus_items_render():
@@ -318,7 +322,7 @@ def game(**kwargs):
     if globals.time_reversing_count_down:
         return
 
-    if globals.game_tick % 400 == 0:
+    if globals.game_tick % 5 == 0:
         spawn_bonus(rand(0, 4))
 
     if len(get_players(globals.entities)) == 0:
@@ -388,8 +392,6 @@ def game(**kwargs):
         if isinstance(entity, Controllable):
             entity.handle_event()
         if isinstance(entity, Bot):
-            if isinstance(entity, AggressiveBot):
-                entity.cur_boredom_countdown = max(entity.cur_boredom_countdown - 1, 0)
             entity.think()
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error

@@ -17,7 +17,7 @@ class BombSpawnable(Entity):
         self.spread_type = kwargs.get("spread_type", "bfs")
 
 
-    def spawn_bomb(self, is_simulation = False):
+    def spawn_bomb(self):
         from entitites.bomb import Bomb, get_bombs
         if self.bomb_allowed <= 0 or self.cur_bomb_countdown > 0:
             return
@@ -41,8 +41,6 @@ class BombSpawnable(Entity):
             spawner_key=self.key,
             spread_type=self.spread_type,
             power=self.bomb_power,
-
-            is_simulation=is_simulation,
 
             move_up_key=K_i,
             move_left_key=K_j,

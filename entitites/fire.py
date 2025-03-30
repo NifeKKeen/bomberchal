@@ -17,7 +17,6 @@ class Fire(Collidable, Entity):
         self.is_initial = kwargs.get("is_initial", False)
         self.spread_type = kwargs.get("spread_type", "bfs")  # | "star" | "up" | "right" | "down" | "left"
         self.did_spread = False
-        self.is_simulation = kwargs.get("is_simulation", False) # used for calculations in aggressive bot's logic
 
         if self.mounted:
             globals.field_fire_state[self.x][self.y] = self.power
@@ -77,7 +76,6 @@ class Fire(Collidable, Entity):
                 spread_timer=self.spread_timer,
                 spawner_key=self.spawner_key,
                 spread_type=self.spread_type,
-                is_simulation=self.is_simulation,
 
                 x=nx,
                 y=ny,
@@ -106,7 +104,6 @@ class Fire(Collidable, Entity):
                 spread_timer=self.spread_timer,
                 spawner_key=self.spawner_key,
                 spread_type=spread_type,
-                is_simulation=self.is_simulation,
 
                 x=nx,
                 y=ny,
@@ -135,7 +132,6 @@ class Fire(Collidable, Entity):
             spread_timer=self.spread_timer,
             spawner_key=self.spawner_key,
             spread_type=self.spread_type,
-            is_simulation=self.is_simulation,
 
             x=nx,
             y=ny,

@@ -117,7 +117,7 @@ cur_state_killed_sprites = set()
 cur_state_spawned_sprites = set()
 
 entities = set()
-initial_bots_count = [10, 10, 10, 0]  # original, wandering, aggressive, boss
+initial_bots_count = [0, 0, 10, 0]  # original, wandering, aggressive, boss
 initial_obstacle_count = 200
 
 # GAME CONSTRAINTS
