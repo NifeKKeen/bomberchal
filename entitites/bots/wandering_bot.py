@@ -78,27 +78,19 @@ class WanderingBot(Bot):
 
         if self.moving == 0:
             queue = []
-            bombs_lst = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
-            self.used = [
-                [False for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weight = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.dist = [
-                [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weighted_dist = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.prev = [
-                [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
+            bombs_list = list(get_bombs(globals.entities)) + list(get_fires(globals.entities))
+            for x in range(globals.cols):
+                for y in range(globals.rows):
+                    self.used[x][y] = False
+                    self.weight[x][y] = 0
+                    self.dist[x][y] = float('inf')
+                    self.weighted_dist[x][y] = 0
+                    self.prev[x][y] = (-1, -1)
 
             def add(x, y):
                 heappush(queue, ((self.weighted_dist[x][y], self.dist[x][y]), (x, y)))
 
-            for bomb in bombs_lst:
+            for bomb in bombs_list:
                 for fx in range(max(1, bomb.x - bomb.power), min(globals.cols - 1, bomb.x + bomb.power + 1)):
                     for fy in range(max(1, bomb.y - bomb.power), min(globals.rows - 1, bomb.y + bomb.power + 1)):
                         if abs(bomb.x - fx) + abs(bomb.y - fy) <= bomb.power:
@@ -191,21 +183,16 @@ class WanderingBot(Bot):
                 self.dest_px_x, self.dest_px_y = get_field_pos(nx, ny)
 
             queue.clear()
-            self.used = [
-                [False for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.dist = [
-                [float('inf') for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.weighted_dist = [
-                [0 for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
-            self.prev = [
-                [(-1, -1) for _ in range(globals.rows)] for _ in range(globals.cols)
-            ]
+
+            for x in range(globals.cols):
+                for y in range(globals.rows):
+                    self.used[x][y] = False
+                    self.dist[x][y] = float('inf')
+                    self.weighted_dist[x][y] = 0
+                    self.prev[x][y] = (-1, -1)
+
             self.weighted_dist[self.dest_x][self.dest_y] = self.weight[self.dest_x][self.dest_y]
             self.dist[self.dest_x][self.dest_y] = 0
-
             self.prev[self.dest_x][self.dest_y] = (self.dest_x, self.dest_y)
             add(self.dest_x, self.dest_y)
             dijkstra()

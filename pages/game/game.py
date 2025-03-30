@@ -6,7 +6,7 @@ from entitites.bots.boss_bot import BossBot
 from entitites.bots.wandering_bot import WanderingBot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from utils import paint_api, snapshot_api
-from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time
+from utils.helpers import rand, get_field_pos, get_tick_from_ms, calc_speed_per_time, in_valid_range
 from utils.interaction_api import is_clicked, is_pressed
 from utils.paint_api import mount_rect
 from utils.sound_api import play_music
@@ -191,6 +191,7 @@ def reset_game():
     globals.state_snapshots.clear()
     globals.field = field_generator.generate(globals.cols, globals.rows, globals.game_mode)
     globals.field_fire_state = [[0] * globals.rows for _ in range(globals.cols)]
+    globals.field_free_state = [[False] * globals.rows for _ in range(globals.cols)]
 
 def spawn_bonus(bonus_type = 0):
     attempts = 0
@@ -376,6 +377,14 @@ def game(**kwargs):
             navigate("menu")
             return
 
+    for entity in list(globals.entities):
+        if not in_valid_range(entity.x, entity.y, globals.cols, globals.rows):
+            continue
+        globals.field_free_state[entity.x][entity.y] = True
+
+    for x in range(globals.cols):
+        for y in range(globals.rows):
+            globals.field_weight = 0
 
     globals.game_tick += 1
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
