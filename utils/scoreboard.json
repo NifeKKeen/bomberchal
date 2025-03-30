@@ -27,6 +27,62 @@
                 "losses": 2,
                 "draws": 0
             }
+        },
+        {
+            "username": "WWWWWWWWWWWWWWW",
+            "pve": {
+                "score": -120
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "123456789012345",
+            "pve": {
+                "score": -117
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "Chetam",
+            "pve": {
+                "score": 100
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "NeKylasyn",
+            "pve": {
+                "score": 177
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
         }
     ]
 }

@@ -86,7 +86,7 @@ def pop_up_window():
 
 
 
-def menu_customization():
+def customization():
     global player_skins, show_popup_window
     player_skins = globals.skins
 
