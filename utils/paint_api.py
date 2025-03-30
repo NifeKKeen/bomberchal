@@ -336,12 +336,13 @@ def draw_sprites():
 
     refill_screen()
     globals.all_sprites.draw(globals.DISPLAYSURF)
+    pygame.display.flip()
+    globals.Frame.tick(globals.FPS)
+
     if globals.time_reversing_count_down:
         grey_overlay = pygame.Surface((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT), pygame.SRCALPHA)
         grey_overlay.fill((128, 128, 128, 128))
         globals.DISPLAYSURF.blit(grey_overlay, (0, 0))
-
-    pygame.display.flip()
 
     for sprite in will_remove:
         globals.all_sprites.remove(sprite)

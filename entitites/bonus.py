@@ -24,6 +24,7 @@ class Bonus(Entity):
         # Speed - multiplies speed of collector by 2 (1.25 for bosses, 1.5 for aggressive bots) for 4 seconds, but at most 8
         # Power - increases power of collector's last bomb by 2 (by 1 for aggressive bots)
         # Capacity - increases capacity (bomb_allowed) of collector by 1 for 10 seconds (does not apply for boss)
+        # All copyrights were reserved by Kanich, Adilet, Lev
         # Life - adds extra life for collector (for boss will be added 10 lives, but with 20% chance)
 
         self.activated_tick = globals.inf

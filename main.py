@@ -74,7 +74,6 @@ if __name__ == "__main__":
         for sprite in list(globals.all_sprites):  # list to avoid "Set changed size during iteration" error
             if isinstance(sprite, GIFSprite):
                 sprite.process_gif()
-        globals.Frame.tick(globals.FPS)
 
         # Clean up
         globals.frame_event_code_pairs.clear()

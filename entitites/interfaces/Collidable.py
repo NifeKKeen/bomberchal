@@ -112,6 +112,7 @@ class Collidable(Entity):
         ent_px_end_x = entity.px_x + ent_px_w
         if self.px_x + (self.px_w // 2) < ent_px_start_x + (ent_px_w // 2):
             # print("ADJUSTED TO LEFT")
+            # All copyrights were reserved by Kanich, Adilet, Lev
             self.set_px(ent_px_start_x - self.px_w, self.px_y)  # set lefter entity
         else:
             # print("ADJUSTED TO RIGHT")
