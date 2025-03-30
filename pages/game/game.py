@@ -72,8 +72,8 @@ def setup_game(**kwargs):
             attack_func=Player.spawn_bomb,
             bonus_activation_key=control_keys[5][i],
 
-            px_x=(1 if i == 0 else globals.cols - 1) * globals.CELL_SIZE,
-            px_y=(1 if i == 0 else globals.rows - 1) * globals.CELL_SIZE,
+            px_x=(1.1 if i == 0 else globals.cols - 1) * globals.CELL_SIZE,
+            px_y=(1.1 if i == 0 else globals.rows - 1) * globals.CELL_SIZE,
             px_w=globals.PLAYER_CELL_SIZE,
             px_h=globals.PLAYER_CELL_SIZE,
 
