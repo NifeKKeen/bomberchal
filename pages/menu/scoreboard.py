@@ -6,9 +6,61 @@ from utils.interaction_api import is_clicked
 from utils import scoreboard_api as scoreboard_api
 
 game_mode = "pve"
+pve_sprite = None
+duel_sprite = None
+bossfight_sprite = None
+pve_text = None
+duel_text = None
+bossfight_text = None
+back_button = None
+back_button_text = None
+header_text = "Scoreboard"
+def table():
+    font_size = 30
+    padding = int(font_size * 0.8)
+    y_offset = globals.CENTER_Y - 100
+    if game_mode == "duel":
+        header_text = f"{'Username':<12} {'Wins':^6} {'Losses':^6} {'Draws':^6}"
+    else:
+        header_text = f"{'Username':<12} {'Score':^10}"
+    paint_api.mount_text(
+        px_x=globals.CENTER_X,
+        px_y=y_offset,
+        align="center",
+        text=header_text,
+        font_size=font_size,
+        color=(255, 255, 255),
+        key="scoreboard_header",
+    )
+    y_offset += font_size + padding
 
-def menu_scoreboard():
-    global game_mode
+    # Отрисовка строк с результатами
+    score_data = scoreboard_api.get_scoreboard(game_mode)
+    for i, entry in enumerate(score_data):
+        if game_mode in ("pve", "bossfight"):
+            key_mode = "pve" if game_mode == "pve" else "bossfight"
+            line_text = f"{entry.get('username', ''):<12} {entry.get(key_mode, {}).get('score', 0):^10}"
+        elif game_mode == "duel":
+            duel = entry.get("duel", {"wins": 0, "losses": 0, "draws": 0})
+            line_text = f"{entry.get('username', ''):<12} {duel.get('wins', 0):^6} {duel.get('losses', 0):^6} {duel.get('draws', 0):^6}"
+        paint_api.mount_text(
+            px_x=globals.CENTER_X,
+            px_y=y_offset,
+            align="center",
+            text=line_text,
+            font_size=font_size,
+            color=(255, 255, 255),
+            key=f"scoreboard_line_{i}",
+        )
+        y_offset += font_size + padding
+
+def mount_sprites():
+    global game_mode, pve_sprite, duel_sprite, bossfight_sprite
+    global pve_text, duel_text, bossfight_text
+    global back_button, back_button_text
+    global header_text, y_offset, font_size
+    y_offset = globals.CENTER_Y - 300
+
     paint_api.mount_text( #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 300,
@@ -121,67 +173,6 @@ def menu_scoreboard():
 
         key="bossfight_shadow",
     )  #endregion
-
-    if is_clicked(pve_sprite):
-        game_mode = "pve"
-    elif is_clicked(duel_sprite):
-        game_mode = "duel"
-    elif is_clicked(bossfight_sprite):
-        game_mode = "bossfight"
-
-    if game_mode == "pve":
-        pve_text.set_color((255, 255, 0))
-        duel_text.set_color((255, 255, 255))
-        bossfight_text.set_color((255, 255, 255))
-    elif game_mode == "duel":
-        pve_text.set_color((255, 255, 255))
-        duel_text.set_color((255, 255, 0))
-        bossfight_text.set_color((255, 255, 255))
-    elif game_mode == "bossfight":
-        pve_text.set_color((255, 255, 255))
-        duel_text.set_color((255, 255, 255))
-        bossfight_text.set_color((255, 255, 0))
-      
-    for key in ["scoreboard_header"] + [f"scoreboard_line_{i}" for i in range(5)]:
-        if key in globals.map_key_sprite:
-            paint_api.unmount(key)
-
-    score_data = scoreboard_api.get_scoreboard(game_mode)
-    font_size = 30
-    padding = int(font_size * 0.8)
-    y_offset = globals.CENTER_Y - 100
-    if game_mode == "duel":
-        header_text = f"{'Username':<12} {'Wins':^6} {'Losses':^6} {'Draws':^6}"
-    else:
-        header_text = f"{'Username':<12} {'Score':^10}"
-    paint_api.mount_text(
-        px_x=globals.CENTER_X,
-        px_y=y_offset,
-        align="center",
-        text=header_text,
-        font_size=font_size,
-        color=(255, 255, 255),
-        key="scoreboard_header",
-    )
-    y_offset += font_size + padding
-    for i, entry in enumerate(score_data):
-        if game_mode in ("pve", "bossfight"):
-            key_mode = "pve" if game_mode == "pve" else "bossfight"
-            line_text = f"{entry.get('username', ''):<12} {entry.get(key_mode, {}).get('score', 0):^10}"
-        elif game_mode == "duel":
-            duel = entry.get("duel", {"wins": 0, "losses": 0, "draws": 0})
-            line_text = f"{entry.get('username', ''):<12} {duel.get('wins', 0):^6} {duel.get('losses', 0):^6} {duel.get('draws', 0):^6}"
-        paint_api.mount_text(
-            px_x=globals.CENTER_X,
-            px_y=y_offset,
-            align="center",
-            text=line_text,
-            font_size=font_size,   
-            color=(255, 255, 255),
-            key=f"scoreboard_line_{i}",
-        )
-        y_offset += font_size + padding
-    # print("game mode", game_mode)
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
@@ -217,5 +208,46 @@ def menu_scoreboard():
         key="back_text",
     )  #endregion
 
-    if is_clicked(back_button):
+def menu_scoreboard():
+    global game_mode, pve_sprite, duel_sprite, bossfight_sprite
+    global pve_text, duel_text, bossfight_text
+    global back_button, back_button_text, header_text
+    global y_offset, font_size
+
+    # Если спрайты ещё не смонтированы, монтируем их
+    if pve_sprite is None or duel_sprite is None or bossfight_sprite is None or back_button is None:
+        mount_sprites()
+
+    # Очистка предыдущих элементов
+    for key in ["scoreboard_header"] + [f"scoreboard_line_{i}" for i in range(5)]:
+        if key in globals.map_key_sprite:
+            paint_api.unmount(key)
+
+    # Отрисовка таблицы
+    table()
+    
+    # Обработка кликов по режимам (с проверками на None)
+    if pve_sprite is not None and is_clicked(pve_sprite):
+        game_mode = "pve"
+    elif duel_sprite is not None and is_clicked(duel_sprite):
+        game_mode = "duel"
+    elif bossfight_sprite is not None and is_clicked(bossfight_sprite):
+        game_mode = "bossfight"
+
+    # Обновление цвета текста выбранного режима
+    if game_mode == "pve":
+        pve_text.set_color((255, 255, 0))
+        duel_text.set_color((255, 255, 255))
+        bossfight_text.set_color((255, 255, 255))
+    elif game_mode == "duel":
+        pve_text.set_color((255, 255, 255))
+        duel_text.set_color((255, 255, 0))
+        bossfight_text.set_color((255, 255, 255))
+    elif game_mode == "bossfight":
+        pve_text.set_color((255, 255, 255))
+        duel_text.set_color((255, 255, 255))
+        bossfight_text.set_color((255, 255, 0))
+      
+    # Обработка клика по кнопке "Back"
+    if back_button is not None and is_clicked(back_button):
         navigate("menu")
