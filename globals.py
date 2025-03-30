@@ -19,6 +19,7 @@ Frame = None  # pygame.time.Clock()
 FPS = 60
 all_sprites = None  # pygame.sprite.LayeredUpdates()
 tick = 0  # whole app's tick
+APP_VERSION = "1.1"
 # endregion
 
 # region FOR PAINT RENDER API
@@ -293,6 +294,7 @@ setup_data = {
             ["Wandering bots", bot_frames["wandering"]["down_static"][0], INITIAL_WANDERING_BOTS, None, None, None, 1],
             ["Rows", None, rows, None, None, None, 1],
             ["Cols", None, cols, None, None, None, 1],
+            ["Lives", None, 1, None, None, None, 1],
         ],
     "players": 1,
     "index": {
@@ -304,7 +306,9 @@ setup_data = {
         "wandering_bots": 5,
         "rows": 6,
         "cols": 7,
+        "lives": 8,
     },
+    "version": APP_VERSION,
 }
 
 exp_key_p1, exp_key_p2 = load_controls()

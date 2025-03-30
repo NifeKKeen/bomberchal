@@ -73,7 +73,11 @@ def load_config():
         globals.usernames = json.loads(config.get("Usernames", "usernames", fallback=globals.usernames))
 
     if "GameSetup" in config:
+        tmp = globals.setup_data
         globals.setup_data = json.loads(config.get("GameSetup", "setup_data", fallback=globals.setup_data))
+        if globals.setup_data.get("version", None) != globals.APP_VERSION:
+            globals.setup_data = tmp
+            save_config()
 
 
 def save_config():

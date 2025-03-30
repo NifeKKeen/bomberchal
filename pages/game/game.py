@@ -17,7 +17,7 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.player import get_players
 from entitites.bot import get_bots
 from pages.game.dispatchers import build_field, spawn_bonus, reset_game
-from pages.game.render_utils import render_bonus_inventory, render_game_end
+from pages.game.render_utils import render_bonus_inventory, render_game_end, render_pause
 from pages.game import field_generator
 from pages.navigation import navigate
 from config import load_config
@@ -98,7 +98,11 @@ def game(**kwargs):
     is_game_over = handle_game_end()
 
     if is_clicked(go_menu_button_sprite):
-        navigate("menu")
+        globals.paused = True
+
+    if globals.paused:
+        render_pause()
+        return
 
     if is_pressed(K_t):
         globals.time_reversing_count_down = 2
@@ -152,7 +156,6 @@ def game(**kwargs):
             if not in_valid_range(x, y, globals.cols, globals.rows):
                 continue
             globals.field_weight[x][y] = globals.inf
-
 
     bonus_delay = get_setup_data_value("bonus_delay")
     if bonus_delay == 0 or globals.game_tick % bonus_delay == 0:

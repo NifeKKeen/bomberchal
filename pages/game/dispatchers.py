@@ -153,7 +153,7 @@ def build_field():
     for i in range(player_cnt):
         player = Player(  # region parameters
             speed=calc_speed_per_time(8, 100),
-            lives=1,
+            lives=get_setup_data_value("lives"),
             bomb_power=2,
             bomb_allowed=2,
             bomb_timer=get_tick_from_ms(3000),

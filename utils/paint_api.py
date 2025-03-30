@@ -223,7 +223,7 @@ def mount_button(**kwargs):
         align="center",
         image_path="assets/images/buttons/bar_button.png",
 
-        is_dynamic=kwargs.get("dynamic"),
+        dynamic=kwargs.get("dynamic"),
         key=f"button_{key}",
     )  # endregion
     pos = button.px_x, button.px_y
@@ -236,7 +236,7 @@ def mount_button(**kwargs):
         font_size=kwargs.get("font_size"),
         color=kwargs.get("color", (255, 255, 255)),
 
-        is_dynamic=kwargs.get("dynamic"),
+        dynamic=kwargs.get("dynamic"),
         key=f"button_text_{key}",
     )  # endregion
     button_text_shadow = mount_text(  # region parameters
@@ -248,7 +248,7 @@ def mount_button(**kwargs):
         font_size=button_text.font_size,
         color=globals.SHADOW_COLOR,
 
-        is_dynamic=kwargs.get("dynamic"),
+        dynamic=kwargs.get("dynamic"),
         key=f"button_shadow_{key}",
     )  # endregion
 

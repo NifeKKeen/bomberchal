@@ -58,6 +58,53 @@ def render_bonus_inventory():
             x += 1
 
 
+def render_pause():
+    bg_overlay = paint_api.mount_rect(  # region parameters
+        px_x=0,
+        px_y=0,
+        px_w=globals.SCREEN_WIDTH,
+        px_h=globals.SCREEN_HEIGHT,
+        layer=globals.LAYER_SHIFT - 1,
+        image_path="assets/images/backgrounds/overlay.png",
+
+        key="pause_overlay",
+        dynamic=True,
+    )  # endregion
+
+    unpause_button_c = paint_api.mount_button(  # region parameters
+        px_x=globals.CENTER_X,
+        px_y=globals.CENTER_Y,
+        px_w=500,
+        px_h=60,
+        popup_layer=1,
+        text="Continue",
+        font_size=30,
+
+        key="restart",
+        dynamic=True,
+    )  # endregion
+
+    home_button_c = paint_api.mount_button(  # region parameters
+        px_x=globals.CENTER_X,
+        px_y=globals.CENTER_Y + 70,
+        px_w=500,
+        px_h=60,
+        popup_layer=1,
+        text="Exit",
+        font_size=30,
+
+        key="game_over_back",
+        dynamic=True,
+    )  # endregion
+
+    if are_clicked(*unpause_button_c):
+        globals.paused = False
+    elif are_clicked(*home_button_c):
+        globals.paused = False
+        navigate("menu")
+
+
+
 def render_game_end(message, show_score, payload):
     score = players_sum_of_scores(globals.scores)
 

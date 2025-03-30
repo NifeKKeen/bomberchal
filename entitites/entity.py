@@ -27,6 +27,9 @@ class Entity(SurfaceSprite, Snapshotable):
 
         self.initial_lives = kwargs.get("lives", 1)
         self.lives = self.initial_lives
+        if self.lives <= 0:
+            raise "lives must be positive"
+
         self.damage_countdown = kwargs.get("damage_countdown", get_tick_from_ms(0))
         self.cur_damage_countdown = kwargs.get("cur_damage_countdown", get_tick_from_ms(0))
         self.damaged_by = {}
