@@ -1,0 +1,88 @@
+{
+    "scoreboard": [
+        {
+            "username": "Kanich",
+            "pve": {
+                "score": 126
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 4,
+                "losses": 3,
+                "draws": 0
+            }
+        },
+        {
+            "username": "NifeKKeen",
+            "pve": {
+                "score": 0
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 2,
+                "losses": 2,
+                "draws": 0
+            }
+        },
+        {
+            "username": "WWWWWWWWWWWWWWW",
+            "pve": {
+                "score": -120
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "123456789012345",
+            "pve": {
+                "score": -117
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "Chetam",
+            "pve": {
+                "score": 100
+            },
+            "bossfight": {
+                "score": 0
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        },
+        {
+            "username": "NeKylasyn",
+            "pve": {
+                "score": 177
+            },
+            "bossfight": {
+                "score": 6427
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
+        }
+    ]
+}

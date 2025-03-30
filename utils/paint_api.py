@@ -209,6 +209,48 @@ def mount_gif(**kwargs):
     return sprite.mount()
 
 
+def mount_button(**kwargs):
+    key = kwargs.get("key")
+    popup_layer = kwargs.get("popup_layer", 0)
+
+    button = mount_rect(  #region parameters
+        px_x=kwargs.get("px_x"),
+        px_y=kwargs.get("px_y"),
+        px_w=kwargs.get("px_w"),
+        px_h=kwargs.get("px_h"),
+        layer=globals.LAYER_SHIFT * popup_layer + globals.BUTTON_LAYER,
+        align="center",
+        image_path="assets/images/buttons/bar_button.png",
+
+        key=f"button_{key}",
+    )  #endregion
+    pos = button.px_x, button.px_y
+    button_text = mount_text(  #region parameters
+        px_x=pos[0],
+        px_y=pos[1],
+        layer=globals.LAYER_SHIFT * popup_layer + globals.TEXT_LAYER,
+        align="center",
+        text=kwargs.get("text"),
+        font_size=kwargs.get("font_size"),
+        color=kwargs.get("color", (255, 255, 255)),
+
+        key=f"button_text_{key}",
+    )  #endregion
+    button_text_shadow = mount_text(  #region parameters
+        px_x=pos[0] + globals.SHADOW_OFFSET,
+        px_y=pos[1] + globals.SHADOW_OFFSET,
+        layer=globals.LAYER_SHIFT * popup_layer + globals.SHADOW_LAYER,
+        align="center",
+        text=button_text.text,
+        font_size=button_text.font_size,
+        color=globals.SHADOW_COLOR,
+
+        key=f"button_shadow_{key}",
+    )  #endregion
+
+    return [button, button_text, button_text_shadow]
+
+
 def mount_sprite(sprite):
     if sprite.key in globals.to_render_keys:
         # already in to render queue

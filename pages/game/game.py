@@ -50,21 +50,29 @@ def setup_game():
 def handle_game_end():
     if globals.game_mode == "pve" or globals.game_mode == "bossfight":
         if len(get_players(globals.entities)) == 0:
-            render_game_end("You died!", True)
+            render_game_end("You died!", True, { "game_mode": globals.game_mode, "payload": globals.scores })
             return True
         elif len(get_bots(globals.entities)) == 0:
-            render_game_end("You won!", True)
+            render_game_end("You won!", True, { "game_mode": globals.game_mode, "payload": globals.scores })
             return True
         else:
             return False
     elif globals.game_mode == "duel":
         players = list(get_players(globals.entities))
         if len(players) == 0:
-            render_game_end("Draw!", False)
+
+
+            render_game_end("Draw!", False, { "game_mode": globals.game_mode, "payload": -1 })
             return True
         if len(players) == 1:
-            player_id = players[0].player_id
-            render_game_end(f"Player {player_id} won!", False)
+            winner_player_id = players[0].player_id
+            render_game_end(
+                f"Player {winner_player_id} won!",
+                False,
+                {
+                    "game_mode": globals.game_mode,
+                    "payload": winner_player_id
+                })
             return True
         else:
             return False
@@ -160,4 +168,3 @@ def game(**kwargs):
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         if isinstance(entity, Collidable):
             entity.handle_collision()
-

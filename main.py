@@ -4,8 +4,8 @@ from pygame.locals import *
 from pages.menu.menu import menu
 from pages.menu.play import play
 from pages.menu.settings import settings
-from pages.menu.customization import menu_customization
-from pages.menu.scoreboard import menu_scoreboard 
+from pages.menu.customization import customization
+from pages.menu.scoreboard import scoreboard
 from utils import paint_api
 from pages.game.game import game
 import globals
@@ -57,9 +57,9 @@ if __name__ == "__main__":
         elif globals.current_page == "menu/settings":
             settings(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "menu/customization":
-            menu_customization()
+            customization()
         elif globals.current_page == "menu/scoreboard":
-            menu_scoreboard()
+            scoreboard(is_setup=globals.switched_page_this_frame)
         elif globals.current_page == "game":
             game(is_setup=globals.switched_page_this_frame)
 

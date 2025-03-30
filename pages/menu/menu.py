@@ -4,27 +4,20 @@ from pygame import K_BACKSPACE, K_RETURN
 from config import save_config, load_config
 from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, get_last_pressed_char, are_clicked, is_pressed_once
+from utils.paint_api import mount_button
 from utils.sound_api import play_menu_music, stop_music
 from pages.navigation import navigate
 
-mute_button_sprite = None
-play_button_sprite = None
-play_button_text = None
-play_button_shadow = None
-customization_button_sprite = None
-customization_button_text = None
-customization_button_shadow = None
-settings_button_sprite = None
-settings_button_text = None
-settings_button_shadow = None
-quit_button_sprite = None
-quit_button_text = None
-quit_button_shadow = None
-input_button_sprite = None
-input_button_text = None
-input_button_shadow = None
 
 INPUT_PLACEHOLDER_TEXT = "Enter your name..."
+
+mute_button_sprite = None
+input_button_c = None
+play_button_c = None
+scoreboard_button_c = None
+customization_button_c = None
+settings_button_c = None
+quit_button_c = None
 
 input_is_active = False
 fields_focused = [True, False]
@@ -107,42 +100,19 @@ def render_input():
         get_input_components(globals.CENTER_Y, 2, current_usernames[1])
     ]
 
-    back_button = paint_api.mount_rect(  #region parameters
+    back_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
         px_h=80,
-        layer=globals.LAYER_SHIFT + globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        popup_layer=1,
+        text="Back",
+        font_size=50,
 
         key="back",
     )  #endregion
-    back_pos = back_button.px_x, back_button.px_y
-    back_button_text = paint_api.mount_text(  #region parameters
-        px_x=back_pos[0],
-        px_y=back_pos[1],
-        layer=globals.LAYER_SHIFT + globals.TEXT_LAYER,
-        align="center",
-        text="Back",
-        font_size=50,
-        color=(255, 255, 255),
 
-        key="back_text",
-    )  #endregion
-    back_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=back_pos[0] + globals.SHADOW_OFFSET,
-        px_y=back_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.LAYER_SHIFT + globals.SHADOW_LAYER,
-        align="center",
-        text="Back",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="back_text_shadow",
-    )  #endregion
-
-    if is_pressed_once(K_RETURN) or are_clicked(back_button, back_button_text, back_button_shadow):
+    if is_pressed_once(K_RETURN) or are_clicked(*back_button_c):
         input_is_active = False
         bg_overlay.unmount()
 
@@ -152,9 +122,8 @@ def render_input():
 
         fields_focused = [True, False]
 
-        back_button.unmount()
-        back_button_text.unmount()
-        back_button_shadow.unmount()
+        for component in back_button_c:
+            component.unmount()
         return
 
     for (order, components) in enumerate(inputs):
@@ -168,13 +137,16 @@ def render_input():
         if fields_focused[order]:
             current_username = current_usernames[order]
             current_text = INPUT_PLACEHOLDER_TEXT
+            updated = False
 
             if get_last_pressed_key() == K_BACKSPACE:
                 if current_username:
                     current_username = current_username[:-1]
+                    updated = True
             elif last_pressed_char:
                 if len(current_username) < globals.MAX_USERNAME_LENGTH:
                     current_username += last_pressed_char
+                    updated = True
 
             if current_username:
                 current_text = current_username
@@ -183,16 +155,13 @@ def render_input():
 
             globals.usernames = current_usernames
             input_field_text.set_text(current_text)
-            save_config()
+            if updated:
+                save_config()
 
 
 def render_menu():
     global mute_button_sprite
-    global input_button_sprite, input_button_text, input_button_shadow
-    global play_button_sprite, play_button_text, play_button_shadow
-    global customization_button_sprite, customization_button_text, customization_button_shadow
-    global settings_button_sprite, settings_button_text, settings_button_shadow
-    global quit_button_sprite, quit_button_text, quit_button_shadow
+    global input_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
 
     mute_button_sprite = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 350,
@@ -206,225 +175,77 @@ def render_menu():
         key="mute",
     )  #endregion
 
-    input_button_sprite = paint_api.mount_rect(  #region parameters
+    input_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X + 345,
         px_y=40,
         px_w=100,
         px_h=65,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
-
-        key="input_button",
-    )  #endregion
-    input_pos = input_button_sprite.px_x, input_button_sprite.px_y
-    input_button_text = paint_api.mount_text(  #region parameters
-        px_x=input_pos[0],
-        px_y=input_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
         text="Login",
         font_size=30,
-        color=(255, 255, 255),
 
-        key="input_button_text",
-    )  #endregion
-    input_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=input_pos[0] + globals.SHADOW_OFFSET,
-        px_y=input_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Login",
-        font_size=30,
-        color=globals.SHADOW_COLOR,
-
-        key="input_button_shadow",
+        key="input",
     )  #endregion
 
-    play_button_sprite = paint_api.mount_rect(  #region parameters
+    play_button_c = mount_button(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 100,
         px_w=500,
         px_h=90,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        text="Play",
+        font_size=50,
 
         key="play",
     )  #endregion
-    play_pos = play_button_sprite.px_x, play_button_sprite.px_y
-    play_button_text = paint_api.mount_text(  #region parameters
-        px_x=play_pos[0],
-        px_y=play_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Play",
-        font_size=50,
-        color=(255, 255, 255),
 
-        key="play_text",
-    )  #endregion
-    play_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=play_pos[0] + globals.SHADOW_OFFSET,
-        px_y=play_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Play",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="play_text_shadow",
-    )  #endregion
-
-    customization_button_sprite = paint_api.mount_rect(  #region parameters
+    customization_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y,
         px_w=500,
         px_h=90,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        text="Customization",
+        font_size=50,
 
         key="customization",
     )  #endregion
-    customization_pos = customization_button_sprite.px_x, customization_button_sprite.px_y
-    customization_button_text = paint_api.mount_text(  #region parameters
-        px_x=customization_pos[0],
-        px_y=customization_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Customization",
-        font_size=50,
-        color=(255, 255, 255),
 
-        key="customization_text",
-    )  #endregion
-    customization_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=customization_pos[0] + globals.SHADOW_OFFSET,
-        px_y=customization_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Customization",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="customization_text_shadow",
-    )  #endregion
-
-    settings_button_sprite = paint_api.mount_rect(  #region parameters
+    settings_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X - 128,
-        px_y=globals.CENTER_Y + 100,
+        px_y=globals.CENTER_Y + 200,
         px_w=246,
         px_h=90,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        text="Settings",
+        font_size=50,
 
         key="settings",
     )  #endregion
-    settings_pos = settings_button_sprite.px_x, settings_button_sprite.px_y
-    settings_button_text = paint_api.mount_text(  #region parameters
-        px_x=settings_pos[0],
-        px_y=settings_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Settings",
-        font_size=50,
-        color=(255, 255, 255),
 
-        key="settings_text",
-    )  #endregion
-    settings_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=settings_pos[0] + globals.SHADOW_OFFSET,
-        px_y=settings_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Settings",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="settings_text_shadow",
-    )  #endregion
-
-    # scoreboard_button_sprite = paint_api.mount_rect(  #region parameters
-    #     px_x=globals.CENTER_X,
-    #     px_y=globals.CENTER_Y + 200,
-    #     px_w=230,
-    #     px_h=90,
-    #     layer=globals.BUTTON_LAYER,
-    #     align="center",
-    #     image_path="assets/images/buttons/bar_button.png",
-    #
-    #     key="scoreboard",
-    # )
-    # scoreboard_pos = scoreboard_button_sprite.px_x, scoreboard_button_sprite.px_y
-    # scoreboard_button_text = paint_api.mount_text(  #region parameters
-    #     px_x = scoreboard_pos[0],
-    #     px_y = scoreboard_pos[1],
-    #     layer=globals.TEXT_LAYER,
-    #     align="center",
-    #     text="Scoreboard",
-    #     font_size=50,
-    #     color=(255, 255, 255),
-    #
-    #     key="scoreboard_text",
-    # )  #endregion
-    # scoreboard_button_shadow = paint_api.mount_text(  #region parameters
-    #     px_x = scoreboard_pos[0] + globals.SHADOW_OFFSET,
-    #     px_y = scoreboard_pos[1] + globals.SHADOW_OFFSET,
-    #     layer=globals.SHADOW_LAYER,
-    #     align="center",
-    #     text="Scoreboard",
-    #     font_size=50,
-    #     color=globals.SHADOW_COLOR,
-    #
-    #     key = "scoreboard_text_shadow",
-    # )  #endregion
-
-    quit_button_sprite = paint_api.mount_rect(  #region parameters
-        px_x=globals.CENTER_X + 128,
+    scoreboard_button_c = paint_api.mount_button(  #region parameters
+        px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 100,
+        px_w=500,
+        px_h=90,
+        text="Scoreboard",
+        font_size=50,
+
+        key="scoreboard",
+    )  #endregion
+
+    quit_button_c = paint_api.mount_button(  #region parameters
+        px_x=globals.CENTER_X + 128,
+        px_y=globals.CENTER_Y + 200,
         px_w=246,
         px_h=90,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        text="Quit",
+        font_size=50,
 
         key="quit",
-    )  #endregion
-    quit_pos = quit_button_sprite.px_x, quit_button_sprite.px_y
-    quit_button_text = paint_api.mount_text(  #region parameters
-        px_x=quit_pos[0],
-        px_y=quit_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Quit",
-        font_size=50,
-        color=(255, 255, 255),
-
-        key="quit_text",
-    )  #endregion
-    quit_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=quit_pos[0] + globals.SHADOW_OFFSET,
-        px_y=quit_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Quit",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="quit_text_shadow",
     )  #endregion
 
 
 def menu(is_setup=False):
     global mute_button_sprite
-    global play_button_sprite, play_button_text, play_button_shadow
-    global customization_button_sprite, customization_button_text, customization_button_shadow
-    global settings_button_sprite, settings_button_text, settings_button_shadow
-    global quit_button_sprite, quit_button_text, quit_button_shadow
-    global input_button_sprite, input_button_text, input_button_shadow, input_is_active
-    global current_usernames
+    global input_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
+    global input_is_active, current_usernames
 
     if is_setup:
         load_config()
@@ -437,15 +258,15 @@ def menu(is_setup=False):
     if input_is_active:
         render_input()
 
-    if are_clicked(play_button_sprite, play_button_text, play_button_shadow):
+    if are_clicked(*play_button_c):
         navigate("menu/play")
-    elif are_clicked(settings_button_sprite, settings_button_text, settings_button_shadow):
+    elif are_clicked(*settings_button_c):
         navigate("menu/settings")
-    # elif is_clicked(scoreboard_button_sprite):
-    #     navigate("menu/scoreboard")
-    elif are_clicked(customization_button_sprite, customization_button_text, customization_button_shadow):
+    elif are_clicked(*scoreboard_button_c):
+        navigate("menu/scoreboard")
+    elif are_clicked(*customization_button_c):
         navigate("menu/customization")
-    elif are_clicked(quit_button_sprite, quit_button_text, quit_button_shadow):
+    elif are_clicked(*quit_button_c):
         sys.exit()
 
     if is_clicked(mute_button_sprite):
@@ -459,5 +280,5 @@ def menu(is_setup=False):
             mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH1)
         save_config()
 
-    if are_clicked(input_button_sprite, input_button_text, input_button_shadow):
+    if are_clicked(*input_button_c):
         input_is_active = True

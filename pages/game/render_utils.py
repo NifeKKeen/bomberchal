@@ -5,6 +5,7 @@ from utils.helpers import get_field_pos, players_sum_of_scores
 from utils.interaction_api import is_clicked
 from utils.paint_api import mount_rect
 from entitites.player import get_players
+from utils.scoreboard_api import save_data
 
 
 def render_bonus_inventory():
@@ -58,9 +59,8 @@ def render_bonus_inventory():
             x += 1
 
 
-def render_game_end(message, show_score):
+def render_game_end(message, show_score, payload):
     score = players_sum_of_scores(globals.scores)
-
 
     bg_overlay = paint_api.mount_rect(  #region parameters
         px_x=0,
@@ -179,7 +179,8 @@ def render_game_end(message, show_score):
     if is_clicked(restart_button_sprite):
         from pages.game.game import setup_game
 
+        save_data(payload)
         setup_game()
     elif is_clicked(back_button_sprite):
+        save_data(payload)
         navigate("menu")
-

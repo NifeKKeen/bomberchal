@@ -64,6 +64,9 @@ def load_config():
         globals.music_muted = False
         globals.sound_muted = False
 
+    if "Usernames" in config:
+        globals.usernames = json.loads(config.get("Usernames", "usernames", fallback=globals.usernames))
+
     if "GameSetup" in config:
         globals.setup_data = json.loads(config.get("GameSetup", "setup_data", fallback=globals.setup_data))
 
@@ -78,6 +81,10 @@ def save_config():
     config["Sound"] = {
         "music": str(globals.music_muted).lower(),  # приводим к "true" или "false"
         "sound": str(globals.sound_muted).lower()
+    }
+
+    config["Usernames"] = {
+        "usernames": str(json.dumps(globals.usernames))
     }
 
     config["GameSetup"] = {

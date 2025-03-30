@@ -1,6 +1,6 @@
 import globals, pygame, configparser, os
 from utils import paint_api
-from utils.interaction_api import is_clicked, get_last_pressed_key
+from utils.interaction_api import is_clicked, get_last_pressed_key, are_clicked
 from utils.sound_api import play_menu_music
 from pages.navigation import navigate
 from config import load_config, save_config
@@ -11,31 +11,26 @@ def update_display(text_sprite, player_index, waiting):
     text_sprite.set_text(display_text)
 
 
-left_arrow_p0 = None
-display_p0 = None
-right_arrow_p0 = None
 left_arrow_p1 = None
 display_p1 = None
 right_arrow_p1 = None
-default_button = None
-default_button_text = None
-boss_button = None
-boss_button_text = None
-back_button = None
-back_button_text = None
+left_arrow_p2 = None
+display_p2 = None
+right_arrow_p2 = None
+back_button_c = None
 bomb_mute_button_sprite = None
 
-current_key_text_p0 = None
 current_key_text_p1 = None
+current_key_text_p2 = None
 
-def mount_sprites():
-    global left_arrow_p0, display_p0, right_arrow_p0
+
+def render_settings():
     global left_arrow_p1, display_p1, right_arrow_p1
-    global default_button, default_button_text
-    global boss_button, boss_button_text
-    global back_button, back_button_text
-    global current_key_text_p0, current_key_text_p1
+    global left_arrow_p2, display_p2, right_arrow_p2
+    global back_button_c
+    global current_key_text_p1, current_key_text_p2
     global bomb_mute_button_sprite
+
     paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y - 250,
@@ -55,55 +50,12 @@ def mount_sprites():
         font_size=30,
         color=(255, 255, 255),
 
-        key="label_p0",
-    )  #endregion
-
-    left_arrow_p0 = paint_api.mount_rect(  #region parameters
-        px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 185,
-        px_w=75,
-        px_h=75,
-        layer=globals.BUTTON_LAYER,
-        image_path="assets/images/buttons/left.png",
-
-        key="left_arrow_p0",
-    )  #endregion
-    display_p0 = paint_api.mount_text(  #region parameters
-        px_x=globals.CENTER_X + 35,
-        px_y=globals.CENTER_Y - 150,
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text=current_key_text_p0,
-        font_size=25,
-        color=(255, 255, 0),
-
-        key="display_p0",
-    )  #endregion
-    right_arrow_p0 = paint_api.mount_rect(  #region parameters
-        px_x=globals.CENTER_X + 150,
-        px_y=globals.CENTER_Y - 185,
-        px_w=75,
-        px_h=75,
-        layer=globals.BUTTON_LAYER,
-        image_path="assets/images/buttons/right.png",
-
-        key="right_arrow_p0",
-    )  #endregion
-
-    paint_api.mount_text(  #region parameters
-        px_x=globals.CENTER_X - 350,
-        px_y=globals.CENTER_Y - 50,
-        layer=globals.TEXT_LAYER,
-        text="for player2",
-        font_size=30,
-        color=(255, 255, 255),
-
         key="label_p1",
     )  #endregion
 
     left_arrow_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X - 150,
-        px_y=globals.CENTER_Y - 65,
+        px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
         layer=globals.BUTTON_LAYER,
@@ -113,7 +65,7 @@ def mount_sprites():
     )  #endregion
     display_p1 = paint_api.mount_text(  #region parameters
         px_x=globals.CENTER_X + 35,
-        px_y=globals.CENTER_Y - 35,
+        px_y=globals.CENTER_Y - 150,
         layer=globals.TEXT_LAYER,
         align="center",
         text=current_key_text_p1,
@@ -124,13 +76,56 @@ def mount_sprites():
     )  #endregion
     right_arrow_p1 = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X + 150,
-        px_y=globals.CENTER_Y - 65,
+        px_y=globals.CENTER_Y - 185,
         px_w=75,
         px_h=75,
         layer=globals.BUTTON_LAYER,
         image_path="assets/images/buttons/right.png",
 
         key="right_arrow_p1",
+    )  #endregion
+
+    paint_api.mount_text(  #region parameters
+        px_x=globals.CENTER_X - 350,
+        px_y=globals.CENTER_Y - 50,
+        layer=globals.TEXT_LAYER,
+        text="for player2",
+        font_size=30,
+        color=(255, 255, 255),
+
+        key="label_p2",
+    )  #endregion
+
+    left_arrow_p2 = paint_api.mount_rect(  #region parameters
+        px_x=globals.CENTER_X - 150,
+        px_y=globals.CENTER_Y - 65,
+        px_w=75,
+        px_h=75,
+        layer=globals.BUTTON_LAYER,
+        image_path="assets/images/buttons/left.png",
+
+        key="left_arrow_p2",
+    )  #endregion
+    display_p2 = paint_api.mount_text(  #region parameters
+        px_x=globals.CENTER_X + 35,
+        px_y=globals.CENTER_Y - 35,
+        layer=globals.TEXT_LAYER,
+        align="center",
+        text=current_key_text_p2,
+        font_size=25,
+        color=(255, 255, 0),
+
+        key="display_p2",
+    )  #endregion
+    right_arrow_p2 = paint_api.mount_rect(  #region parameters
+        px_x=globals.CENTER_X + 150,
+        px_y=globals.CENTER_Y - 65,
+        px_w=75,
+        px_h=75,
+        layer=globals.BUTTON_LAYER,
+        image_path="assets/images/buttons/right.png",
+
+        key="right_arrow_p2",
     )  #endregion
 
     paint_api.mount_text(  #region parameters
@@ -154,80 +149,55 @@ def mount_sprites():
 
         key="bomb_mute",
     )  #endregion
-    back_button = paint_api.mount_rect(  #region parameters
+
+    back_button_c = paint_api.mount_button(  #region parameters
         px_x=globals.CENTER_X,
         px_y=globals.CENTER_Y + 300,
         px_w=350,
         px_h=80,
-        layer=globals.BUTTON_LAYER,
-        align="center",
-        image_path="assets/images/buttons/bar_button.png",
+        text="Back",
+        font_size=50,
 
         key="back",
-    )  #endregion
-    back_pos = back_button.px_x, back_button.px_y
-    back_button_shadow = paint_api.mount_text(  #region parameters
-        px_x=back_pos[0] + globals.SHADOW_OFFSET,
-        px_y=back_pos[1] + globals.SHADOW_OFFSET,
-        layer=globals.SHADOW_LAYER,
-        align="center",
-        text="Back",
-        font_size=50,
-        color=globals.SHADOW_COLOR,
-
-        key="back_text_shadow",
-    )  #endregion
-    back_button_text = paint_api.mount_text(  #region parameters
-        px_x=back_pos[0],
-        px_y=back_pos[1],
-        layer=globals.TEXT_LAYER,
-        align="center",
-        text="Back",
-        font_size=50,
-        color=(255, 255, 255),
-
-        key="back_text",
     )  #endregion
 
 
 def settings(is_setup=False):
-    global left_arrow_p0, display_p0, right_arrow_p0
     global left_arrow_p1, display_p1, right_arrow_p1
-    global default_button, default_button_text
-    global boss_button, boss_button_text
-    global back_button, back_button_text
-    global current_key_text_p0, current_key_text_p1
+    global left_arrow_p2, display_p2, right_arrow_p2
+    global back_button_c
+    global current_key_text_p1, current_key_text_p2
 
     load_config()
-    offered_keys_p0 = [pygame.K_SPACE, pygame.K_v, pygame.K_x, "custom"]
+    offered_keys_p1 = [pygame.K_SPACE, pygame.K_v, pygame.K_x, "custom"]
     try:
-        current_index0 = offered_keys_p0.index(globals.controls_players[0]["explosion_key"])
+        current_index0 = offered_keys_p1.index(globals.controls_players[0]["explosion_key"])
     except ValueError:
-        current_index0 = len(offered_keys_p0) - 1
+        current_index0 = len(offered_keys_p1) - 1
 
     waiting_for_key1 = globals.controls_players[0]["explosion_key"] == "custom"
 
-    current_key_text_p0 = "Custom" if offered_keys_p0[current_index0] == "custom" else pygame.key.name(offered_keys_p0[current_index0])
+    current_key_text_p1 = "Custom" if offered_keys_p1[current_index0] == "custom" else pygame.key.name(offered_keys_p1[current_index0])
 
-    offered_keys_p1 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
+    offered_keys_p2 = [pygame.K_RETURN, pygame.K_m, pygame.K_n, "custom"]
     try:
-        current_index1 = offered_keys_p1.index(globals.controls_players[1]["explosion_key"])
+        current_index1 = offered_keys_p2.index(globals.controls_players[1]["explosion_key"])
     except ValueError:
-        current_index1 = len(offered_keys_p1) - 1
+        current_index1 = len(offered_keys_p2) - 1
 
     waiting_for_key2 = globals.controls_players[1]["explosion_key"] == "custom"
 
-    current_key_text_p1 = "Custom" if offered_keys_p1[current_index1] == "custom" else pygame.key.name(offered_keys_p1[current_index1])
+    current_key_text_p2 = "Custom" if offered_keys_p2[current_index1] == "custom" else pygame.key.name(offered_keys_p2[current_index1])
 
     if is_setup:
         play_menu_music(volume=.2)
-        mount_sprites()
+        render_settings()
 
-    if is_clicked(left_arrow_p0) or is_clicked(right_arrow_p0):
-        new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p0) else 1)) % len(offered_keys_p0)
-        new_key0 = offered_keys_p0[new_index0]
+    if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
+        new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p1) else 1)) % len(offered_keys_p1)
+        new_key0 = offered_keys_p1[new_index0]
         if new_key0 != "custom" and new_key0 == globals.controls_players[1]["explosion_key"]:
-            display_p0.set_text("Duplicate!")
+            display_p1.set_text("Duplicate!")
         else:
             if new_key0 == "custom":
                 globals.controls_players[0]["explosion_key"] = "custom"
@@ -235,24 +205,24 @@ def settings(is_setup=False):
             else:
                 globals.controls_players[0]["explosion_key"] = new_key0
                 waiting_for_key1 = False
-            update_display(display_p0, 0, waiting_for_key1)
+            update_display(display_p1, 0, waiting_for_key1)
             save_config()
     if waiting_for_key1:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             if pressed_key == globals.controls_players[1]["explosion_key"]:
-                display_p0.set_text("Duplicate!")
+                display_p1.set_text("Duplicate!")
             else:
                 globals.controls_players[0]["explosion_key"] = pressed_key
                 waiting_for_key1 = False
-                update_display(display_p0, 0, waiting_for_key1)
+                update_display(display_p1, 0, waiting_for_key1)
                 save_config()
 
-    if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
-        new_index1 = (current_index1 + (-1 if is_clicked(left_arrow_p1) else 1)) % len(offered_keys_p1)
-        new_key1 = offered_keys_p1[new_index1]
+    if is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2):
+        new_index1 = (current_index1 + (-1 if is_clicked(left_arrow_p2) else 1)) % len(offered_keys_p2)
+        new_key1 = offered_keys_p2[new_index1]
         if new_key1 != "custom" and new_key1 == globals.controls_players[0]["explosion_key"]:
-            display_p1.set_text("Duplicate!")
+            display_p2.set_text("Duplicate!")
         else:
             if new_key1 == "custom":
                 globals.controls_players[1]["explosion_key"] = "custom"
@@ -260,17 +230,17 @@ def settings(is_setup=False):
             else:
                 globals.controls_players[1]["explosion_key"] = new_key1
                 waiting_for_key2 = False
-            update_display(display_p1, 1, waiting_for_key2)
+            update_display(display_p2, 1, waiting_for_key2)
             save_config()
     if waiting_for_key2:
         pressed_key = get_last_pressed_key()
         if pressed_key is not None:
             if pressed_key == globals.controls_players[0]["explosion_key"]:
-                display_p1.set_text("Duplicate!")
+                display_p2.set_text("Duplicate!")
             else:
                 globals.controls_players[1]["explosion_key"] = pressed_key
                 waiting_for_key2 = False
-                update_display(display_p1, 1, waiting_for_key2)
+                update_display(display_p2, 1, waiting_for_key2)
                 save_config()
 
     if is_clicked(bomb_mute_button_sprite):
@@ -282,7 +252,7 @@ def settings(is_setup=False):
             bomb_mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH2)
         save_config()
             
-    if is_clicked(back_button):
+    if are_clicked(*back_button_c):
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
         if globals.controls_players[1]["explosion_key"] == "custom":

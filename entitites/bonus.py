@@ -42,10 +42,8 @@ class Bonus(Entity):
 
     def activate(self):
         from entitites.player import PLAYER_KEY
-        print(self.collector_key)
 
         if is_entity_key(PLAYER_KEY, self.collector_key):
-            print("!!!!!")
             add_score(self.collector_key, globals.scoring["USE"][self.type])
 
         collector = globals.map_key_sprite[self.collector_key]
