@@ -46,6 +46,12 @@ if __name__ == "__main__":
             if event.type in (KEYDOWN, KEYUP):
                 globals.frame_event_code_pairs.add((event.type, event.key))
             if event.type == KEYDOWN:
+                globals.comba.append(event.unicode)
+                if len(globals.comba) > 10:
+                    globals.comba.pop(0)
+                print("".join(globals.comba))
+                if "".join(globals.comba) == "js>python":
+                    globals.KRASAVA = True
                 globals.frame_unicodes.add(event.unicode)
             globals.frame_event_types.add(event.type)
 

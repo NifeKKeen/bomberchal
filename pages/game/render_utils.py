@@ -1,8 +1,10 @@
 import globals
+
+from pygame.locals import K_ESCAPE
 from pages.navigation import navigate
 from utils import paint_api
 from utils.helpers import get_field_pos, players_sum_of_scores
-from utils.interaction_api import is_clicked, are_clicked
+from utils.interaction_api import is_clicked, are_clicked, is_pressed_once
 from utils.paint_api import mount_rect
 from entitites.player import get_players
 from utils.scoreboard_api import save_data
@@ -80,7 +82,7 @@ def render_pause():
         text="Continue",
         font_size=30,
 
-        key="restart",
+        key="continue",
         dynamic=True,
     )  # endregion
 
@@ -93,7 +95,7 @@ def render_pause():
         text="Exit",
         font_size=30,
 
-        key="game_over_back",
+        key="home",
         dynamic=True,
     )  # endregion
 

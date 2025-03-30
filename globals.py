@@ -132,6 +132,8 @@ paused = False
 game_mode = None
 scores = dict()
 game_tick = 0  # current game's tick
+comba = []
+KRASAVA = False
 inf = 1e9  # formal infinity used in field_weight and pathfinding in general
 
 time_reversing_count_down = 0  # the number of ticks to do time reversing

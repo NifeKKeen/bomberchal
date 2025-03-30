@@ -1,15 +1,14 @@
 import globals
 
 from pygame.locals import *
-
+from config import load_config
+from utils import paint_api, snapshot_api
+from utils.helpers import rand, in_valid_range
+from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
+from utils.sound_api import play_music
 from entitites.bomb import get_bombs
 from entitites.fire import get_fires, Fire
 from entitites.obstacle import Obstacle
-from pages.menu.play import get_setup_data_value
-from utils import paint_api, snapshot_api
-from utils.helpers import rand, in_valid_range
-from utils.interaction_api import is_clicked, is_pressed
-from utils.sound_api import play_music
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.bots.original_bot import Bot
 from entitites.interfaces.Collidable import Collidable
@@ -17,10 +16,9 @@ from entitites.interfaces.Controllable import Controllable
 from entitites.player import get_players
 from entitites.bot import get_bots
 from pages.game.dispatchers import build_field, spawn_bonus, reset_game
+from pages.menu.play import get_setup_data_value
 from pages.game.render_utils import render_bonus_inventory, render_game_end, render_pause
 from pages.game import field_generator
-from pages.navigation import navigate
-from config import load_config
 
 
 def setup_game():
@@ -97,14 +95,14 @@ def game(**kwargs):
 
     is_game_over = handle_game_end()
 
-    if is_clicked(go_menu_button_sprite):
+    if is_pressed_once(K_ESCAPE) or is_clicked(go_menu_button_sprite):
         globals.paused = True
 
     if globals.paused:
         render_pause()
         return
 
-    if is_pressed(K_t):
+    if globals.KRASAVA and is_pressed(K_t):
         globals.time_reversing_count_down = 2
 
     if globals.time_reversing_count_down:

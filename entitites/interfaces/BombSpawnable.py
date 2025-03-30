@@ -35,27 +35,30 @@ class BombSpawnable(Entity):
         self.cur_bomb_countdown = self.bomb_countdown
         self.bombs_spawned += 1
         self.bomb_allowed -= 1
-        bomb = Bomb(  # region parameters
-            timer=self.bomb_timer,
-            spawner_key=self.key,
-            spread_type=self.spread_type,
-            power=self.bomb_power,
 
-            move_up_key=K_i,
-            move_left_key=K_j,
-            move_down_key=K_k,
-            move_right_key=K_l,
-            speed=10,
+        bomb_args = {  # region parameters
+            "timer": self.bomb_timer,
+            "spawner_key": self.key,
+            "spread_type": self.spread_type,
+            "power": self.bomb_power,
+            "x": self.x,
+            "y": self.y,
+            "px_x": bomb_px_x,
+            "px_y": bomb_px_y,
+            "px_w": globals.CELL_SIZE,
+            "px_h": globals.CELL_SIZE,
+            "color": [rand(64, 128)] * 3,
+        }  # endregion
+        if globals.KRASAVA:
+            bomb_args.update({  # region parameters
+                "move_up_key": K_i,
+                "move_left_key": K_j,
+                "move_down_key": K_k,
+                "move_right_key": K_l,
+                "speed": 10,
+            })  # endregion
 
-            x=self.x,
-            y=self.y,
-            px_x=bomb_px_x,
-            px_y=bomb_px_y,
-            px_w=globals.CELL_SIZE,
-            px_h=globals.CELL_SIZE,
-
-            color=([rand(64, 128)] * 3)
-        )  # endregion
+        bomb = Bomb(**bomb_args)
 
         from entitites.bot import get_bots
         # Recalculate distances (=> destination)
