@@ -129,13 +129,26 @@ def menu_scoreboard():
     elif is_clicked(bossfight_sprite):
         game_mode = "bossfight"
 
+    if game_mode == "pve":
+        pve_text.set_color((255, 255, 0))
+        duel_text.set_color((255, 255, 255))
+        bossfight_text.set_color((255, 255, 255))
+    elif game_mode == "duel":
+        pve_text.set_color((255, 255, 255))
+        duel_text.set_color((255, 255, 0))
+        bossfight_text.set_color((255, 255, 255))
+    elif game_mode == "bossfight":
+        pve_text.set_color((255, 255, 255))
+        duel_text.set_color((255, 255, 255))
+        bossfight_text.set_color((255, 255, 0))
+      
+
     scoreboard_sprite = scoreboard_api.mount_scoreboard(
         game_mode, 
         px_x=globals.CENTER_X, 
         px_y=globals.CENTER_Y + 50,
         align="center",
-        font_size=30,
-        bg_color=(50, 50, 50, 180),  
+        bg_color=(0,0,0,0)
     )  
     back_button = paint_api.mount_rect(  #region parameters
         px_x=globals.CENTER_X,
