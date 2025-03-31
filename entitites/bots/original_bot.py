@@ -24,14 +24,22 @@ class OriginalBot(Bot, BombSpawnable):
         if not self.alive():
             return
 
-        self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-
         collisions = Collidable.get_collisions(self)
+        already_collides = False
         for entity in collisions:
             if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key):
-                self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
-                self.direction ^= 2  # 0 to 2, 2 to 0, 1 to 3, 3 to 1 (UP <-> DOWN, LEFT <-> RIGHT)
+                already_collides = True
                 break
+
+        self.move_px(*tuple(x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+
+        if not already_collides:
+            collisions = Collidable.get_collisions(self)
+            for entity in collisions:
+                if not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key):
+                    self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
+                    self.direction ^= 2  # 0 to 2, 2 to 0, 1 to 3, 3 to 1 (UP <-> DOWN, LEFT <-> RIGHT)
+                    break
 
         if rand(0, 100) == 0:  # to simulate randomness like in actual game
             self.direction ^= 1

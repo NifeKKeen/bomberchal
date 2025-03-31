@@ -1,4 +1,5 @@
 from entitites.bot import Bot
+from entitites.bots.original_bot import OriginalBot
 from entitites.interfaces.BombSpawnable import BombSpawnable
 from entitites.interfaces.Collidable import Collidable
 from utils.helpers import get_pos, get_field_pos, in_valid_range, rand
@@ -66,6 +67,11 @@ class AggressiveBot(Bot, BombSpawnable):
                 for entity in collisions:
                     if ((not isinstance(entity, Player) and not isinstance(entity, Bonus) and not (isinstance(entity, Bomb) and entity.spawner_key == self.key))
                             or not in_valid_range(self.x, self.y, globals.cols, globals.rows)):
+
+                        from entitites.bots.original_bot import OriginalBot
+                        if isinstance(entity, OriginalBot):
+                            entity.direction ^= 2
+
                         self.move_px(*tuple(-x * self.speed for x in globals.BFS_DIRECTIONS[self.direction]))
                         self.moving = 2
                         break

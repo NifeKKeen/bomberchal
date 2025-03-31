@@ -83,6 +83,20 @@
                 "losses": 0,
                 "draws": 0
             }
+        },
+        {
+            "username": "Lev1106",
+            "pve": {
+                "score": 233
+            },
+            "bossfight": {
+                "score": 8448
+            },
+            "duel": {
+                "wins": 0,
+                "losses": 0,
+                "draws": 0
+            }
         }
     ]
 }
