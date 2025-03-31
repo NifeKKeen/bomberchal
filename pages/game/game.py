@@ -17,7 +17,7 @@ from entitites.player import get_players
 from entitites.bot import get_bots
 from pages.game.dispatchers import build_field, spawn_bonus, reset_game
 from pages.menu.play import get_setup_data_value
-from pages.game.render_utils import render_bonus_inventory, render_game_end, render_pause
+from pages.game.render_utils import render_inventory, render_game_end, render_pause
 from pages.game import field_generator
 
 
@@ -91,7 +91,7 @@ def game(**kwargs):
         key="go_menu"
     )  # endregion
 
-    render_bonus_inventory()
+    render_inventory()
 
     is_game_over = handle_game_end()
 

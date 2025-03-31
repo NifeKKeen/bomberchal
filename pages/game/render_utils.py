@@ -1,25 +1,39 @@
 import globals
 
-from pygame.locals import K_ESCAPE
 from pages.navigation import navigate
 from utils import paint_api
 from utils.helpers import get_field_pos, players_sum_of_scores
-from utils.interaction_api import is_clicked, are_clicked, is_pressed_once
+from utils.interaction_api import are_clicked
 from utils.paint_api import mount_rect
 from entitites.player import get_players
 from utils.scoreboard_api import save_data
 
 
-def render_bonus_inventory():
+def render_inventory():
     # 1, 2, ..., 0 for both players
     shift_x = 200
+    shift_y = 20
+    padding = 20
 
     # rendering bonuses in inventory
     for idx, player in enumerate(list(get_players(globals.entities))):
+        for i in range(player.lives):
+            paint_api.mount_rect(  # region parameters
+                px_x=shift_x + i * 16,
+                px_y=idx * padding + shift_y + (globals.rows + idx) * globals.CELL_SIZE + globals.CELL_SIZE // 2 - 30,
+                px_w=15,
+                px_h=15,
+                layer=globals.TEXT_LAYER,
+                image_path="assets/images/bonus/heart.png",
+
+                dynamic=True,
+                key=f"health-{i}-{idx}",
+            )
+
         for i in range(1, 11):
             paint_api.mount_text(  # region parameters
                 px_x=shift_x + (i - 0.75) * globals.CELL_SIZE + globals.CELL_SIZE // 2,
-                px_y=(globals.rows + idx) * globals.CELL_SIZE + globals.CELL_SIZE // 2,
+                px_y=idx * padding + shift_y + (globals.rows + idx) * globals.CELL_SIZE + globals.CELL_SIZE // 2,
                 layer=globals.TEXT_LAYER,
                 text=str(i % 10),
                 font_size=16,
@@ -29,7 +43,7 @@ def render_bonus_inventory():
             )  # endregion
             paint_api.mount_text(  # region parameters
                 px_x=shift_x + (i - 0.75) * globals.CELL_SIZE + globals.CELL_SIZE // 2 + 2,
-                px_y=(globals.rows + idx) * globals.CELL_SIZE + globals.CELL_SIZE // 2 + 2,
+                px_y=idx * padding + shift_y + (globals.rows + idx) * globals.CELL_SIZE + globals.CELL_SIZE // 2 + 2,
                 layer=globals.SHADOW_LAYER,
                 text=str(i % 10),
                 font_size=16,
@@ -46,7 +60,7 @@ def render_bonus_inventory():
 
             npx_x, npx_y = get_field_pos(x, globals.rows + (player.key[-1] == '1'))
             mount_rect(  # region parameters
-                px_x=shift_x + npx_x, px_y=npx_y,
+                px_x=shift_x + npx_x, px_y=idx * padding + shift_y + (globals.rows + idx) * globals.CELL_SIZE,
                 px_w=bonus.px_w, px_h=bonus.px_h,
                 layer=globals.BASE_ENTITY_LAYER,
 
@@ -104,7 +118,6 @@ def render_pause():
     elif are_clicked(*home_button_c):
         globals.paused = False
         navigate("menu")
-
 
 
 def render_game_end(message, show_score, payload):
