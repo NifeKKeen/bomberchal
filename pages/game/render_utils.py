@@ -9,6 +9,7 @@ from entitites.player import get_players
 from utils.scoreboard_api import save_data
 from utils.sound_api import play_button_click
 
+
 def render_inventory():
     # 1, 2, ..., 0 for both players
     shift_x = 200
