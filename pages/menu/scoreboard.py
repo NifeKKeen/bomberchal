@@ -1,9 +1,9 @@
 import globals
 from utils import paint_api
 from utils.interaction_api import is_clicked, are_clicked
-from utils import scoreboard_api as scoreboard_api
+from utils import scoreboard_api
 from pages.navigation import navigate
-
+from utils.sound_api import play_button_click
 
 pve_button_c = None
 duel_button_c = None
@@ -132,10 +132,13 @@ def scoreboard(is_setup=False):
     render_table()
 
     if are_clicked(*pve_button_c):
+        play_button_click()
         selected_game_mode = "pve"
     elif are_clicked(*duel_button_c):
+        play_button_click()
         selected_game_mode = "duel"
     elif are_clicked(*bossfight_button_c):
+        play_button_click()
         selected_game_mode = "bossfight"
 
     if selected_game_mode == "pve":
@@ -152,4 +155,5 @@ def scoreboard(is_setup=False):
         bossfight_button_c[1].set_color((255, 255, 0))
       
     if are_clicked(*back_button_c):
+        play_button_click()
         navigate("menu")

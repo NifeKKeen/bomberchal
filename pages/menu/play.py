@@ -3,7 +3,7 @@ from config import save_config, load_config
 from pages.navigation import navigate
 from utils import paint_api
 from utils.interaction_api import is_clicked, are_clicked
-
+from utils.sound_api import play_button_click
 players1_button_c = None
 players2_button_c = None
 pve_button_c = None
@@ -174,37 +174,45 @@ def play(is_setup=False):
         right_arrow = data[5]
 
         if is_clicked(left_arrow):
+            play_button_click()
             if value - data[6] >= 0:
                 value -= data[6]
             value_text.set_text(str(value))
         elif is_clicked(right_arrow):
+            play_button_click()
             value += data[6]
             value_text.set_text(str(value))
 
         data[2] = value
 
     if are_clicked(*players1_button_c):
+        play_button_click()
         globals.setup_data["players"] = 1
 
     elif are_clicked(*players2_button_c):
+        play_button_click()
         globals.setup_data["players"] = 2
 
     elif are_clicked(*pve_button_c):
+        play_button_click()
         globals.game_mode = "pve"
         save_config()
         navigate("game")
 
     elif are_clicked(*bossfight_button_c):
+        play_button_click()
         globals.game_mode = "bossfight"
         save_config()
         navigate("game")
 
     elif are_clicked(*duel_button_c):
+        play_button_click()
         globals.game_mode = "duel"
         save_config()
         navigate("game")
 
     elif are_clicked(*back_button_c):
+        play_button_click()
         save_config()
         navigate("menu")
         return

@@ -5,7 +5,7 @@ from config import load_config
 from utils import paint_api, snapshot_api
 from utils.helpers import rand, in_valid_range
 from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
-from utils.sound_api import play_music
+from utils.sound_api import play_music, play_button_click
 from entitites.bomb import get_bombs
 from entitites.fire import get_fires, Fire
 from entitites.obstacle import Obstacle
@@ -19,7 +19,6 @@ from pages.game.dispatchers import build_field, spawn_bonus, reset_game
 from pages.menu.play import get_setup_data_value
 from pages.game.render_utils import render_inventory, render_game_end, render_pause
 from pages.game import field_generator
-
 
 def setup_game():
     reset_game()
@@ -97,6 +96,7 @@ def game(**kwargs):
 
     if is_pressed_once(K_ESCAPE) or is_clicked(go_menu_button_sprite):
         globals.paused = True
+        play_button_click()
 
     if globals.paused:
         render_pause()
