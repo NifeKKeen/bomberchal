@@ -4,7 +4,7 @@ from config import load_config, save_config
 from pages.navigation import navigate
 from utils import paint_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, are_clicked
-from utils.sound_api import play_menu_music
+from utils.sound_api import play_menu_music, play_button_click
 
 
 def update_display(text_sprite, player_index, waiting):
@@ -196,6 +196,7 @@ def settings(is_setup=False):
         render_settings()
 
     if is_clicked(left_arrow_p1) or is_clicked(right_arrow_p1):
+        play_button_click()
         new_index0 = (current_index0 + (-1 if is_clicked(left_arrow_p1) else 1)) % len(offered_keys_p1)
         new_key0 = offered_keys_p1[new_index0]
         if new_key0 != "custom" and new_key0 == globals.controls_players[1]["explosion_key"]:
@@ -221,6 +222,7 @@ def settings(is_setup=False):
                 save_config()
 
     if is_clicked(left_arrow_p2) or is_clicked(right_arrow_p2):
+        play_button_click()
         new_index1 = (current_index1 + (-1 if is_clicked(left_arrow_p2) else 1)) % len(offered_keys_p2)
         new_key1 = offered_keys_p2[new_index1]
         if new_key1 != "custom" and new_key1 == globals.controls_players[0]["explosion_key"]:
@@ -246,6 +248,7 @@ def settings(is_setup=False):
                 save_config()
 
     if is_clicked(bomb_mute_button_sprite):
+        play_button_click()
         if globals.sound_muted:
             globals.sound_muted = False
             bomb_mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH2)
@@ -255,6 +258,7 @@ def settings(is_setup=False):
         save_config()
             
     if are_clicked(*back_button_c):
+        play_button_click()
         if globals.controls_players[0]["explosion_key"] == "custom":
             globals.controls_players[0]["explosion_key"] = pygame.K_SPACE
         if globals.controls_players[1]["explosion_key"] == "custom":

@@ -8,7 +8,7 @@ from utils.interaction_api import is_clicked, are_clicked, is_pressed_once
 from utils.paint_api import mount_rect
 from entitites.player import get_players
 from utils.scoreboard_api import save_data
-
+from utils.sound_api import play_button_click
 
 def render_bonus_inventory():
     # 1, 2, ..., 0 for both players
@@ -101,8 +101,10 @@ def render_pause():
 
     if are_clicked(*unpause_button_c):
         globals.paused = False
+        play_button_click()
     elif are_clicked(*home_button_c):
         globals.paused = False
+        play_button_click()
         navigate("menu")
 
 
@@ -176,9 +178,10 @@ def render_game_end(message, show_score, payload):
 
     if are_clicked(*restart_button_c):
         from pages.game.game import setup_game
-
+        play_button_click()
         save_data(payload)
         setup_game()
     elif are_clicked(*back_button_c):
         save_data(payload)
+        play_button_click()
         navigate("menu")

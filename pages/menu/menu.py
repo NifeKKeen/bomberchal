@@ -7,7 +7,7 @@ from pages.navigation import navigate
 from utils import paint_api, sound_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, get_last_pressed_char, are_clicked, is_pressed_once
 from utils.paint_api import mount_button
-from utils.sound_api import play_menu_music, stop_music
+from utils.sound_api import play_menu_music, stop_music, play_button_click
 
 INPUT_PLACEHOLDER_TEXT = "Enter your name..."
 
@@ -115,6 +115,7 @@ def render_input():
     if is_pressed_once(K_RETURN) or are_clicked(*back_button_c):
         input_is_active = False
         bg_overlay.unmount()
+        play_button_click()
 
         for components in inputs:
             for component in components.values():
@@ -260,14 +261,20 @@ def menu(is_setup=False):
 
     if are_clicked(*play_button_c):
         navigate("menu/play")
+        play_button_click()
     elif are_clicked(*settings_button_c):
         navigate("menu/settings")
+        play_button_click()
     elif are_clicked(*scoreboard_button_c):
         navigate("menu/scoreboard")
+        play_button_click()
     elif are_clicked(*customization_button_c):
         navigate("menu/customization")
+        play_button_click()
     elif are_clicked(*quit_button_c):
+        play_button_click()
         sys.exit()
+
 
     if is_clicked(mute_button_sprite):
         sound_api.play_button_click(volume=.2)
@@ -275,11 +282,14 @@ def menu(is_setup=False):
             globals.music_muted = False
             play_menu_music(volume=.2)
             mute_button_sprite.set_image_path(globals.UNMUTED_IMG_PATH1)
+            play_button_click()
         else:
             globals.music_muted = True
             stop_music()
             mute_button_sprite.set_image_path(globals.MUTED_IMG_PATH1)
+            play_button_click()
         save_config()
 
     if are_clicked(*input_button_c):
         input_is_active = True
+        play_button_click()

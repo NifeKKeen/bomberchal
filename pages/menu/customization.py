@@ -5,6 +5,7 @@ from utils import paint_api
 from pages.navigation import navigate
 from utils.interaction_api import is_clicked, are_clicked
 from config import load_config
+from utils.sound_api import play_button_click
 
 
 CONFIG_FILE = "config.ini"
@@ -84,6 +85,7 @@ def pop_up_window():
         for component in close_button_c:
             component.unmount()
         bg_overlay.unmount()
+        play_button_click()
 
 
 def customization():
@@ -227,8 +229,10 @@ def customization():
     if show_popup_window_p1 == 0 and show_popup_window_p2 == 0:
         if are_clicked(*preview_button_p1_c):
             show_popup_window_p1 = True
+            play_button_click()
         if are_clicked(*preview_button_p2_c):
             show_popup_window_p2 = True
+            play_button_click()
     if show_popup_window_p1 or show_popup_window_p2:
         pop_up_window()
 
@@ -236,13 +240,17 @@ def customization():
         ind = -1 if is_clicked(left_arrow_p1) else 1
         globals.skin_p1_id = get_available_skin(globals.skin_p1_id, globals.skin_p2_id, ind)
         display_p1.set_image_path(globals.skins[f"ch{globals.skin_p1_id}"])
+        play_button_click()
         save_skin_config()
+        
 
     if is_clicked(left_arrow_p2, True) or is_clicked(right_arrow_p2, True):
         ind = -1 if is_clicked(left_arrow_p2) else 1
         globals.skin_p2_id = get_available_skin(globals.skin_p2_id, globals.skin_p1_id, ind)
         display_p2.set_image_path(globals.skins[f"ch{globals.skin_p2_id}"])
+        play_button_click()
         save_skin_config()
 
     if are_clicked(*back_button_c):
+        play_button_click()
         navigate("menu")
