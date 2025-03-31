@@ -42,3 +42,24 @@ def play_explosion_sound(randomly=True, index=None, volume=1, ignore_mute=False)
     if randomly or index is None:
         index = rand(1, 5)
     play_sound(path.join(globals.SOUND_PATH, f"Explosion{index}.ogg"), volume)
+
+
+def play_item_pickup(randomly=True, index=None, volume=1, ignore_mute=False):
+    if not ignore_mute and globals.sound_muted:
+        return
+
+    play_sound(path.join(globals.SOUND_PATH, f"Pickup.mp3"), volume)
+
+
+def play_item_use(randomly=True, index=None, volume=1, ignore_mute=False):
+    if not ignore_mute and globals.sound_muted:
+        return
+
+    play_sound(path.join(globals.SOUND_PATH, f"Burp.mp3"), volume)
+
+
+def play_button_click(randomly=True, index=None, volume=1, ignore_mute=False):
+    if not ignore_mute and globals.sound_muted:
+        return
+
+    play_sound(path.join(globals.SOUND_PATH, f"Click.mp3"), volume)
