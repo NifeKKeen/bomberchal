@@ -33,12 +33,10 @@ if __name__ == "__main__":
     )
 
     while True:
-        globals.frame_keys_map = pygame.key.get_pressed()
-        globals.frame_keys = get_pressed_keys()
-
         if globals.switched_page:
             paint_api.reset_frame()
             globals.switched_page = False
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -56,7 +54,9 @@ if __name__ == "__main__":
                     globals.KRASAVA = True
                 globals.frame_unicodes.add(event.unicode)
 
-            globals.frame_event_types.add(event.type)
+        globals.frame_keys_map = pygame.key.get_pressed()
+        globals.frame_keys = get_pressed_keys()
+        globals.frame_event_types.add(event.type)
 
         globals.tick += 1
 
