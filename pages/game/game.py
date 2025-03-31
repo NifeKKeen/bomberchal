@@ -157,7 +157,7 @@ def game(**kwargs):
 
     bonus_delay = get_setup_data_value("bonus_delay")
     if bonus_delay == 0 or globals.game_tick % bonus_delay == 0:
-        spawn_bonus(rand(4, 6))
+        spawn_bonus(rand(0, 6))
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
         entity.add_tick()

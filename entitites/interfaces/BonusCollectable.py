@@ -1,5 +1,6 @@
 import globals
 from entitites.entity import Entity
+from utils import sound_api
 
 
 class BonusCollectable(Entity):
@@ -32,6 +33,7 @@ class BonusCollectable(Entity):
         if not_activated_bonus_cnt >= 10:
             return
 
+        sound_api.play_item_pickup(volume=.2)
         self.bonus_keys.append(bonus.key)
         bonus.collector_key = self.key
         bonus.hidden = True

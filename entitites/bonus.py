@@ -1,6 +1,7 @@
 import globals
 from entitites.bots.aggressive_bot import AggressiveBot
 from entitites.bots.boss_bot import BossBot
+from utils import sound_api
 from utils.helpers import rand
 from entitites.entity import Entity, is_entity_key, add_score
 
@@ -54,6 +55,7 @@ class Bonus(Entity):
             return
         self.activated = True
         self.activated_tick = self.tick
+        sound_api.play_item_use(volume=.2)
 
         is_boss = isinstance(collector, BossBot)
         is_aggressive_bot = isinstance(collector, AggressiveBot)

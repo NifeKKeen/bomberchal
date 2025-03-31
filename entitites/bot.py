@@ -20,6 +20,7 @@ class Bot(BonusCollectable, Movable, Collidable, Entity):
 
         self.texture_type = "wandering"
 
+        self.map_allowed_bonus_types[globals.BONUS_REVERSE] = False
         self.moving = kwargs.get("moving",
                                  0)  # 0 if not moving (but calculating), 1 if moving by default, 2 if moves only to don't be stuck (to be entirely in the cell)
         self.x = kwargs.get("x", 0)
