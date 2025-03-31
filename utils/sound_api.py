@@ -56,3 +56,10 @@ def play_item_use(randomly=True, index=None, volume=1, ignore_mute=False):
         return
 
     play_sound(path.join(globals.SOUND_PATH, f"Burp.mp3"), volume)
+
+
+def play_button_click(randomly=True, index=None, volume=1, ignore_mute=False):
+    if not ignore_mute and globals.sound_muted:
+        return
+
+    play_sound(path.join(globals.SOUND_PATH, f"Click.mp3"), volume)

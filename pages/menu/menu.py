@@ -4,7 +4,7 @@ import sys
 from pygame import K_BACKSPACE, K_RETURN
 from config import save_config, load_config
 from pages.navigation import navigate
-from utils import paint_api
+from utils import paint_api, sound_api
 from utils.interaction_api import is_clicked, get_last_pressed_key, get_last_pressed_char, are_clicked, is_pressed_once
 from utils.paint_api import mount_button
 from utils.sound_api import play_menu_music, stop_music
@@ -270,6 +270,7 @@ def menu(is_setup=False):
         sys.exit()
 
     if is_clicked(mute_button_sprite):
+        sound_api.play_button_click(volume=.2)
         if globals.music_muted:
             globals.music_muted = False
             play_menu_music(volume=.2)
