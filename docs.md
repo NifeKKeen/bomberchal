@@ -93,4 +93,4 @@
 - `**`
 - To make it more clear, if it's like above (`#` is obstacle, `*` is bot moving left) and bot's field coordinates are being changed from right to left, then his right side will not be able to pass because of the obstacle above him => stuck.
 - To prevent this, `self.moving = 2` is implemented. Its goal is to make bot fit entirely within one cell. Of course, its speed and direction are taken into account.
-- If the bot position is aligned, we return the previous value to `moving`
+- If the bot position is aligned, we return the previous value to `moving`  
