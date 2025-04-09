@@ -226,8 +226,8 @@ map_obstacle_seed_to_props = {
 }
 map_bonus_type_to_timer = {
     BONUS_LIFE: float('inf'),
-    BONUS_POWER: utils.helpers.get_tick_from_ms(10000),
-    BONUS_CAPACITY: utils.helpers.get_tick_from_ms(30000),
+    BONUS_POWER: float('inf'),
+    BONUS_CAPACITY: float('inf'),
     BONUS_SPEED: utils.helpers.get_tick_from_ms(5000),
     BONUS_SLOWDOWN: utils.helpers.get_tick_from_ms(8000),
     BONUS_REVERSE: utils.helpers.get_tick_from_ms(7000),

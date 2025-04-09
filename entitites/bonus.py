@@ -116,7 +116,8 @@ class Bonus(Entity):
         elif self.type == globals.BONUS_POWER:
             collector.bomb_power -= self.payload
 
-        collector.bonus_keys.remove(self.key)
+        if collector.bonus_keys.count(self.key):
+            collector.bonus_keys.remove(self.key)
         self.kill()
 
 

@@ -118,7 +118,7 @@ def build_field():
 
             elif field[x][y] == globals.BOSS_BOT_CELL:
                 bot = BossBot(  # region parameters
-                    lives=5,
+                    lives=30,
                     speed=calc_speed_per_time(12, 100),
                     bomb_power=4,
                     bomb_allowed=1,
