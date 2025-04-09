@@ -22,6 +22,14 @@ tick = 0  # whole app's tick
 APP_VERSION = "1.1"
 # endregion
 
+# region DATABASE
+HOST = "dpg-cvqvikp5pdvs73e62b00-a.frankfurt-postgres.render.com"
+PORT = 5432
+DATABASE = "bomberchal_0f22"
+USERNAME = "public_user"
+PASSWORD = "1234"
+#
+
 # region FOR PAINT RENDER API
 to_render_keys = set()
 map_key_sprite = dict()
