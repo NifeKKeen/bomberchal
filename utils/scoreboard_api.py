@@ -12,9 +12,16 @@ SCOREBOARD_FILE = "utils/scoreboard.json"
 
 
 def _load_scoreboard_data(cursor=None):
-    if cursor:
-        pass
-    else:
+    try:
+        if cursor is None:
+            raise Exception("Cursor is not provided")
+        # online data is available
+        cursor.execute("SELECT * FROM scoreboard")
+        data = {"scoreboard": []}
+        for row in cursor.fetchall():
+            data["scoreboard"].append(dict(row))
+
+    except: # switching to offline data
         if not os.path.exists(SCOREBOARD_FILE):
             data = {"scoreboard": []}
             with open(SCOREBOARD_FILE, 'w') as f:
@@ -28,7 +35,8 @@ def _load_scoreboard_data(cursor=None):
                     data = {"scoreboard": []}
             if "scoreboard" not in data:
                 data["scoreboard"] = []
-            return data
+
+    return data
 
 
 def _save_scoreboard_data(data):
@@ -37,61 +45,54 @@ def _save_scoreboard_data(data):
 
 
 def _get_scoreboard(mode, cursor=None):
-    if cursor:
-        pass
+    mode = mode.lower()
+    data = _load_scoreboard_data()
+    scoreboard_list = data.get("scoreboard", [])
+    if mode in ("pve", "bossfight"):
+        key = "pve" if mode == "pve" else "bossfight"
+        sorted_list = sorted(
+            scoreboard_list,
+            key=lambda x: x.get(key, {}).get("score", 0),
+            reverse=True
+        )
+    elif mode == "duel":
+        sorted_list = sorted(
+            scoreboard_list,
+            key=lambda x: (x.get("duel", {}).get("wins", 0),
+                           -x.get("duel", {}).get("losses", 0)),
+            reverse=True
+        )
     else:
-        mode = mode.lower()
-        data = _load_scoreboard_data()
-        scoreboard_list = data.get("scoreboard", [])
+        sorted_list = scoreboard_list
 
-        if mode in ("pve", "bossfight"):
-            key = "pve" if mode == "pve" else "bossfight"
-            sorted_list = sorted(
-                scoreboard_list,
-                key=lambda x: x.get(key, {}).get("score", 0),
-                reverse=True
-            )
-        elif mode == "duel":
-            sorted_list = sorted(
-                scoreboard_list,
-                key=lambda x: (x.get("duel", {}).get("wins", 0),
-                               -x.get("duel", {}).get("losses", 0)),
-                reverse=True
-            )
-        else:
-            sorted_list = scoreboard_list
-        return sorted_list[:5]
+    return sorted_list[:5]
 
 
 def update_score(mode, username, score, cursor=None):
-    if cursor:
-        pass
-    else:
-        mode = mode.lower()
-        if mode not in ("pve", "bossfight"):
-            raise ValueError("update only for pve or bossfight modes.")
+    mode = mode.lower()
+    if mode not in ("pve", "bossfight"):
+        raise ValueError("update only for pve or bossfight modes.")
+    data = _load_scoreboard_data()
+    updated = False
+    for entry in data["scoreboard"]:
+        if entry.get("username") == username:
+            if mode not in entry:
+                entry[mode] = {"score": 0}
+            if score > entry[mode].get("score", 0):
+                entry[mode]["score"] = score
+            updated = True
+            break
 
-        data = _load_scoreboard_data()
-        updated = False
-        for entry in data["scoreboard"]:
-            if entry.get("username") == username:
-                if mode not in entry:
-                    entry[mode] = {"score": 0}
-                if score > entry[mode].get("score", 0):
-                    entry[mode]["score"] = score
-                updated = True
-                break
-
-        if not updated:
-            new_entry = {
-                "username": username,
-                "pve": {"score": score} if mode == "pve" else {"score": 0},
-                "bossfight": {"score": score} if mode == "bossfight" else {"score": 0},
-                "duel": {"wins": 0, "losses": 0, "draws": 0}
-            }
-            data["scoreboard"].append(new_entry)
-        _save_scoreboard_data(data)
-        return _get_scoreboard(mode)
+    if not updated:
+        new_entry = {
+            "username": username,
+            "pve": {"score": score} if mode == "pve" else {"score": 0},
+            "bossfight": {"score": score} if mode == "bossfight" else {"score": 0},
+            "duel": {"wins": 0, "losses": 0, "draws": 0}
+        }
+        data["scoreboard"].append(new_entry)
+    _save_scoreboard_data(data)
+    return _get_scoreboard(mode)
 
 
 def _update_duel(username, wins=0, losses=0, draws=0, cursor=None):

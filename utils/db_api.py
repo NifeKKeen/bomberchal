@@ -12,7 +12,6 @@ def get_db_connection():
             user=globals.USERNAME,
             password=globals.PASSWORD,
             sslmode="require",
-
         )
         globals.online = True
         globals.db = conn
