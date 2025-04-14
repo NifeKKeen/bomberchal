@@ -45,7 +45,6 @@ def render_table():
 
         if selected_game_mode in ("pve", "bossfight"):
             key_mode = "pve" if selected_game_mode == "pve" else "bossfight"
-            print(entry)
             line_text = f"{entry.get('username', ''):<12} {entry.get(f'{key_mode}_score', 0):^10}"
         elif selected_game_mode == "duel":
             line_text = f"{entry.get('username', ''):<12} {entry.get('duel_wins', 0):^6} {entry.get('duel_loses', 0):^6} {entry.get('duel_draws', 0):^6}"

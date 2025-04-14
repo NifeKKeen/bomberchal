@@ -1,8 +1,6 @@
 import os
 import json
 
-import psycopg2
-
 import globals
 from pages.menu.play import get_setup_data_value
 from utils.db_api import get_db_connection
@@ -48,7 +46,7 @@ def _load_scoreboard_data(cursor=None):
             with open(SCOREBOARD_FILE, 'r') as f:
                 try:
                     data = json.load(f)
-                except Exception as e:
+                except:
                     data = {"scoreboard": []}
             if "scoreboard" not in data:
                 data = {"scoreboard": []}
@@ -110,26 +108,25 @@ def update_score(mode, username, score, cursor=None):
             if cursor: # online
                 if f"{mode}_score" not in entry:
                     try:
-                        cursor.execute(f"UPDATE scoreboard SET {mode}_score = 0 WHERE username = {username}")
+                        cursor.execute(f'UPDATE scoreboard SET {mode}_score = %s WHERE username = %s', (0, username))
                     except Exception as e:
                         print(e)
-                if score > entry[mode].get("score", 0):
+                if score > entry.get(f"{mode}_score", 0):
                     try:
-                        cursor.execute(f"UPDATE scoreboard SET {mode}_score = {score} WHERE username = {username}")
+                        cursor.execute(f'UPDATE scoreboard SET {mode}_score = %s WHERE username = %s', (score, username))
                     except Exception as e:
                         print(e)
 
             else: # offline
                 if mode not in entry:
-                    entry[mode] = {"score": 0}
+                    entry = {f"{mode}_score": 0}
                 if score > entry[mode].get("score", 0):
-                    entry[mode]["score"] = score
+                    entry[f"{mode}_score"] = score
 
             updated = True
             break
 
     if not updated:  # inserting new entry
-        # raise Exception("INSERTING NEW")
         if cursor:
             pve_score = score if mode == "pve" else 0
             bossfight_score = score if mode == "bossfight" else 0
@@ -154,30 +151,33 @@ def update_score(mode, username, score, cursor=None):
 
 
 def _update_duel(username, wins=0, loses=0, draws=0, cursor=None):
-    if cursor: # todo
-        pass
-    else:
-        data = _load_scoreboard_data(cursor=cursor)
-        print(data)
-        found = False
-        for entry in data["scoreboard"]:
-            if entry.get("username") == username:
+    data = _load_scoreboard_data(cursor=cursor)
+    print(data)
+    found = False
+    for entry in data:
+        if entry.get("username") == username:
+            if cursor:
+                cursor.execute("""UPDATE scoreboard SET duel_wins = duel_wins + %s, duel_loses = duel_loses + %s,
+                duel_draws = duel_draws + %s WHERE username = %s""", (wins, loses, draws, username))
+            else:
                 entry["duel_wins"] += wins
                 entry["duel_loses"] += loses
                 entry["duel_draws"] += draws
-                found = True
-                break
-        if not found:  # inserting new entry
-            new_entry = {
-                "username": username,
-                "pve_score": 0,
-                "bossfight_score": 0,
-                "duel_wins": 0,
-                "duel_loses": 0,
-                "duel_draws": 0
-            }
-            data["scoreboard"].append(new_entry)
-        _save_scoreboard_data(data)
+            found = True
+            break
+    if not found:  # inserting new entry
+        cursor.execute("""INSERT INTO scoreboard (username, pve_score, bossfight_score,
+        duel_wins, duel_loses, duel_draws) VALUES (%s, %s, %s, %s, %s, %s)""", (username, 0, 0, wins, loses, draws))
+        new_entry = {
+            "username": username,
+            "pve_score": 0,
+            "bossfight_score": 0,
+            "duel_wins": 0,
+            "duel_loses": 0,
+            "duel_draws": 0
+        }
+        data["scoreboard"].append(new_entry)
+    _save_scoreboard_data(data)
 
 
 def save_data(data):  # API endpoint
@@ -226,4 +226,5 @@ def save_data(data):  # API endpoint
             update_score(game_mode, globals.usernames[idx], score, db_cursor)
 
     if db_cursor is not None:
+        db_cursor.connection.commit()
         db_cursor.close()
