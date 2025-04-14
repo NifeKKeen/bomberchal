@@ -47,7 +47,7 @@ if __name__ == "__main__":
         #     pve_score INTEGER DEFAULT 0,
         #     bossfight_score INTEGER DEFAULT 0,
         #     duel_wins INTEGER DEFAULT 0,
-        #     duel_losses INTEGER DEFAULT 0,
+        #     duel_loses INTEGER DEFAULT 0,
         #     duel_draws INTEGER DEFAULT 0
         # );
         # """,

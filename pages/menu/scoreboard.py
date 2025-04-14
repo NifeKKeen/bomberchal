@@ -45,10 +45,10 @@ def render_table():
 
         if selected_game_mode in ("pve", "bossfight"):
             key_mode = "pve" if selected_game_mode == "pve" else "bossfight"
-            line_text = f"{entry.get('username', ''):<12} {entry.get(key_mode, {}).get('score', 0):^10}"
+            print(entry)
+            line_text = f"{entry.get('username', ''):<12} {entry.get(f'{key_mode}_score', 0):^10}"
         elif selected_game_mode == "duel":
-            duel = entry.get("duel", {"wins": 0, "losses": 0, "draws": 0})
-            line_text = f"{entry.get('username', ''):<12} {duel.get('wins', 0):^6} {duel.get('losses', 0):^6} {duel.get('draws', 0):^6}"
+            line_text = f"{entry.get('username', ''):<12} {entry.get("duel_wins", 0):^6} {entry.get("duel_loses", 0):^6} {entry.get("duel_draws", 0):^6}"
         paint_api.mount_text(
             px_x=globals.CENTER_X,
             px_y=y_offset,
@@ -127,14 +127,7 @@ def scoreboard(is_setup=False):
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     if is_setup:
-        get_db_connection()
-        print(globals.db, "RWEWRWER")
-        if globals.db:
-            with globals.db.cursor() as cursor:
-                db_cursor = cursor
-        else:
-            db_cursor = None
-        score_data = scoreboard_api.get_scoreboard(selected_game_mode, cursor=db_cursor)
+        score_data = scoreboard_api.get_scoreboard(selected_game_mode)
         render_scoreboard()
 
     render_table()
