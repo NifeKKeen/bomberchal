@@ -144,6 +144,8 @@ comba = []
 KRASAVA = False
 inf = 1e9  # formal infinity used in field_weight and pathfinding in general
 
+db = None
+
 time_reversing_count_down = 0  # the number of ticks to do time reversing
 time_slowdown_count_down = 0  # the number of ticks to run time slowly
 

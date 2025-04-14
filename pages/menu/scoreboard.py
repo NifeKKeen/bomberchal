@@ -1,5 +1,6 @@
 import globals
 from utils import paint_api
+from utils.db_api import get_db_connection
 from utils.interaction_api import is_clicked, are_clicked
 from utils import scoreboard_api
 from pages.navigation import navigate
@@ -11,9 +12,10 @@ bossfight_button_c = None
 back_button_c = None
 
 selected_game_mode = "pve"
-
+score_data = None
 
 def render_table():
+    global score_data
     header_text = "Scoreboard"
     font_size = 30
     padding = int(font_size * 0.8)
@@ -37,8 +39,6 @@ def render_table():
     )  # endregion
     y_offset = initial_y_offset + font_size + padding
 
-    # Rendering results
-    score_data = scoreboard_api.get_scoreboard(selected_game_mode)
     for i, entry in enumerate(score_data):
         if i > 5:
             break
@@ -63,7 +63,7 @@ def render_table():
         y_offset += font_size + padding
 
 
-def render_scoreboard():
+def render_scoreboard(is_setup=False):
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     paint_api.mount_text(  # region parameters
@@ -123,10 +123,18 @@ def render_scoreboard():
 
 
 def scoreboard(is_setup=False):
-    global selected_game_mode
+    global score_data, selected_game_mode
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     if is_setup:
+        get_db_connection()
+        print(globals.db, "RWEWRWER")
+        if globals.db:
+            with globals.db.cursor() as cursor:
+                db_cursor = cursor
+        else:
+            db_cursor = None
+        score_data = scoreboard_api.get_scoreboard(selected_game_mode, cursor=db_cursor)
         render_scoreboard()
 
     render_table()

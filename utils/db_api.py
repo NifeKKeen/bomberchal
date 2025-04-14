@@ -13,11 +13,13 @@ def get_db_connection():
             password=globals.PASSWORD,
             sslmode="require",
         )
+        print("I'm online")
+        print(conn)
+        print(conn.cursor())
         globals.online = True
         globals.db = conn
         return conn
     except Exception as e:
-        print("Database connection failed")
         raise e
 
 

@@ -1,5 +1,8 @@
 import os
 import json
+
+import psycopg2
+
 import globals
 from pages.menu.play import get_setup_data_value
 from utils.db_api import get_db_connection
@@ -16,7 +19,11 @@ def _load_scoreboard_data(cursor=None):
         if cursor is None:
             raise Exception("Cursor is not provided")
         # online data is available
-        cursor.execute("SELECT * FROM scoreboard")
+        print("Loading scoreboard data")
+        try:
+            cursor.execute("SELECT * FROM scoreboard")
+        except Exception as e:
+            print(e, "OSHIBKA")
         data = {"scoreboard": []}
         for row in cursor.fetchall():
             data["scoreboard"].append(dict(row))
@@ -39,14 +46,15 @@ def _load_scoreboard_data(cursor=None):
     return data
 
 
+
 def _save_scoreboard_data(data):
     with open(SCOREBOARD_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
 
-def _get_scoreboard(mode, cursor=None):
+def get_scoreboard(mode, cursor=None):
     mode = mode.lower()
-    data = _load_scoreboard_data()
+    data = _load_scoreboard_data(cursor=cursor)
     scoreboard_list = data.get("scoreboard", [])
     if mode in ("pve", "bossfight"):
         key = "pve" if mode == "pve" else "bossfight"
@@ -72,34 +80,60 @@ def update_score(mode, username, score, cursor=None):
     mode = mode.lower()
     if mode not in ("pve", "bossfight"):
         raise ValueError("update only for pve or bossfight modes.")
-    data = _load_scoreboard_data()
+    data = _load_scoreboard_data(cursor=cursor)
     updated = False
     for entry in data["scoreboard"]:
         if entry.get("username") == username:
-            if mode not in entry:
-                entry[mode] = {"score": 0}
-            if score > entry[mode].get("score", 0):
-                entry[mode]["score"] = score
+            if cursor: # online
+                if mode not in entry:
+                    try:
+                        cursor.execute(f"UPDATE scoreboard SET {mode}_score = 0 WHERE username = {username}")
+                    except Exception as e:
+                        print(e)
+                if score > entry[mode].get("score", 0):
+                    try:
+                        cursor.execute(f"UPDATE scoreboard SET {mode}_score = {score} WHERE username = {username}")
+                    except Exception as e:
+                        print(e)
+
+            else: # offline
+                if mode not in entry:
+                    entry[mode] = {"score": 0}
+                if score > entry[mode].get("score", 0):
+                    entry[mode]["score"] = score
+
             updated = True
             break
 
     if not updated:
-        new_entry = {
-            "username": username,
-            "pve": {"score": score} if mode == "pve" else {"score": 0},
-            "bossfight": {"score": score} if mode == "bossfight" else {"score": 0},
-            "duel": {"wins": 0, "losses": 0, "draws": 0}
-        }
-        data["scoreboard"].append(new_entry)
+        if cursor:
+            pve_score = {"score": score} if mode == "pve" else {"score": 0}
+            bossfight_score = {"score": score} if mode == "bossfight" else {"score": 0}
+            duel_wins = {"score": score} if mode == "pve" else {"score": 0}
+            duel_losses = {"score": score} if mode == "pve" else {"score": 0}
+            duel_draws = {"score": score} if mode == "pve" else {"score": 0}
+            try:
+                cursor.execute(f"INSERT INTO scoreboard VALUES pve_score = {pve_score}, bossfight_score = {bossfight_score},"
+                           f"duel_wins = {duel_wins}, duel_losses = {duel_losses}, duel_draws = {duel_draws} WHERE username = {username}")
+            except Exception as e:
+                print(e)
+        else:
+            new_entry = {
+                "username": username,
+                "pve": {"score": score} if mode == "pve" else {"score": 0},
+                "bossfight": {"score": score} if mode == "bossfight" else {"score": 0},
+                "duel": {"wins": 0, "losses": 0, "draws": 0}
+            }
+            data["scoreboard"].append(new_entry)
     _save_scoreboard_data(data)
-    return _get_scoreboard(mode)
+    return get_scoreboard(mode, cursor=cursor)
 
 
 def _update_duel(username, wins=0, losses=0, draws=0, cursor=None):
     if cursor:
         pass
     else:
-        data = _load_scoreboard_data()
+        data = _load_scoreboard_data(cursor=cursor)
         found = False
         for entry in data["scoreboard"]:
             if entry.get("username") == username:
@@ -119,17 +153,20 @@ def _update_duel(username, wins=0, losses=0, draws=0, cursor=None):
             }
             data["scoreboard"].append(new_entry)
         _save_scoreboard_data(data)
-        return _get_scoreboard("duel")
+        return get_scoreboard("duel", cursor=cursor)
 
 
 def save_data(data):  # API endpoint
     db_cursor = None
     try:  # online
         db = get_db_connection()
-        with db.cursor() as cursor:
-            db_cursor = cursor
+        db_cursor = db.cursor()
+        # with db.cursor() as cursor:
+        #     db_cursor = cursor
+        print("Online!")
     except Exception as e:  # offline
-        pass
+        print(e)
+
 
     game_mode = data["game_mode"]
     player_cnt = get_setup_data_value("players")
@@ -162,4 +199,5 @@ def save_data(data):  # API endpoint
             if not len(globals.usernames[idx]):
                 continue
 
+            print(db_cursor)
             update_score(game_mode, globals.usernames[idx], score, db_cursor)
