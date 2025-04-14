@@ -3,7 +3,7 @@ import psycopg2, globals
 
 def get_db_connection():
     if globals.db:
-        return
+        return globals.db
     try:
         conn = psycopg2.connect(
             host=globals.HOST,
@@ -41,6 +41,7 @@ if __name__ == "__main__":
         # ALTER USER public_user WITH PASSWORD '1234';
         # """
 
+        #
         # """
         # CREATE TABLE scoreboard (
         #     username TEXT NOT NULL PRIMARY KEY UNIQUE,
@@ -51,10 +52,10 @@ if __name__ == "__main__":
         #     duel_draws INTEGER DEFAULT 0
         # );
         # """,
-
-        """
-        SELECT * FROM scoreboard;
-        """,
+        #
+        # """
+        # SELECT * FROM scoreboard;
+        # """,
     ]
     with db.cursor() as cur:
         for command in commands:

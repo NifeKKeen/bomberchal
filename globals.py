@@ -28,7 +28,9 @@ PORT = 5432
 DATABASE = "bomberchal_0f22"
 USERNAME = "public_user"
 PASSWORD = "1234"
-#
+db = None
+
+# endregion
 
 # region FOR PAINT RENDER API
 to_render_keys = set()
@@ -143,8 +145,6 @@ game_tick = 0  # current game's tick
 comba = []
 KRASAVA = False
 inf = 1e9  # formal infinity used in field_weight and pathfinding in general
-
-db = None
 
 time_reversing_count_down = 0  # the number of ticks to do time reversing
 time_slowdown_count_down = 0  # the number of ticks to run time slowly

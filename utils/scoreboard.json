@@ -1,20 +1,10 @@
-{
-    "scoreboard": [
-        {
-            "username": "NifeKKeen",
-            "pve_score": 0,
-            "bossfight_score": 0,
-            "duel_wins": 0,
-            "duel_loses": 2,
-            "duel_draws": 0
-        },
-        {
-            "username": "Lev",
-            "pve_score": 0,
-            "bossfight_score": 0,
-            "duel_wins": 1,
-            "duel_loses": 0,
-            "duel_draws": 0
-        }
-    ]
-}
+[
+    {
+        "username": "NifeKKeen",
+        "pve_score": 10,
+        "bossfight_score": 0,
+        "duel_wins": 0,
+        "duel_loses": 0,
+        "duel_draws": 0
+    }
+]

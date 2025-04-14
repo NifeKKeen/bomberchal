@@ -48,7 +48,7 @@ def render_table():
             print(entry)
             line_text = f"{entry.get('username', ''):<12} {entry.get(f'{key_mode}_score', 0):^10}"
         elif selected_game_mode == "duel":
-            line_text = f"{entry.get('username', ''):<12} {entry.get("duel_wins", 0):^6} {entry.get("duel_loses", 0):^6} {entry.get("duel_draws", 0):^6}"
+            line_text = f"{entry.get('username', ''):<12} {entry.get('duel_wins', 0):^6} {entry.get('duel_loses', 0):^6} {entry.get('duel_draws', 0):^6}"
         paint_api.mount_text(
             px_x=globals.CENTER_X,
             px_y=y_offset,
