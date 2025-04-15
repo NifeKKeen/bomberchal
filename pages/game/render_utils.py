@@ -6,7 +6,7 @@ from utils.helpers import get_field_pos, players_sum_of_scores
 from utils.interaction_api import are_clicked
 from utils.paint_api import mount_rect
 from entitites.player import get_players
-from utils.scoreboard_api import save_data
+from utils.record_api import record_game
 from utils.sound_api import play_button_click
 
 
@@ -193,9 +193,9 @@ def render_game_end(message, show_score, payload):
     if are_clicked(*restart_button_c):
         from pages.game.game import setup_game
         play_button_click()
-        save_data(payload)
+        record_game(payload, globals.prefer_online)
         setup_game()
     elif are_clicked(*back_button_c):
-        save_data(payload)
+        record_game(payload, globals.prefer_online)
         play_button_click()
         navigate("menu")

@@ -2,7 +2,7 @@ import globals
 from utils import paint_api
 from utils.db_api import get_db_connection
 from utils.interaction_api import is_clicked, are_clicked
-from utils import scoreboard_api
+from utils import record_api
 from pages.navigation import navigate
 from utils.sound_api import play_button_click
 

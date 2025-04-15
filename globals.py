@@ -294,6 +294,7 @@ MAP_DIRECTION = {
 # region CUSTOM SETTINGS VARIABLES
 MAX_USERNAME_LENGTH = 15
 usernames = ["", ""]
+prefer_online = True
 
 setup_data = {
     "ranges":

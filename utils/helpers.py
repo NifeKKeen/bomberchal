@@ -53,8 +53,8 @@ def players_sum_of_scores(scores):
     from entitites.player import PLAYER_KEY
 
     res = 0
-    for key, score in scores.items():
-        if is_entity_key(PLAYER_KEY, key):
+    for entity_key, score in scores.items():
+        if is_entity_key(PLAYER_KEY, entity_key):
             res += score
 
     return res

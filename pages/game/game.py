@@ -20,6 +20,7 @@ from pages.menu.play import get_setup_data_value
 from pages.game.render_utils import render_inventory, render_game_end, render_pause
 from pages.game import field_generator
 
+
 def setup_game():
     reset_game()
     load_config()

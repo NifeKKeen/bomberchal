@@ -1,28 +1,10 @@
-import psycopg2, globals
-from psycopg2 import pool
+import psycopg2
+import globals
 
-def query_check():
-    try:
-        with globals.db.cursor() as cursor:
-            cursor.execute("SELECT 1")
-            cursor.close()
-        return True
-    except Exception as e:
-        # print(e)
-        return False
 
-def check_db_connection():
-    # using of multithreading to prevent infinite connection attempts
-    import threading
-    thr = threading.Thread(target=query_check)
-    thr.start()
-    thr.join(5) # giving 5 seconds to connect
-    return not thr.is_alive()
-
-def get_db_connection():
-    if globals.db: # caching db
-        if check_db_connection():
-            return globals.db
+def get_db_connection(should_reconnect=False):
+    if not should_reconnect and globals.db:  # caching db
+        return globals.db
 
     try:
         conn = psycopg2.connect(
@@ -32,8 +14,6 @@ def get_db_connection():
             user=globals.USERNAME,
             password=globals.PASSWORD,
             sslmode="require",
-            connect_timeout=2,
-            options='-c statement_timeout=2000'
         )
         globals.db = conn
         return conn
@@ -66,27 +46,43 @@ if __name__ == "__main__":
         # CREATE TABLE users (
         #     id SERIAL PRIMARY KEY,
         #     username TEXT UNIQUE
-        # )
+        # );
         # """,
-        #
         # """
-        # DROP TABLE scoreboard
+        # DROP TABLE pve_games;
         # """,
-        #
         # """
-        # CREATE TABLE scoreboard (
-        #     user_id INTEGER PRIMARY KEY,
-        #     pve_score INTEGER DEFAULT 0,
-        #     bossfight_score INTEGER DEFAULT 0,
-        #     duel_wins INTEGER DEFAULT 0,
-        #     duel_loses INTEGER DEFAULT 0,
-        #     duel_draws INTEGER DEFAULT 0,
+        # DROP TABLE bossfight_games;
+        # """,
+        # """
+        # DROP TABLE duel_games;
+        # """,
+        # """
+        # CREATE TABLE pve_games (
+        #     user_id INTEGER NOT NULL,
+        #     score INTEGER DEFAULT 0,
+        #     recorded_at TIMESTAMP DEFAULT now(),
+        #
         #     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         # );
         # """,
-        #
         # """
-        # SELECT * FROM scoreboard;
+        # CREATE TABLE bossfight_games (
+        #     user_id INTEGER NOT NULL,
+        #     score INTEGER DEFAULT 0,
+        #     recorded_at TIMESTAMP DEFAULT now(),
+        #     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        # );
+        # """,
+        # """
+        # CREATE TABLE duel_games (
+        #     user_id INTEGER NOT NULL,
+        #     wins INTEGER DEFAULT 0,
+        #     draws INTEGER DEFAULT 0,
+        #     loses INTEGER DEFAULT 0,
+        #     recorded_at TIMESTAMP DEFAULT now(),
+        #     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        # );
         # """,
     ]
     if db:
@@ -94,7 +90,7 @@ if __name__ == "__main__":
             for command in commands:
                 cur.execute(command)
 
-            print(cur.fetchall())
+            # print(cur.fetchall())
             db.commit()
         print("SUCCESS")
 
