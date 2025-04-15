@@ -30,6 +30,7 @@ USERNAME = "public_user"
 PASSWORD = "1234"
 db = None
 
+db_mode = "pull" # | "push"
 # endregion
 
 # region FOR PAINT RENDER API
@@ -307,6 +308,8 @@ setup_data = {
             ["Rows", None, rows, None, None, None, 1],
             ["Cols", None, cols, None, None, None, 1],
             ["Lives", None, 1, None, None, None, 1],
+
+            ["Database mode", None, db_mode, None, None, None, 0],
         ],
     "players": 1,
     "index": {
@@ -319,6 +322,7 @@ setup_data = {
         "rows": 6,
         "cols": 7,
         "lives": 8,
+        "db_mode": 9
     },
     "version": APP_VERSION,
 }

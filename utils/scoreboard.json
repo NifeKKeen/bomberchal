@@ -1,18 +1,12 @@
-[
-    {
-        "username": "Levkekekekek",
-        "pve_score": 10,
-        "bossfight_score": 0,
-        "duel_wins": 0,
-        "duel_loses": 0,
-        "duel_draws": 0
-    },
-    {
-        "username": "Lev222",
-        "pve_score": 30,
-        "bossfight_score": 10,
-        "duel_wins": 1,
-        "duel_loses": 1,
-        "duel_draws": 0
-    }
-]
+{
+    "scoreboard": [
+        {
+            "username": 1,
+            "pve_score": 5,
+            "bossfight_score": 0,
+            "duel_wins": 0,
+            "duel_loses": 0,
+            "duel_draws": 0
+        }
+    ]
+}
