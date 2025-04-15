@@ -10,7 +10,6 @@ from pages.menu.scoreboard import scoreboard
 from utils import paint_api
 from pages.game.game import game
 import globals
-from utils.db_api import get_db_connection
 from utils.interaction_api import get_pressed_keys
 from utils.paint_api import draw_sprites, GIFSprite
 

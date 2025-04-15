@@ -309,8 +309,6 @@ setup_data = {
             ["Rows", None, rows, None, None, None, 1],
             ["Cols", None, cols, None, None, None, 1],
             ["Lives", None, 1, None, None, None, 1],
-
-            ["Database mode", None, db_mode, None, None, None, 0],
         ],
     "players": 1,
     "index": {

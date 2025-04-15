@@ -181,22 +181,13 @@ def play(is_setup=False):
         if is_clicked(left_arrow):
             play_button_click()
 
-            if value == db_modes[0]:
-                value = db_modes[1]
-            elif value == db_modes[1]:
-                value = db_modes[0]
-            elif value - data[6] >= 0:
+            if value - data[6] >= 0:
                 value -= data[6]
             value_text.set_text(str(value))
         elif is_clicked(right_arrow):
             play_button_click()
 
-            if value == db_modes[0]:
-                value = db_modes[1]
-            elif value == db_modes[1]:
-                value = db_modes[0]
-            else:
-                value += data[6]
+            value += data[6]
             value_text.set_text(str(value))
 
         data[2] = value

@@ -126,7 +126,10 @@ def scoreboard(is_setup=False):
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     if is_setup:
-        score_data = scoreboard_api.get_scoreboard(selected_game_mode)
+        if globals.prefer_online:
+            score_data = record_api.get_scoreboard_on()  # TODO
+        else:
+            score_data = record_api.get_scoreboard_off()
         render_scoreboard()
 
     render_table()

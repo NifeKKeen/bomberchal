@@ -13,6 +13,7 @@ INPUT_PLACEHOLDER_TEXT = "Enter your name..."
 
 mute_button_sprite = None
 input_button_c = None
+prefer_online_button_c = None
 play_button_c = None
 scoreboard_button_c = None
 customization_button_c = None
@@ -162,7 +163,7 @@ def render_input():
 
 def render_menu():
     global mute_button_sprite
-    global input_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
+    global input_button_c, prefer_online_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
 
     mute_button_sprite = paint_api.mount_rect(  # region parameters
         px_x=globals.CENTER_X - 350,
@@ -185,6 +186,17 @@ def render_menu():
         font_size=30,
 
         key="input",
+    )  # endregion
+
+    prefer_online_button_c = mount_button(  # region parameters
+        px_x=globals.CENTER_X + 345,
+        px_y=110,
+        px_w=100,
+        px_h=65,
+        text=f"Prefer {"Online" if globals.prefer_online else "Offline"}",
+        font_size=16,
+
+        key="prefer_online",
     )  # endregion
 
     play_button_c = mount_button(  # region parameters
@@ -245,7 +257,7 @@ def render_menu():
 
 def menu(is_setup=False):
     global mute_button_sprite
-    global input_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
+    global input_button_c, prefer_online_button_c, play_button_c, scoreboard_button_c, customization_button_c, settings_button_c, quit_button_c
     global input_is_active, current_usernames
 
     if is_setup:
@@ -258,6 +270,7 @@ def menu(is_setup=False):
 
     if input_is_active:
         render_input()
+
 
     if are_clicked(*play_button_c):
         navigate("menu/play")
@@ -291,5 +304,16 @@ def menu(is_setup=False):
         save_config()
 
     if are_clicked(*input_button_c):
-        input_is_active = True
         play_button_click()
+        input_is_active = True
+    if are_clicked(*prefer_online_button_c):
+        # switching
+        play_button_click()
+        if globals.prefer_online:
+            globals.prefer_online = False
+            prefer_online_button_c[1].set_text("Prefer: Offline")
+            prefer_online_button_c[2].set_text("Prefer: Offline")
+        else:
+            globals.prefer_online = True
+            prefer_online_button_c[1].set_text("Prefer: Online")
+            prefer_online_button_c[2].set_text("Prefer: Online")

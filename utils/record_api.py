@@ -130,6 +130,61 @@ def load_game_logs_on(cursor):
     return game_logs
 
 
+def get_scoreboard_off():
+    game_logs = load_game_logs_off()
+
+    # Dictionary to accumulate user data.
+    aggregated = {}
+
+    for record in game_logs["pve_games"]:
+        username = record["username"]
+        score = record["score"]
+        if username not in aggregated:
+            aggregated[username] = {
+                "username": username,
+                "pve_score": 0,
+                "bossfight_score": 0,
+                "duel_wins": 0,
+                "duel_loses": 0,
+                "duel_draws": 0
+            }
+        aggregated[username]["pve_score"] += score
+
+    for record in game_logs["bossfight_games"]:
+        username = record["username"]
+        score = record["score"]
+        if username not in aggregated:
+            aggregated[username] = {
+                "username": username,
+                "pve_score": 0,
+                "bossfight_score": 0,
+                "duel_wins": 0,
+                "duel_loses": 0,
+                "duel_draws": 0
+            }
+        aggregated[username]["bossfight_score"] += score
+
+    for record in game_logs["duel_games"]:
+        username = record["username"]
+        wins = record["wins"]
+        loses = record["loses"]
+        draws = record["draws"]
+        if username not in aggregated:
+            aggregated[username] = {
+                "username": username,
+                "pve_score": 0,
+                "bossfight_score": 0,
+                "duel_wins": 0,
+                "duel_loses": 0,
+                "duel_draws": 0
+            }
+        aggregated[username]["duel_wins"] += wins
+        aggregated[username]["duel_loses"] += loses
+        aggregated[username]["duel_draws"] += draws
+
+    return list(aggregated.values())
+
+
 def save_game_logs_off(data):
     # converting datetime objects to ISO 8601 strings for JSON serialization
     def default(obj):
