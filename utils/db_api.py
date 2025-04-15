@@ -38,6 +38,10 @@ if __name__ == "__main__":
         # """,
 
         # """
+        # GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO public_users;
+        # """,
+
+        # """
         # ALTER USER public_user WITH PASSWORD '1234';
         # """,
 

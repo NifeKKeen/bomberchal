@@ -1,5 +1,6 @@
 from entitites.entity import Entity
 from utils.helpers import get_pos
+from utils.slowmo import can_tick
 
 
 class Movable(Entity):
@@ -12,6 +13,9 @@ class Movable(Entity):
         self.last_direction = "top"  # "right" | "down" | "left"
 
     def move_px(self, x=0, y=0):
+        if not can_tick():
+            return
+
         self.vel_px_x = x
         self.vel_px_y = y
 

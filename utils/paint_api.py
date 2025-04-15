@@ -338,11 +338,11 @@ def draw_sprites():
     globals.all_sprites.draw(globals.DISPLAYSURF)
     globals.Frame.tick(globals.FPS)
 
-    if globals.time_reversing_count_down:
+    if not globals.paused and globals.time_reversing_count_down:
         grey_overlay = pygame.Surface((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT), pygame.SRCALPHA)
         grey_overlay.fill((128, 128, 128, 128))
         globals.DISPLAYSURF.blit(grey_overlay, (0, 0))
-    if globals.time_slowdown_count_down:
+    if not globals.paused and globals.time_slowdown_count_down:
         brown_overlay = pygame.Surface((globals.SCREEN_WIDTH, globals.SCREEN_HEIGHT), pygame.SRCALPHA)
         brown_overlay.fill((255, 64, 0, 64))
         globals.DISPLAYSURF.blit(brown_overlay, (0, 0))

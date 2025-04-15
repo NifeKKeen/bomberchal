@@ -5,6 +5,7 @@ from config import load_config
 from utils import paint_api, snapshot_api
 from utils.helpers import rand, in_valid_range
 from utils.interaction_api import is_clicked, is_pressed, is_pressed_once
+from utils.slowmo import can_tick
 from utils.sound_api import play_music, play_button_click
 from entitites.bomb import get_bombs
 from entitites.fire import get_fires, Fire
@@ -121,10 +122,10 @@ def game(**kwargs):
         return
 
     globals.time_slowdown_count_down = max(0, globals.time_slowdown_count_down - 1)
-    if globals.time_slowdown_count_down % 4 >= 1:
-        return
 
-    globals.game_tick += 1
+    should_tick = can_tick()
+    if should_tick:
+        globals.game_tick += 1
 
     for x in range(globals.cols):
         for y in range(globals.rows):
@@ -157,11 +158,12 @@ def game(**kwargs):
             globals.field_weight[x][y] = globals.inf
 
     bonus_delay = get_setup_data_value("bonus_delay")
-    if bonus_delay == 0 or globals.game_tick % bonus_delay == 0:
-        spawn_bonus(rand(0, 6))
+    if should_tick and (bonus_delay == 0 or globals.game_tick % bonus_delay == 0):
+        spawn_bonus(rand(4, 5))
 
     for entity in list(globals.entities):  # list to avoid "Set changed size during iteration" error
-        entity.add_tick()
+        if should_tick:
+            entity.add_tick()
 
         entity.cur_damage_countdown = max(entity.cur_damage_countdown - 1, 0)
 

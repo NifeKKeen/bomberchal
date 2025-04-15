@@ -118,7 +118,6 @@ def render_pause():
         globals.paused = False
         play_button_click()
     elif are_clicked(*home_button_c):
-        globals.paused = False
         play_button_click()
         navigate("menu")
 
