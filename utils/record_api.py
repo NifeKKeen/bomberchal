@@ -16,32 +16,6 @@ GAME_LOGS_FILE = "game_logs.json"
 # 'off' suffix means offline
 
 
-def get_user_id_on(username, cursor=None):
-    if cursor is None:
-        # in offline mode, there are no integer keys, so user_id will actually be username
-        return username
-
-    try:
-        cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
-        res = cursor.fetchone()
-        if res:
-            return int(res[0])
-        cursor.execute("SELECT COUNT(*) + 1 FROM users")
-        id = cursor.fetchone()[0]
-        cursor.execute("INSERT INTO users (username) VALUES (%s)", (username,))
-        return id
-    except Exception as e:
-        print(e)
-
-
-def get_user_by_id_on(user_id, cursor):
-    cursor.execute("SELECT username FROM users WHERE id = %s;", (user_id,))
-    res = cursor.fetchone()
-    if res:
-        return res[0]
-    raise Exception("User not found")
-
-
 def access_username_on(username, cursor):
     cursor.execute("SELECT id FROM users WHERE username = %s;", (username,))
     return bool(cursor.fetchone())
@@ -130,7 +104,7 @@ def load_game_logs_on(cursor):
     return game_logs
 
 
-def get_scoreboard_off():
+def get_accumulated_scores_off():
     game_logs = load_game_logs_off()
 
     # to accumulate data for each username
@@ -185,7 +159,7 @@ def get_scoreboard_off():
     return list(aggregated.values())
 
 
-def get_scoreboard_on():
+def get_accumulated_scores_on():
     cursor = get_db_connection(True).cursor()
     aggregated = {}
 
@@ -367,7 +341,6 @@ def record_game(data, online=False):  # API endpoint
             for idx in range(player_cnt):
                 if not len(globals.usernames[idx]):  # username is not set
                     continue
-                print("Saving data for", idx, globals.usernames[idx])
                 if data["payload"] == -1:  # draw
                     create_duels_record_on(
                         globals.usernames[idx],

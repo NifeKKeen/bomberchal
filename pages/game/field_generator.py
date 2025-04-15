@@ -93,6 +93,4 @@ def generate_maze(cols, rows):
             dfs(nx, ny)
 
     dfs(1, 1)
-    for i in field:
-        print(i)
     return field

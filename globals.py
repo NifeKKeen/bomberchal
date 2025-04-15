@@ -19,7 +19,7 @@ Frame = None  # pygame.time.Clock()
 FPS = 60
 all_sprites = None  # pygame.sprite.LayeredUpdates()
 tick = 0  # whole app's tick
-APP_VERSION = "1.1"
+APP_VERSION = "1.2"
 # endregion
 
 # region DATABASE
@@ -241,7 +241,7 @@ map_bonus_type_to_timer = {
     BONUS_CAPACITY: float('inf'),
     BONUS_SPEED: utils.helpers.get_tick_from_ms(5000),
     BONUS_SLOWDOWN: utils.helpers.get_tick_from_ms(8000),
-    BONUS_REVERSE: utils.helpers.get_tick_from_ms(7000),
+    BONUS_REVERSE: utils.helpers.get_tick_from_ms(4000),
 }
 # endregion
 

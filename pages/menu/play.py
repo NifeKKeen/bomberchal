@@ -19,7 +19,6 @@ def get_setup_data_value(key):
 
 
 def render_range(order):
-    print(order)
     if order < 6:
         label_pos = globals.CENTER_X + 300, 100 + order * 100
     else:
@@ -90,8 +89,6 @@ def render_range(order):
 
 def render_layout():
     global players1_button_c, players2_button_c, pve_button_c, bossfight_button_c, duel_button_c, back_button_c
-
-    print(globals.setup_data["ranges"])
 
     for i in range(len(globals.setup_data["ranges"])):
         render_range(i)

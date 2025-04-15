@@ -1,5 +1,5 @@
 import globals
-from utils import paint_api
+from utils import paint_api, scoreboard_api
 from utils.db_api import get_db_connection
 from utils.interaction_api import is_clicked, are_clicked
 from utils import record_api
@@ -12,10 +12,12 @@ bossfight_button_c = None
 back_button_c = None
 
 selected_game_mode = "pve"
-score_data = None
+processed_pve_score_data = None
+processed_bossfight_score_data = None
+processed_duel_score_data = None
 
 def render_table():
-    global score_data
+    global processed_pve_score_data, processed_bossfight_score_data, processed_duel_score_data
     header_text = "Scoreboard"
     font_size = 30
     padding = int(font_size * 0.8)
@@ -39,10 +41,16 @@ def render_table():
     )  # endregion
     y_offset = initial_y_offset + font_size + padding
 
-    for i, entry in enumerate(score_data):
-        if i > 5:
-            break
+    if selected_game_mode == "pve":
+        score_data = processed_pve_score_data
+    elif selected_game_mode == "bossfight":
+        score_data = processed_bossfight_score_data
+    elif selected_game_mode == "duel":
+        score_data = processed_duel_score_data
+    else:
+        raise "Selected unknown game mode"
 
+    for i, entry in enumerate(score_data):
         if selected_game_mode in ("pve", "bossfight"):
             key_mode = "pve" if selected_game_mode == "pve" else "bossfight"
             line_text = f"{entry.get('username', ''):<12} {entry.get(f'{key_mode}_score', 0):^10}"
@@ -122,14 +130,18 @@ def render_scoreboard(is_setup=False):
 
 
 def scoreboard(is_setup=False):
-    global score_data, selected_game_mode
+    global processed_pve_score_data, processed_bossfight_score_data, processed_duel_score_data, selected_game_mode
     global pve_button_c, duel_button_c, bossfight_button_c, back_button_c
 
     if is_setup:
         if globals.prefer_online:
-            score_data = record_api.get_scoreboard_on()  # TODO
+            score_data = record_api.get_accumulated_scores_on()
         else:
-            score_data = record_api.get_scoreboard_off()
+            score_data = record_api.get_accumulated_scores_off()
+
+        processed_pve_score_data = scoreboard_api.get_processed_score_data(score_data, "pve")
+        processed_bossfight_score_data = scoreboard_api.get_processed_score_data(score_data, "bossfight")
+        processed_duel_score_data = scoreboard_api.get_processed_score_data(score_data, "duel")
         render_scoreboard()
 
     render_table()
