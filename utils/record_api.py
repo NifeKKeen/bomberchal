@@ -133,7 +133,7 @@ def load_game_logs_on(cursor):
 def get_scoreboard_off():
     game_logs = load_game_logs_off()
 
-    # Dictionary to accumulate user data.
+    # to accumulate data for each username
     aggregated = {}
 
     for record in game_logs["pve_games"]:
@@ -182,6 +182,80 @@ def get_scoreboard_off():
         aggregated[username]["duel_loses"] += loses
         aggregated[username]["duel_draws"] += draws
 
+    return list(aggregated.values())
+
+
+def get_scoreboard_on():
+    cursor = get_db_connection(True).cursor()
+    aggregated = {}
+
+    # aggregating pve_score for each user
+    cursor.execute(
+        """
+        SELECT users.username, COALESCE(SUM(p.score), 0) as pve_score
+        FROM pve_games AS p
+        JOIN users ON p.user_id = users.id
+        GROUP BY users.username;
+        """
+    )
+    for username, pve_score in cursor.fetchall():
+        aggregated[username] = {
+            "username": username,
+            "pve_score": pve_score,
+            "bossfight_score": 0,
+            "duel_wins": 0,
+            "duel_loses": 0,
+            "duel_draws": 0
+        }
+
+    # aggregating bossfight_score for each user
+    cursor.execute(
+        """
+        SELECT users.username, COALESCE(SUM(b.score), 0) as bossfight_score
+        FROM bossfight_games AS b
+        JOIN users ON b.user_id = users.id
+        GROUP BY users.username;
+        """
+    )
+    for username, bossfight_score in cursor.fetchall():
+        if username not in aggregated:
+            aggregated[username] = {
+                "username": username,
+                "pve_score": 0,
+                "bossfight_score": 0,
+                "duel_wins": 0,
+                "duel_loses": 0,
+                "duel_draws": 0
+            }
+        aggregated[username]["bossfight_score"] = bossfight_score
+
+    # aggregating duel data for each user
+    cursor.execute(
+        """
+        SELECT users.username, 
+               COALESCE(SUM(d.wins), 0) as duel_wins, 
+               COALESCE(SUM(d.draws), 0) as duel_draws, 
+               COALESCE(SUM(d.loses), 0) as duel_loses
+        FROM duel_games AS d
+        JOIN users ON d.user_id = users.id
+        GROUP BY users.username;
+        """
+    )
+    for username, duel_wins, duel_draws, duel_loses in cursor.fetchall():
+        if username not in aggregated:
+            aggregated[username] = {
+                "username": username,
+                "pve_score": 0,
+                "bossfight_score": 0,
+                "duel_wins": 0,
+                "duel_loses": 0,
+                "duel_draws": 0
+            }
+        aggregated[username]["duel_wins"] = duel_wins
+        aggregated[username]["duel_draws"] = duel_draws
+        aggregated[username]["duel_loses"] = duel_loses
+
+    cursor.close()
     return list(aggregated.values())
 
 
