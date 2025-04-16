@@ -122,7 +122,7 @@ def get_accumulated_scores_off():
                 "duel_loses": 0,
                 "duel_draws": 0
             }
-        aggregated[username]["pve_score"] += score
+        aggregated[username]["pve_score"] = max(aggregated[username]["pve_score"], score)
 
     for record in game_logs["bossfight_games"]:
         username = record["username"]
@@ -136,7 +136,7 @@ def get_accumulated_scores_off():
                 "duel_loses": 0,
                 "duel_draws": 0
             }
-        aggregated[username]["bossfight_score"] += score
+        aggregated[username]["bossfight_score"] = max(aggregated[username]["bossfight_score"], score)
 
     for record in game_logs["duel_games"]:
         username = record["username"]
@@ -166,7 +166,7 @@ def get_accumulated_scores_on():
     # aggregating pve_score for each user
     cursor.execute(
         """
-        SELECT users.username, COALESCE(SUM(p.score), 0) as pve_score
+        SELECT users.username, MAX(p.score) as pve_score
         FROM pve_games AS p
         JOIN users ON p.user_id = users.id
         GROUP BY users.username;
@@ -185,7 +185,7 @@ def get_accumulated_scores_on():
     # aggregating bossfight_score for each user
     cursor.execute(
         """
-        SELECT users.username, COALESCE(SUM(b.score), 0) as bossfight_score
+        SELECT users.username, MAX(b.score) as bossfight_score
         FROM bossfight_games AS b
         JOIN users ON b.user_id = users.id
         GROUP BY users.username;
@@ -207,9 +207,9 @@ def get_accumulated_scores_on():
     cursor.execute(
         """
         SELECT users.username, 
-               COALESCE(SUM(d.wins), 0) as duel_wins, 
-               COALESCE(SUM(d.draws), 0) as duel_draws, 
-               COALESCE(SUM(d.loses), 0) as duel_loses
+               SUM(d.wins) as duel_wins, 
+               SUM(d.draws) as duel_draws, 
+               SUM(d.loses) as duel_loses
         FROM duel_games AS d
         JOIN users ON d.user_id = users.id
         GROUP BY users.username;
